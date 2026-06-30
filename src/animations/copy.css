@@ -1,0 +1,5 @@
+/* SplitText masked-line wrapper. `mask: "lines"` wraps each line in an
+   overflow-hidden clip so the line lifts in from below without spilling. */
+.line {
+  display: block;
+}

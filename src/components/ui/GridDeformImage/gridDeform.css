@@ -1,0 +1,27 @@
+/* Grid-deformation image — the <img> fills the box (and is the reduced-motion
+   / no-WebGL fallback); the WebGL canvas overlays it once ready. */
+.grid-deform {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.grid-deform__img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 48%;
+  display: block;
+  z-index: 0;
+}
+
+.grid-deform__canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+}

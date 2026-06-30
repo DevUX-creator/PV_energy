@@ -1,0 +1,131 @@
+/* About — "What we do" industrial-scroll list (CodeGrid pattern). Dark inverse
+   surface; each row expands (taller + image widens) as it scrolls up. */
+.about-services {
+  /* Same dark grey as the hero band above (not pure black). */
+  background: #26262a;
+  color: var(--fg-on-inverse);
+  --fg-primary: var(--fg-on-inverse);
+  --fg-secondary: rgba(238, 244, 251, 0.72);
+  --fg-tertiary: rgba(238, 244, 251, 0.5);
+  --border: rgba(238, 244, 251, 0.18);
+  /* Scrolls up and overlaps the sticky section above it (home pattern). Small
+     top padding like the home overlap; normal rhythm below. */
+  position: relative;
+  z-index: 1;
+  padding-top: var(--container-padding);
+  padding-bottom: var(--gap-section);
+}
+
+/* Eyebrow tag — translucent light chip so it reads on the dark surface. */
+.about-services .section-tag {
+  color: var(--fg-on-inverse);
+  background: rgba(255, 255, 255, 0.12);
+}
+
+/* ---- Header: small label (left) + big heading (right) --------------- */
+.about-services__header {
+  display: flex;
+  gap: var(--col-gap);
+  margin-bottom: var(--space-16);
+}
+
+.about-services__header-left {
+  flex: 2;
+}
+
+.about-services__header-right {
+  flex: 5;
+}
+
+.about-services__title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: var(--font-bold);
+  font-size: clamp(3rem, 6.5vw, 6rem);
+  line-height: 0.95;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  color: var(--fg-primary);
+}
+
+/* ---- Rows ----------------------------------------------------------- */
+.about-svc {
+  display: flex;
+  gap: var(--col-gap);
+  height: 160px; /* collapsed; JS animates to ~460px on scroll */
+  border-top: 1px solid var(--border);
+  overflow: hidden;
+}
+
+.about-svc:last-child {
+  border-bottom: 1px solid var(--border);
+}
+
+.about-svc__info {
+  flex: 2;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding-block: var(--space-5);
+}
+
+.about-svc__name {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: var(--text-fluid-h4);
+  font-weight: var(--font-semibold);
+  line-height: var(--leading-snug);
+  color: var(--fg-primary);
+}
+
+.about-svc__copy {
+  margin: 0;
+  max-width: 42ch;
+  font-size: var(--text-sm);
+  line-height: var(--leading-normal);
+  color: var(--fg-secondary);
+}
+
+.about-svc__img {
+  flex: 5;
+  display: flex;
+  align-items: stretch;
+  padding-block: var(--space-4);
+  /* keep the growing image pinned to the right edge */
+  justify-content: flex-end;
+}
+
+.about-svc__img-inner {
+  width: 26%; /* collapsed; JS animates to 100% */
+  height: 100%;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  will-change: width;
+}
+
+.about-svc__img-inner img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* ---- Reduced-motion / static fallback: show expanded ---------------- */
+.about-services.is-static .about-svc {
+  height: clamp(260px, 36vh, 440px);
+}
+
+.about-services.is-static .about-svc__img-inner {
+  width: 100%;
+}
+
+/* ---- Responsive (basic — full pass deferred) ------------------------ */
+@media (max-width: 768px) {
+  .about-services__header {
+    flex-direction: column;
+    gap: var(--space-5);
+  }
+  .about-svc {
+    gap: var(--space-6);
+  }
+}

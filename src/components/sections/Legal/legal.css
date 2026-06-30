@@ -1,0 +1,97 @@
+/* Legal / prose pages — narrow readable column. */
+.legal-section.section {
+  /* clear the fixed header */
+  padding-top: calc(var(--header-height) + var(--gap-section-header));
+}
+
+.legal__title {
+  margin-top: var(--space-4);
+  font-size: var(--text-fluid-h1);
+  line-height: var(--leading-tight);
+}
+
+.legal__updated {
+  margin-top: var(--space-4);
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  color: var(--fg-tertiary);
+}
+
+.legal__body {
+  margin-top: var(--gap-section-header);
+  font-size: var(--text-base);
+  line-height: var(--leading-relaxed);
+  color: var(--fg-secondary);
+}
+
+.legal__body h2 {
+  margin-top: var(--space-12);
+  margin-bottom: var(--space-4);
+  font-size: var(--text-fluid-h4);
+  line-height: var(--leading-snug);
+  color: var(--fg-primary);
+}
+
+.legal__body h3 {
+  margin-top: var(--space-8);
+  margin-bottom: var(--space-2);
+  font-size: var(--text-lg);
+  color: var(--fg-primary);
+}
+
+.legal__body p {
+  margin-bottom: var(--space-4);
+}
+
+.legal__body ul {
+  margin: 0 0 var(--space-4);
+  padding-left: 1.25rem;
+  list-style: disc;
+}
+
+.legal__body li {
+  margin-bottom: var(--space-2);
+}
+
+.legal__body a {
+  color: var(--accent);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.legal__body strong {
+  color: var(--fg-primary);
+  font-weight: var(--font-semibold);
+}
+
+/* Inline cookie-settings trigger (renders like a body link). */
+.legal__cookie-btn {
+  font: inherit;
+  color: var(--accent);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  cursor: pointer;
+}
+
+/* Address blocks (imprint). */
+.legal__offices {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: var(--space-8);
+  margin: var(--space-6) 0 var(--space-4);
+}
+
+.legal__office-city {
+  display: block;
+  font-family: var(--font-display);
+  font-size: var(--text-lg);
+  font-weight: var(--font-semibold);
+  color: var(--fg-primary);
+  margin-bottom: var(--space-2);
+}
+
+.legal__office address {
+  font-style: normal;
+  font-size: var(--text-sm);
+  line-height: var(--leading-normal);
+}

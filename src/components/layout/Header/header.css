@@ -1,0 +1,90 @@
+/* ===================================================================
+   Header — aircenter.space layout. Fixed, transparent, monochrome.
+   3-column grid so the logo is truly centered regardless of the side
+   elements' widths:   [ menu ]      [ logo ]      [ Our Offices ]
+   (The burger button styles live in Menu's menu.css.)
+   =================================================================== */
+.header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: var(--z-header);
+}
+
+.header__inner {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  padding-block: var(--space-5);
+}
+
+.header__logo {
+  position: relative;
+  z-index: 2; /* stay above the open menu overlay (z 1) */
+  justify-self: center;
+  display: inline-flex;
+}
+
+/* ---- Our Offices button: 38px, text + rotating "more" icon ---------- */
+.office-btn {
+  position: relative;
+  z-index: 2; /* stay above the open menu overlay (z 1) */
+  justify-self: end;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 38px;
+  padding-inline: 18px;
+  border-radius: 4px;
+  color: var(--primary-contrast);
+  background: var(--primary);
+  transition: background-color var(--transition-base);
+}
+
+.office-btn:hover {
+  background: var(--primary-hover);
+}
+
+.office-btn:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 3px;
+}
+
+.office-btn__text {
+  font-family: var(--font-mono);
+  font-size: var(--text-sm); /* slightly bigger than before */
+  font-weight: var(--font-medium);
+  letter-spacing: var(--tracking-normal);
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.office-btn__icon {
+  display: inline-flex;
+  /* aircenter btn--rotation: the icon spins 0 → 90deg on hover. */
+  transition: transform 0.6s cubic-bezier(0.25, 0.74, 0.22, 0.99);
+}
+
+.office-btn__icon svg {
+  width: 16px;
+  height: 16px;
+}
+
+.office-btn:hover .office-btn__icon {
+  transform: rotate(90deg);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .office-btn__icon {
+    transition: none;
+  }
+}
+
+/* Hide the office button on small screens (aircenter hides it too). */
+@media (max-width: 768px) {
+  .office-btn {
+    display: none;
+  }
+}

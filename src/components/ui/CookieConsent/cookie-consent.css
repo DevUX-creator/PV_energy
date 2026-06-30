@@ -1,0 +1,170 @@
+/* ===================================================================
+   Cookie consent — a brand-cut card pinned bottom-left. drop-shadow on
+   the wrapper (so it follows the chamfer); the panel carries the cut.
+   =================================================================== */
+.cookie {
+  position: fixed;
+  left: clamp(1rem, 0.5rem + 1.5vw, 2rem);
+  bottom: clamp(1rem, 0.5rem + 1.5vw, 2rem);
+  right: clamp(1rem, 0.5rem + 1.5vw, 2rem);
+  z-index: var(--z-modal, 1000);
+  max-width: 30rem;
+  filter: drop-shadow(0 1rem 2.5rem rgba(0, 0, 0, 0.35));
+  animation: cookie-in 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes cookie-in {
+  from {
+    opacity: 0;
+    transform: translateY(1rem);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.cookie__panel {
+  --r: var(--radius-2xl);
+  --cut: clamp(1.25rem, 0.75rem + 1.5vw, 2rem);
+  --cr: 0.35rem;
+
+  display: flex;
+  flex-direction: column;
+  gap: clamp(0.85rem, 0.6rem + 1vw, 1.25rem);
+  padding: clamp(1.25rem, 1rem + 1.5vw, 1.85rem);
+  background: var(--bg-elevated);
+  color: var(--fg-primary);
+  border-radius: var(--r);
+  clip-path: polygon(
+    var(--cut) 0,
+    100% 0,
+    100% calc(100% - var(--cut)),
+    calc(100% - var(--cut)) 100%,
+    0 100%,
+    0 var(--cut)
+  );
+}
+
+@supports (clip-path: shape(from 0 0, line to 100% 0)) {
+  .cookie__panel {
+    clip-path: shape(
+      from calc(var(--cut) + var(--cr)) 0,
+      line to calc(100% - var(--r)) 0,
+      curve to 100% var(--r) with 100% 0,
+      line to 100% calc(100% - var(--cut) - var(--cr)),
+      curve to calc(100% - 0.7 * var(--cr)) calc(100% - var(--cut) + 0.7 * var(--cr))
+        with 100% calc(100% - var(--cut)),
+      line to calc(100% - var(--cut) + 0.7 * var(--cr)) calc(100% - 0.7 * var(--cr)),
+      curve to calc(100% - var(--cut) - var(--cr)) 100% with calc(100% - var(--cut)) 100%,
+      line to var(--r) 100%,
+      curve to 0 calc(100% - var(--r)) with 0 100%,
+      line to 0 calc(var(--cut) + var(--cr)),
+      curve to calc(0.7 * var(--cr)) calc(var(--cut) - 0.7 * var(--cr)) with 0 var(--cut),
+      line to calc(var(--cut) - 0.7 * var(--cr)) calc(0.7 * var(--cr)),
+      curve to calc(var(--cut) + var(--cr)) 0 with var(--cut) 0,
+      close
+    );
+  }
+}
+
+.cookie__heading {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: var(--font-semibold);
+  font-size: var(--text-fluid-h5);
+  color: var(--fg-primary);
+}
+.cookie__body {
+  margin: 0;
+  font-size: var(--text-sm);
+  line-height: var(--leading-relaxed);
+  color: var(--fg-secondary);
+}
+.cookie__link {
+  color: var(--accent);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+/* -- Category toggles ------------------------------------------ */
+.cookie__choices {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  padding: 0.85rem 0;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+.cookie__choice-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+.cookie__choice-label {
+  font-size: var(--text-base);
+  font-weight: var(--font-medium);
+  color: var(--fg-primary);
+}
+.cookie__choice-meta {
+  font-size: var(--text-sm);
+  color: var(--fg-tertiary);
+}
+.cookie__choice-body {
+  margin: 0.3rem 0 0;
+  font-size: var(--text-sm);
+  line-height: var(--leading-relaxed);
+  color: var(--fg-tertiary);
+}
+
+/* Toggle switch from the checkbox. */
+.cookie__toggle {
+  appearance: none;
+  flex-shrink: 0;
+  width: 2.4rem;
+  height: 1.35rem;
+  border-radius: 1rem;
+  background: var(--border-strong);
+  cursor: pointer;
+  position: relative;
+  transition: background-color var(--transition-base);
+}
+.cookie__toggle::after {
+  content: "";
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: calc(1.35rem - 4px);
+  height: calc(1.35rem - 4px);
+  border-radius: 50%;
+  background: var(--bg-elevated);
+  transition: transform var(--transition-base);
+}
+.cookie__toggle:checked {
+  background: var(--accent);
+}
+.cookie__toggle:checked::after {
+  transform: translateX(calc(2.4rem - 1.35rem));
+}
+.cookie__toggle:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+
+/* -- Actions --------------------------------------------------- */
+.cookie__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+}
+.cookie__btn {
+  flex: 1 1 auto;
+  --bg-base: var(--bg-elevated); /* outline punch matches the card */
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cookie {
+    animation: none;
+  }
+}

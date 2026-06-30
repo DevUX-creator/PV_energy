@@ -1,0 +1,18 @@
+.contact__title {
+  margin-top: var(--space-4);
+  max-width: 16ch;
+}
+
+.contact__lead {
+  margin-top: var(--space-6);
+  max-width: var(--max-width-text);
+  font-size: var(--text-fluid-lead);
+  color: var(--fg-secondary);
+}
+
+.contact__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+  margin-top: var(--space-10);
+}

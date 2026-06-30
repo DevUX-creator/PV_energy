@@ -1,0 +1,120 @@
+/* ===================================================================
+   Button — chamfered silhouette (shared --chamfer token) with the
+   Fabrisa hover: a fill layer slides up from the bottom on hover
+   (expo-out), the label colour flips in step. No lift/scale.
+   =================================================================== */
+.btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.55rem;
+
+  height: var(--height-control);
+  padding-inline: 1.6rem;
+
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  font-weight: var(--font-medium);
+  letter-spacing: var(--tracking-normal);
+  line-height: 1;
+  white-space: nowrap;
+  cursor: pointer;
+  overflow: hidden;
+  isolation: isolate;
+
+  /* Fallback (no shape() support): plain sharp diagonal cut. */
+  clip-path: polygon(
+    0 0,
+    100% 0,
+    100% calc(100% - var(--chamfer-cut)),
+    calc(100% - var(--chamfer-cut)) 100%,
+    0 100%
+  );
+  clip-path: var(--chamfer);
+
+  transition: color 0.5s cubic-bezier(0.83, 0, 0.17, 1);
+}
+
+/* Fill layer — slides up from the bottom on hover/focus. */
+.btn__fill {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background: var(--btn-fill, var(--primary-hover));
+  transform: translateY(101%);
+  transition: transform 0.5s cubic-bezier(0.83, 0, 0.17, 1);
+}
+
+.btn:hover .btn__fill,
+.btn:focus-visible .btn__fill {
+  transform: translateY(0);
+}
+
+.btn__label {
+  position: relative;
+  z-index: 1;
+}
+
+.btn__arrow {
+  position: relative;
+  z-index: 1;
+  width: 1rem;
+  height: 1rem;
+  flex-shrink: 0;
+  stroke: currentColor;
+  transition: transform var(--transition-base);
+}
+
+.btn:hover .btn__arrow {
+  transform: translateX(3px);
+}
+
+/* -- Primary: solid base; accent fill slides up -------------------- */
+.btn--primary {
+  color: var(--primary-contrast);
+  background: var(--primary);
+  --btn-fill: var(--accent);
+}
+
+.btn--primary:hover,
+.btn--primary:focus-visible {
+  color: var(--primary-contrast);
+}
+
+/* -- Outline: hairline; primary fill slides up, label inverts ------ */
+.btn--outline {
+  color: var(--fg-primary);
+  background: transparent;
+  border: 1px solid var(--border-strong);
+  --btn-fill: var(--primary);
+}
+
+.btn--outline:hover,
+.btn--outline:focus-visible {
+  color: var(--primary-contrast);
+}
+
+/* -- Ghost: bare, link-like (no chamfer / fill) -------------------- */
+.btn--ghost {
+  height: auto;
+  padding-inline: 0;
+  color: var(--accent);
+  background: transparent;
+  clip-path: none;
+}
+
+.btn--ghost .btn__fill {
+  display: none;
+}
+
+.btn--ghost:hover {
+  color: var(--accent-hover);
+}
+
+/* Focus: the fill slide (on :focus-visible) is the indicator — a normal
+   outline/box-shadow would be clipped by the chamfer. */
+.btn--ghost:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 3px;
+}

@@ -1,0 +1,197 @@
+/* Experience — reach / sectors intro. Shares the surface background with
+   the section above. Big uppercase display type; the last headline line is
+   a masked, letter-swap rotator (same transition as the menu links). */
+
+/* Exact same pattern as Hero→About: this section is pinned one viewport
+   tall (sticky, top:0, z-index:0) and centred so it's fully visible —
+   headline + image + "Global Network" mark — while the Products section
+   (relative, higher z-index) scrolls up and overlaps it. */
+.section.exp {
+  /* Plain, normal-flow section — no sticky, no overlap, no trailing gap. */
+  padding-block: var(--space-12);
+}
+
+.exp__head {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-6);
+}
+
+/* Hairline directly under the tag. */
+.exp__rule {
+  width: 100%;
+}
+
+/* ---- Big highlight headline (width limited only by the container) ---- */
+.exp__highlight {
+  /* One-line box shared by the lead lines and the rotator mask, so the
+     swap travels exactly one line. */
+  --exp-line: 1.04em;
+  margin-top: var(--space-8);
+  font-family: var(--font-display);
+  font-weight: var(--font-bold);
+  font-size: clamp(2.5rem, 7.5vw, 7rem);
+  line-height: var(--exp-line);
+  letter-spacing: -0.01em;
+  text-transform: uppercase;
+}
+
+/* Static lead lines — solid ink, leading into the swapping sector.
+   Inherit the big size from .exp__highlight (overrides the global h2
+   font-size) so the lead matches the swapping text exactly. */
+.exp__lead {
+  font-size: inherit;
+  line-height: inherit;
+  letter-spacing: inherit;
+  color: #2a2a2a; /* softened black — slightly brighter than full ink */
+}
+
+.exp__lead-line {
+  display: block;
+}
+
+/* The final lead word ("to") shares its line with the swap rotator. */
+.exp__lead-line--swap {
+  display: flex;
+  align-items: flex-start;
+}
+
+.exp__to {
+  white-space: pre; /* keep the trailing space before the sector */
+}
+
+/* ---- Letter-swap rotator (grey = the text that swaps) ---- */
+.exp__swap {
+  position: relative;
+  flex: 1 1 auto; /* fill the rest of the line — no horizontal clipping */
+  min-width: 0;
+  height: var(--exp-line);
+  overflow: hidden;
+  color: var(--fg-secondary);
+}
+
+.exp__swap-line {
+  position: absolute;
+  left: 0;
+  width: max-content;
+  height: var(--exp-line);
+  line-height: var(--exp-line);
+  display: flex;
+  white-space: nowrap;
+}
+
+.exp__swap-front {
+  top: 0;
+}
+
+/* The incoming word waits one line below the mask. */
+.exp__swap-back {
+  top: 100%;
+}
+
+.exp__swap-char {
+  display: inline-block;
+  white-space: pre; /* preserve spaces between words */
+}
+
+/* ---- Image below the headline, shifted to the right (2/3 width) ---- */
+.exp__media {
+  position: relative;
+  display: flex;
+  justify-content: flex-end;
+  margin-top: var(--space-10); /* gap below the headline */
+}
+
+/* Mono label centred on the image's left edge (image is 2/3, right-aligned,
+   so its left edge sits at 33.33%) → the word straddles half on the
+   background, half on the image. The shuriken floats to its left. */
+.exp__mark {
+  position: absolute;
+  top: 50%;
+  left: 33.3333%;
+  transform: translate(-50%, -50%);
+  z-index: 2;
+  pointer-events: none;
+}
+
+/* Inner layer — the bit the scroll parallax flies away. */
+.exp__mark-inner {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  will-change: transform, opacity;
+}
+
+.exp__mark-label {
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  font-weight: var(--font-medium);
+  letter-spacing: var(--tracking-eyebrow);
+  text-transform: uppercase;
+  color: var(--fg-primary);
+  white-space: nowrap;
+}
+
+.exp__shuriken-wrap {
+  position: absolute;
+  right: 100%;
+  top: 50%;
+  transform: translateY(-50%);
+  margin-right: 0.7rem;
+  display: block;
+  color: var(--accent);
+}
+
+.exp__shuriken {
+  display: block;
+  width: clamp(1.5rem, 2.2vw, 2.25rem);
+  height: auto;
+  animation: exp-spin 7s linear infinite;
+}
+
+@keyframes exp-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .exp__shuriken {
+    animation: none;
+  }
+}
+
+.exp__img {
+  /* Top-left corner cut — brand chamfer, mirrored from the buttons. */
+  --cut: clamp(1.5rem, 3vw, 3rem);
+  width: 66.6667%;
+  height: auto;
+  display: block;
+  clip-path: polygon(
+    var(--cut) 0,
+    100% 0,
+    100% 100%,
+    0 100%,
+    0 var(--cut)
+  );
+}
+
+@media (max-width: 768px) {
+  .exp__img {
+    width: 100%;
+  }
+}
+
+/* Accessibility helper — visually hidden, still read by assistive tech. */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}

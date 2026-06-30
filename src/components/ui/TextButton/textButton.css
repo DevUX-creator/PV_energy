@@ -1,0 +1,83 @@
+/* TextButton — white text link + arrow, menu letter-swap hover. Tunables:
+   --swap-stagger (per-char delay). */
+.text-btn {
+  --swap-stagger: 22ms;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  color: #fff;
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  font-weight: var(--font-medium);
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+  line-height: 1;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+/* Mask: the label is one line tall; text sits at the top, clone one line
+   below. Both roll up on hover. */
+.text-btn__label {
+  position: relative;
+  display: inline-block;
+  height: 1em;
+  overflow: hidden;
+}
+
+.text-btn__text,
+.text-btn__clone {
+  display: flex;
+  white-space: pre;
+}
+
+.text-btn__text {
+  position: relative;
+}
+
+.text-btn__clone {
+  position: absolute;
+  left: 0;
+  top: 100%;
+}
+
+.text-btn__text > span,
+.text-btn__clone > span {
+  display: inline-block;
+  transition: transform 0.32s cubic-bezier(0.215, 0.61, 0.355, 1);
+  transition-delay: calc(var(--i, 0) * var(--swap-stagger));
+  will-change: transform;
+}
+
+.text-btn:hover .text-btn__text > span,
+.text-btn:hover .text-btn__clone > span,
+.text-btn:focus-visible .text-btn__text > span,
+.text-btn:focus-visible .text-btn__clone > span {
+  transform: translateY(-100%);
+}
+
+.text-btn__arrow {
+  width: 1rem;
+  height: 1rem;
+  flex-shrink: 0;
+  stroke: currentColor;
+  transition: transform var(--transition-base);
+}
+
+.text-btn:hover .text-btn__arrow,
+.text-btn:focus-visible .text-btn__arrow {
+  transform: translateX(3px);
+}
+
+.text-btn:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .text-btn__text > span,
+  .text-btn__clone > span {
+    transition: none;
+  }
+}

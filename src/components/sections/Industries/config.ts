@@ -1,0 +1,23 @@
+/** The 21 industries served — verbatim from the live homepage. */
+export const INDUSTRIES: string[] = [
+  "LNG Liquefaction",
+  "Onshore Drilling",
+  "Offshore Platforms",
+  "Petrochemical Plants",
+  "Lubricants Manufacturing",
+  "Pipeline Engineering",
+  "Refinery Processing",
+  "Natural Gas Distribution",
+  "Fuel Storage & Terminal Operations",
+  "Oilfield Services & Equipment",
+  "Oil & Gas Exploration",
+  "Integrated Oil & Gas",
+  "Coal & Consumable Fuels",
+  "Shipping & Tanker Logistics",
+  "Chemical Manufacturing",
+  "Coal Gasification",
+  "Power Generation",
+  "Steel & Aluminum Plants",
+  "Fertilizer & Ammonia Plants",
+  "Asphalt & Paving Materials",
+];

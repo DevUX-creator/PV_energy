@@ -1,0 +1,46 @@
+.products__title {
+  margin-top: var(--space-4);
+  max-width: 20ch;
+}
+
+.products__lead {
+  margin-top: var(--space-6);
+  max-width: var(--max-width-text);
+  font-size: var(--text-fluid-lead);
+  color: var(--fg-secondary);
+}
+
+.products__departments {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-section);
+  margin-top: var(--gap-section-header);
+}
+
+.products__department-head {
+  margin-bottom: var(--space-6);
+}
+
+.products__department-name {
+  font-size: var(--text-fluid-h3);
+}
+
+.products__department-intro {
+  margin-top: var(--space-3);
+  max-width: var(--max-width-text);
+  color: var(--fg-secondary);
+}
+
+.products__detail {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  max-width: var(--max-width-text);
+}
+
+.products__tagline {
+  font-family: var(--font-display);
+  font-size: var(--text-fluid-h5);
+  font-weight: var(--font-medium);
+  color: var(--fg-primary);
+}

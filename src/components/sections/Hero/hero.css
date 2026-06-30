@@ -1,0 +1,184 @@
+.hero {
+  /* Sticky so the next section scrolls up and overlaps it (BeBawa). */
+  position: sticky;
+  top: 0;
+  z-index: 0;
+  display: flex;
+  align-items: center;
+  height: 100svh;
+  overflow: hidden;
+  background: #0a0a0a;
+  color: #fff;
+  isolation: isolate;
+}
+
+/* Full-bleed background video (scrubbed to scroll). */
+.hero__video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* Contrast overlay so the white text stays legible over the footage. */
+.hero__overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background: linear-gradient(
+    180deg,
+    rgba(8, 8, 8, 0.5) 0%,
+    rgba(8, 8, 8, 0.22) 38%,
+    rgba(8, 8, 8, 0.68) 100%
+  );
+}
+
+/* Film-grain sits above the video/overlay, below the text. */
+.hero__grain {
+  z-index: 2;
+}
+
+.hero__inner {
+  position: relative;
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-10);
+  width: 100%;
+}
+
+/* Wordmark stretched across the wide container:
+   PV (left) · LINK (after a fluid ~180px gap) · ENERGY (right edge). */
+.hero__title {
+  display: flex;
+  align-items: baseline;
+  width: 100%;
+}
+
+.hero__word {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp(2.4rem, 11vw, 11rem);
+  line-height: 0.95;
+  letter-spacing: -0.02em;
+  color: #fff;
+  text-shadow: 0 6px 36px rgba(0, 0, 0, 0.32);
+  will-change: transform, filter, opacity;
+}
+
+/* Optical alignment: pull the first/last glyph flush to the container
+   edges (compensate the font side-bearing) so PV lines up with the burger
+   and ENERGY with the right edge. */
+.hero__word--pv {
+  margin-left: -0.05em;
+}
+
+.hero__word--link {
+  margin-left: clamp(2.5rem, 10vw, 180px);
+}
+
+.hero__word--energy {
+  margin-left: auto;
+  margin-right: -0.05em;
+}
+
+.hero__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+}
+
+/* Primary CTA — blue base; ink fill slides up on hover (Fabrisa). */
+.hero .btn--primary {
+  background: var(--accent);
+  color: var(--accent-contrast);
+  --btn-fill: var(--primary);
+}
+
+.hero .btn--primary:hover,
+.hero .btn--primary:focus-visible {
+  color: #fff;
+}
+
+/* Secondary — filled white; ink fill slides up, label flips to white. */
+.hero .btn--outline {
+  color: var(--primary);
+  background: #fff;
+  border: none; /* no hairline / outline */
+  --btn-fill: var(--primary);
+  transition: color 0.5s cubic-bezier(0.83, 0, 0.17, 1),
+    background-color 0.5s cubic-bezier(0.83, 0, 0.17, 1);
+}
+
+.hero .btn--outline:hover,
+.hero .btn--outline:focus-visible {
+  color: #fff;
+  /* base goes ink too, so no white edge peeks past the sliding fill */
+  background: var(--primary);
+}
+
+/* ---- Bottom row: tagline (left) + arrow indicator (right) ----------- */
+.hero__footer {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: var(--space-10);
+  z-index: 3;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--space-8);
+}
+
+.hero__sub {
+  max-width: 52ch;
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  font-weight: var(--font-medium);
+  letter-spacing: 0.08em;
+  line-height: 1.7;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.82);
+}
+
+/* Brutalist arrow indicator — white hairline box with an open top-left cut
+   (clip-path cuts through the border, leaving the corner open) and a sharp
+   geometric arrow. Transparent centre shows the video through. */
+.hero__indicator {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  color: var(--primary); /* dark arrow on the white square */
+  background: #fff; /* filled square */
+}
+
+.hero__indicator-arrow {
+  width: 22px;
+  height: auto;
+  transform: rotate(90deg); /* point down (scroll cue) */
+}
+
+@media (max-width: 700px) {
+  .hero__title {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .hero__word--link,
+  .hero__word--energy {
+    margin-left: 0;
+  }
+  .hero__footer {
+    position: static;
+    margin-top: var(--space-12);
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-6);
+  }
+}

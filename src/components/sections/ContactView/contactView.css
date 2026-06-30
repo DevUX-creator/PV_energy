@@ -1,0 +1,121 @@
+/* Contact page — light, two-column. */
+.contact-view.section {
+  /* clear the fixed header */
+  padding-top: calc(var(--header-height) + var(--gap-section-header));
+}
+
+.contact-view__title {
+  margin-top: var(--space-4);
+  max-width: 16ch;
+  font-size: var(--text-fluid-h1);
+  line-height: var(--leading-tight);
+  letter-spacing: var(--tracking-tight);
+}
+
+.contact-view__lead {
+  margin-top: var(--space-6);
+  max-width: var(--max-width-text);
+  font-size: var(--text-fluid-lead);
+  line-height: var(--leading-relaxed);
+  color: var(--fg-secondary);
+}
+
+.contact-view__grid {
+  margin-top: var(--gap-section);
+  display: grid;
+  grid-template-columns: 1.25fr 0.85fr;
+  gap: var(--col-gap);
+  align-items: start;
+}
+
+.contact-view__aside {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-16);
+}
+
+.contact-view__col-title {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  font-weight: var(--font-medium);
+  letter-spacing: var(--tracking-eyebrow);
+  text-transform: uppercase;
+  color: var(--fg-tertiary);
+  margin-bottom: var(--space-6);
+}
+
+/* ---- Talk to us ----------------------------------------------------- */
+.contact-view__talk {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.contact-view__email {
+  font-family: var(--font-display);
+  font-size: var(--text-fluid-h3);
+  font-weight: var(--font-semibold);
+  letter-spacing: -0.01em;
+  color: var(--fg-primary);
+  transition: color var(--transition-fast);
+}
+
+.contact-view__email:hover {
+  color: var(--accent);
+}
+
+.contact-view__phone {
+  margin-top: var(--space-4);
+  font-family: var(--font-mono);
+  font-size: var(--text-lg);
+  color: var(--fg-secondary);
+  transition: color var(--transition-fast);
+}
+
+.contact-view__phone:hover {
+  color: var(--fg-primary);
+}
+
+.contact-view__cta {
+  margin-top: var(--space-8);
+}
+
+/* ---- Offices -------------------------------------------------------- */
+.contact-view__office-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+}
+
+.contact-view__office-city {
+  display: block;
+  font-family: var(--font-display);
+  font-size: var(--text-lg);
+  font-weight: var(--font-semibold);
+  color: var(--fg-primary);
+  margin-bottom: var(--space-2);
+}
+
+.contact-view__office address {
+  font-style: normal;
+  font-size: var(--text-sm);
+  line-height: var(--leading-normal);
+  color: var(--fg-secondary);
+}
+
+.contact-view__office address a {
+  color: var(--fg-secondary);
+  transition: color var(--transition-fast);
+}
+
+.contact-view__office address a:hover {
+  color: var(--accent);
+}
+
+/* ---- Responsive (basic — full pass deferred) ------------------------ */
+@media (max-width: 768px) {
+  .contact-view__grid {
+    grid-template-columns: 1fr;
+    gap: var(--space-16);
+  }
+}

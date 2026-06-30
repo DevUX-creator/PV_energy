@@ -1,0 +1,21 @@
+.section-block {
+  position: relative;
+  background: var(--bg-base);
+  color: var(--fg-primary);
+}
+
+.section-block--surface {
+  background: var(--bg-surface);
+}
+
+/* Inverse: deep-navy surface with light text. Headings + meta tokens
+   are remapped locally so existing component CSS reads correctly. */
+.section-block--inverse {
+  background: var(--bg-inverse);
+  color: var(--fg-on-inverse);
+  --fg-primary: var(--fg-on-inverse);
+  --fg-secondary: rgba(238, 244, 251, 0.72);
+  --fg-tertiary: rgba(238, 244, 251, 0.5);
+  --border: rgba(238, 244, 251, 0.16);
+  --border-strong: rgba(238, 244, 251, 0.28);
+}

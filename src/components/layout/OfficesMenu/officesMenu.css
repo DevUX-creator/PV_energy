@@ -1,0 +1,207 @@
+/* ===================================================================
+   Offices overlay content — one frosted bento split by 1px hairlines:
+   three office rows on the left, one image/map cell on the right. Shares
+   the menu's overlay shell + background; only the grid is styled here.
+   =================================================================== */
+
+/* Open-state icon nudge on the header button (rotate the mark to a cross). */
+.office-btn.is-open .office-btn__icon {
+  transform: rotate(45deg);
+}
+
+/* One frosted panel, sections divided by 1px hairlines (same as menu). */
+.offices-ov__grid {
+  --line: rgba(0, 0, 0, 0.16);
+  width: 100%;
+  max-width: 1080px;
+  display: grid;
+  /* Right cell is narrower — the office photo is portrait-oriented. */
+  grid-template-columns: 1.6fr 0.98fr;
+  grid-template-rows: repeat(3, minmax(clamp(90px, 13vh, 150px), auto));
+  gap: 0;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+/* Frosted glass cells — blur over the shared background video. */
+.offices-ov__card {
+  position: relative;
+  background: rgba(255, 255, 255, 0.62);
+  -webkit-backdrop-filter: blur(20px) saturate(140%);
+  backdrop-filter: blur(20px) saturate(140%);
+  color: var(--fg-primary);
+}
+
+/* Left: three office rows. */
+.offices-ov__office {
+  grid-column: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  justify-content: center;
+  text-align: left;
+  padding: clamp(1rem, 2vw, 1.75rem);
+  border-bottom: 1px solid var(--line);
+  cursor: pointer;
+  transition: background-color var(--transition-fast);
+}
+
+.offices-ov__office:last-of-type {
+  border-bottom: 0;
+}
+
+.offices-ov__office:hover {
+  background: rgba(255, 255, 255, 0.72);
+}
+
+.offices-ov__office:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: -2px;
+}
+
+.offices-ov__office.is-active {
+  background: var(--primary);
+}
+
+.offices-ov__office.is-active .offices-ov__eyebrow {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.offices-ov__office.is-active .offices-ov__office-city,
+.offices-ov__office.is-active .offices-ov__office-addr,
+.offices-ov__office.is-active .offices-ov__office-phone {
+  color: var(--primary-contrast);
+}
+
+.offices-ov__eyebrow {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  font-weight: var(--font-medium);
+  letter-spacing: var(--tracking-eyebrow);
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.offices-ov__office-city {
+  font-family: var(--font-display);
+  font-size: var(--text-fluid-h5);
+  font-weight: var(--font-semibold);
+  color: var(--fg-primary);
+}
+
+.offices-ov__office-addr {
+  font-size: var(--text-sm);
+  line-height: var(--leading-normal);
+  color: var(--fg-secondary);
+}
+
+.offices-ov__office-phone {
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  color: var(--fg-secondary);
+}
+
+/* Right: image / map cell spanning all three rows. */
+.offices-ov__media {
+  grid-column: 2;
+  grid-row: 1 / -1;
+  border-left: 1px solid var(--line);
+  overflow: hidden;
+}
+
+.offices-ov__img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.offices-ov__hint {
+  position: absolute;
+  left: var(--space-4);
+  bottom: var(--space-4);
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--radius-full);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  letter-spacing: var(--tracking-wide);
+  color: var(--fg-primary);
+  background: rgba(255, 255, 255, 0.78);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+}
+
+.offices-ov__map {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.offices-ov__crumb {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  background: rgba(255, 255, 255, 0.9);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.16);
+}
+
+.offices-ov__back {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  color: var(--fg-primary);
+  cursor: pointer;
+  transition: color var(--transition-fast);
+}
+
+.offices-ov__back-arrow {
+  width: 1rem;
+  height: 1rem;
+  flex-shrink: 0;
+  stroke: currentColor;
+  transition: transform var(--transition-base);
+}
+
+.offices-ov__back:hover {
+  color: var(--accent);
+}
+
+.offices-ov__back:hover .offices-ov__back-arrow {
+  transform: translateX(-3px);
+}
+
+.offices-ov__crumb-loc {
+  font-size: var(--text-sm);
+  color: var(--fg-secondary);
+}
+
+.offices-ov__frame {
+  flex: 1;
+  width: 100%;
+  border: 0;
+  display: block;
+}
+
+/* ---- Responsive ------------------------------------------------------ */
+@media (max-width: 768px) {
+  .offices-ov__grid {
+    grid-template-columns: 1fr;
+    grid-template-rows: none;
+  }
+  .offices-ov__office {
+    grid-column: 1;
+  }
+  .offices-ov__media {
+    grid-column: 1;
+    grid-row: auto;
+    border-left: 0;
+    border-top: 1px solid var(--line);
+    min-height: 18rem;
+  }
+}

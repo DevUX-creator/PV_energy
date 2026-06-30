@@ -1,0 +1,222 @@
+/* About hero — bottom-anchored intro banner on a dark-grey band. Big wordmark
+   left, tagline + live office clocks right, empty upper band for breathing
+   room. Inverse token remap so all the text reads light on the dark surface. */
+.about-hero {
+  position: relative;
+  background: #26262a; /* dark grey */
+  color: var(--fg-on-inverse);
+  --fg-primary: var(--fg-on-inverse);
+  --fg-secondary: rgba(238, 244, 251, 0.72);
+  --fg-tertiary: rgba(238, 244, 251, 0.55);
+  --border: rgba(238, 244, 251, 0.16);
+}
+
+.about-hero__inner {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  /* A banner, not a full screen — caps at ~600px. */
+  min-height: clamp(440px, 64svh, 600px);
+  /* Clear the fixed header at the top; sit the content off the bottom edge. */
+  padding-top: calc(var(--header-height) + var(--space-8));
+  padding-bottom: var(--space-12);
+  gap: var(--space-12);
+}
+
+/* Eyebrow pill — translucent light chip on the dark band. */
+.about-hero__tag {
+  color: var(--fg-on-inverse);
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* Upper band — just the eyebrow + whitespace. Nudged down a touch. */
+.about-hero__upper {
+  display: flex;
+  margin-top: var(--space-10);
+}
+
+/* Lower row — title + info, bottom-aligned, with a fixed 40px gap between the
+   headline and the right-hand text. */
+.about-hero__lower {
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-start;
+  gap: 62px;
+}
+
+.about-hero__logo {
+  flex: 0 0 auto; /* natural headline width — the info sits 40px to its right */
+  min-width: 0;
+}
+
+/* Large 1–2 word display headline (in place of the SVG wordmark). */
+.about-hero__title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: var(--font-bold);
+  font-size: clamp(4rem, 14.5vw, 12rem);
+  line-height: 0.9;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: var(--fg-primary);
+}
+
+.about-hero__info {
+  flex: 0 0 auto; /* natural width, anchored to the right */
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-10);
+  /* Lift the text so it sits on the headline's bottom line, not below it. */
+  padding-bottom: 10px;
+}
+
+.about-hero__tagline {
+  font-family: var(--font-display);
+  font-weight: var(--font-medium);
+  font-size: var(--text-fluid-h5);
+  line-height: var(--leading-snug);
+  letter-spacing: -0.01em;
+  color: var(--fg-primary);
+}
+
+.about-hero__clocks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-10);
+}
+
+.about-hero__clock {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.about-hero__clock-city {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  font-weight: var(--font-medium);
+  letter-spacing: var(--tracking-eyebrow);
+  text-transform: uppercase;
+  color: var(--fg-tertiary);
+}
+
+.about-hero__clock-time {
+  font-family: var(--font-mono);
+  font-size: var(--text-xl);
+  color: var(--fg-primary);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Full-bleed cinematic image band below the banner, carrying the grid
+   deformation effect. The portrait photo is cropped to a wide band centred on
+   the ship + horizon. */
+.about-hero__media {
+  position: relative;
+  width: 100%;
+  height: clamp(420px, 80vh, 860px);
+  overflow: hidden;
+  background: #1c1c1e;
+  /* Reveal: simple fade once it enters view (movement comes from parallax). */
+  opacity: 0;
+  transition: opacity 1s ease;
+}
+
+.about-hero__media.is-shown {
+  opacity: 1;
+}
+
+/* Parallax layer — taller than the band so it can drift ~200px without gaps. */
+.about-hero__parallax {
+  position: absolute;
+  top: -100px;
+  left: 0;
+  width: 100%;
+  height: calc(100% + 200px);
+  will-change: transform;
+}
+
+/* Center-left caption over the image — sits above the WebGL canvas and lets
+   the mouse pass through to the deform effect. */
+.about-hero__caption {
+  position: absolute;
+  z-index: 2;
+  top: 50%;
+  left: var(--container-padding);
+  transform: translateY(-50%);
+  max-width: 30ch;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-5);
+  color: var(--fg-on-inverse);
+  pointer-events: none;
+  text-shadow: 0 2px 28px rgba(0, 0, 0, 0.4);
+}
+
+.about-hero__caption-icon {
+  display: inline-flex;
+  width: clamp(1.5rem, 2.4vw, 2.25rem);
+  height: clamp(1.5rem, 2.4vw, 2.25rem);
+  color: var(--fg-on-inverse); /* white brand star, slowly spinning */
+  animation: about-caption-spin 9s linear infinite;
+}
+
+.about-hero__caption-icon svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.about-hero__caption-text {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-weight: var(--font-medium);
+  font-size: var(--text-lg);
+  line-height: var(--leading-normal);
+  color: var(--fg-on-inverse);
+}
+
+@keyframes about-caption-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .about-hero__media {
+    transition: none;
+  }
+  .about-hero__caption-icon {
+    animation: none;
+  }
+}
+
+/* Visually-hidden H1 (the wordmark carries the brand visually). */
+.about-hero__sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Responsive — DEFERRED (see docs/POLISH-TODO.md). Minimal stack so it's not
+   broken on small screens; full pass later. */
+@media (max-width: 860px) {
+  .about-hero__lower {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-12);
+  }
+  .about-hero__logo,
+  .about-hero__info {
+    flex: 1 1 auto;
+    width: 100%;
+  }
+}

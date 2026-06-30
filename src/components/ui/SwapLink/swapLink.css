@@ -1,0 +1,77 @@
+/*
+ * Letter-swap link (Fabrisa pattern). The link is the mask
+ * (overflow: hidden); inside, `.swapLink__text` (top: 0) and
+ * `.swapLink__clone` (top: 100%) both translate up by --swap-shift on
+ * hover so the text exits the mask while the clone arrives in its place.
+ *
+ * Tunables (override on a parent or the link):
+ *   --swap-height : visible mask height (default 48px)
+ *   --swap-shift  : travel distance (default -1 × --swap-height)
+ *   --swap-stagger: per-character delay (default 22ms)
+ */
+.swapLink {
+  --swap-height: 48px;
+  --swap-shift: calc(-1 * var(--swap-height));
+  --swap-stagger: 22ms;
+
+  display: block;
+  position: relative;
+  height: var(--swap-height);
+  overflow: hidden;
+
+  cursor: pointer;
+  text-decoration: none;
+  color: inherit;
+
+  font-family: var(--font-display);
+  font-size: 36px;
+  font-weight: var(--font-medium);
+  line-height: 1;
+  letter-spacing: -0.01em;
+}
+
+.swapLink__text,
+.swapLink__clone {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+}
+
+.swapLink__text {
+  top: 0;
+}
+
+.swapLink__clone {
+  top: 100%;
+}
+
+.swapLink__text > span,
+.swapLink__clone > span {
+  display: inline-block;
+  transition: transform 0.32s cubic-bezier(0.215, 0.61, 0.355, 1);
+  transition-delay: calc(var(--i, 0) * var(--swap-stagger));
+  will-change: transform;
+}
+
+.swapLink:hover .swapLink__text > span,
+.swapLink:hover .swapLink__clone > span,
+.swapLink:focus-visible .swapLink__text > span,
+.swapLink:focus-visible .swapLink__clone > span {
+  transform: translateY(var(--swap-shift));
+}
+
+.swapLink:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .swapLink__text > span,
+  .swapLink__clone > span {
+    transition: none;
+  }
+}

@@ -1,0 +1,66 @@
+/* Sits above the sticky hero so it scrolls up and overlaps it.
+   --tag-col is the left gutter the tag occupies; the heading and the
+   showcase align to it, and the same width is mirrored on the right. */
+.about-overlap {
+  --tag-col: clamp(6rem, 12vw, 12rem);
+  position: relative;
+  z-index: 1;
+}
+
+/* Top padding matches the side gutter (was the big section rhythm). */
+.section.about-overlap {
+  padding-top: var(--container-padding);
+}
+
+/* Header: tag in the left gutter, content in the middle, matching gutter
+   on the right — so the heading + showcase share one left edge. */
+.about__head {
+  display: grid;
+  grid-template-columns: var(--tag-col) 1fr var(--tag-col);
+  align-items: start;
+}
+
+.about__head .section-tag {
+  margin-top: 0.4rem;
+}
+
+.about__head-main {
+  grid-column: 2;
+}
+
+.about__title {
+  max-width: 18ch;
+  font-size: clamp(2rem, 5vw, 4.5rem);
+  line-height: 1.02;
+  letter-spacing: -0.01em;
+  text-transform: uppercase;
+}
+
+/* Explanatory paragraph, directly below the heading. */
+.about__lead {
+  margin-top: var(--space-8);
+  max-width: 58ch;
+  font-size: var(--text-base);
+  line-height: var(--leading-relaxed);
+  color: var(--fg-secondary);
+}
+
+.about__cta {
+  margin-top: var(--space-8);
+}
+
+/* Line separator under the Contact Us button (visual + draw animation
+   come from .scroll-line). */
+.about__sep {
+  margin-top: var(--space-16);
+}
+
+@media (max-width: 768px) {
+  .about__head {
+    grid-template-columns: 1fr;
+    gap: var(--space-5);
+  }
+  .about__head-main {
+    grid-column: 1;
+  }
+}

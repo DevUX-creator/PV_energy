@@ -1,0 +1,163 @@
+/* Services showcase — hover-driven. --ww-img-h drives both the image-wrap
+   and each stacked image so the translate maths line up. --tag-col is
+   inherited from the section so the content aligns with the heading and
+   keeps a matching gap on the right. */
+.ww-show {
+  --ww-img-h: clamp(220px, 30vh, 320px);
+  margin-top: var(--gap-section-header);
+}
+
+.ww-show__inner {
+  display: flex;
+  align-items: center;
+  gap: var(--col-gap);
+  padding-inline: var(--tag-col, 0);
+}
+
+/* ---- Left: service list + moving indicator ---- */
+.ww-show__list {
+  position: relative;
+  flex: 1;
+}
+
+.ww-show__indicator {
+  position: absolute;
+  top: 0;
+  left: -6px;
+  z-index: 0;
+  width: 0;
+  height: 0;
+  background: var(--fg-primary);
+  border-radius: 3px;
+}
+
+.ww-show__items {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.ww-show__item {
+  width: max-content;
+  font-family: var(--font-display);
+  font-size: clamp(1.5rem, 3.4vw, 3.25rem);
+  font-weight: var(--font-bold);
+  line-height: 1.22;
+  letter-spacing: -0.01em;
+  color: var(--fg-tertiary);
+  transition: color 0.3s;
+  padding: 0.05em 0;
+  cursor: pointer;
+}
+
+.ww-show__item.is-active {
+  color: var(--bg-surface); /* reads on the dark indicator bar */
+}
+
+/* ---- Right: image + copy + index ---- */
+.ww-show__media {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-6);
+}
+
+.ww-show__img-wrap {
+  position: relative;
+  width: 100%;
+  max-width: 460px;
+  height: var(--ww-img-h);
+  overflow: hidden;
+  /* Bottom-right corner cut (brand chamfer). */
+  clip-path: polygon(
+    0 0,
+    100% 0,
+    100% calc(100% - 28px),
+    calc(100% - 28px) 100%,
+    0 100%
+  );
+}
+
+.ww-show__img-stack {
+  width: 100%;
+  will-change: transform;
+}
+
+.ww-show__img {
+  width: 100%;
+  height: var(--ww-img-h);
+}
+
+.ww-show__img img,
+.ww-show__img video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* Stack every copy in the same grid cell: the block sizes to the tallest
+   copy and stays fixed, so swapping the active one never changes height. */
+.ww-show__copy-stack {
+  display: grid;
+}
+
+.ww-show__copy {
+  grid-area: 1 / 1;
+  max-width: 46ch;
+  font-size: var(--text-base);
+  line-height: var(--leading-relaxed);
+  color: var(--fg-secondary);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.ww-show__copy.is-active {
+  opacity: 1;
+  pointer-events: auto;
+  animation: ww-copy-in 0.4s ease both;
+}
+
+@keyframes ww-copy-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.ww-show__index {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  font-weight: var(--font-medium);
+  color: var(--fg-primary);
+}
+
+.ww-show__sep {
+  width: 20px;
+  height: 2px;
+  background: var(--accent);
+}
+
+@media (max-width: 900px) {
+  .ww-show__inner {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-10);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ww-show__copy.is-active {
+    animation: none;
+  }
+}

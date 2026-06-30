@@ -1,0 +1,22 @@
+.logo3d {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.logo3d__canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* Flat-SVG fallback (reduced motion / no WebGL / until the canvas is ready). */
+.logo3d__fallback {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 34%;
+  height: auto;
+  transition: opacity 0.4s ease;
+}

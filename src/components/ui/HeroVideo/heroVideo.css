@@ -1,0 +1,39 @@
+/* Two-clip background. The poster is the container background, so it shows
+   instantly and remains the fallback if a clip fails to load. */
+.hero-video {
+  position: absolute;
+  inset: 0;
+  background-color: #0a0a0a;
+  background-size: cover;
+  background-position: center;
+  pointer-events: none;
+}
+
+.hero-video__clip {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.hero-video__clip--second {
+  z-index: 1;
+}
+
+.hero-video__clip--first {
+  z-index: 2;
+  opacity: 1;
+  transition: opacity 0.8s ease;
+}
+
+/* Crossfade to the second clip when the first finishes. */
+.hero-video__clip--first.is-done {
+  opacity: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-video__clip--first {
+    transition: none;
+  }
+}

@@ -1,0 +1,230 @@
+/* ProductShowcase — exact layout of the reference: full-width stretched
+   tabs, then a 3-column panel (info left · image centred · accordion
+   right). Our components, fonts, tokens. A slightly grey background sets
+   it apart from the Global Reach surface above, so the section break reads
+   clearly. */
+
+.section.prod {
+  /* Pinned: stays put while the dark Leaders section scrolls up and
+     overlaps it (same stacking move as the sticky Hero under About). */
+  position: sticky;
+  top: 0;
+  z-index: 0;
+  background: var(--bg-surface); /* opaque — match the section above */
+  /* Same top rhythm as the second section (About). */
+  padding-top: var(--container-padding);
+}
+
+.prod__head {
+  margin-bottom: var(--space-12);
+}
+
+/* Headline follows the heading rules: uppercase display type, sized like
+   the second section's title. max-width lives on the title itself (whose
+   ch is the big display size) so it spans wide instead of piling up into
+   a narrow vertical stack. */
+.prod__title {
+  max-width: 20ch;
+  font-size: clamp(2rem, 5vw, 4.5rem);
+  line-height: 1.02;
+  letter-spacing: -0.01em;
+  text-transform: uppercase;
+}
+
+/* ---- Tabs nav: stretched full-width, sliding underline ---- */
+.prod__tabs {
+  position: relative;
+  display: flex;
+  border-bottom: 1px solid var(--border);
+}
+
+.prod__tab {
+  flex: 1 1 0; /* stretch each tab to fill the row equally */
+  min-width: 0;
+  padding: 0 var(--space-3) var(--space-4);
+  border: none;
+  background: none;
+  cursor: pointer;
+  text-align: center;
+  font-family: var(--font-display);
+  font-size: var(--text-base);
+  font-weight: var(--font-medium);
+  color: var(--fg-tertiary);
+  white-space: nowrap;
+  transition: color 0.25s;
+}
+
+.prod__tab:hover {
+  color: var(--fg-secondary);
+}
+
+.prod__tab.is-active {
+  color: var(--fg-primary);
+}
+
+.prod__tab-indicator {
+  position: absolute;
+  left: 0;
+  bottom: -1px;
+  width: 0;
+  height: 2px;
+  background: var(--accent);
+}
+
+/* ---- Panel: info · image · accordion ---- */
+.prod__panel {
+  display: grid;
+  grid-template-columns: 1fr 1.15fr 1fr;
+  gap: var(--col-gap);
+  /* Start-aligned: an expanding accordion no longer stretches the row, so
+     the left column stays put (no jump). */
+  align-items: start;
+  margin-top: var(--space-12);
+}
+
+/* Tab-switch transition: a soft, staggered focus-in per column — no
+   positional jump, just opacity + a brief blur settling into place. */
+@keyframes prod-in {
+  from {
+    opacity: 0;
+    filter: blur(7px);
+  }
+  to {
+    opacity: 1;
+    filter: blur(0);
+  }
+}
+
+.prod__info {
+  animation: prod-in 0.4s ease both;
+}
+
+.prod__media {
+  animation: prod-in 0.5s ease 0.06s both;
+}
+
+.prod__aside {
+  animation: prod-in 0.4s ease 0.12s both;
+}
+
+/* Left column: title block pinned top, description pushed to the bottom.
+   aspect-ratio sizes its height to roughly the centre image's height
+   (independent of the accordion), so the bottom-anchored description never
+   jumps when points expand. */
+.prod__info {
+  display: flex;
+  flex-direction: column;
+  aspect-ratio: 1.16;
+}
+
+.prod__dept {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  font-weight: var(--font-medium);
+  letter-spacing: var(--tracking-eyebrow);
+  text-transform: uppercase;
+  color: var(--fg-tertiary); /* grey, not accent */
+}
+
+.prod__name {
+  margin-top: var(--space-3);
+  max-width: 18ch;
+}
+
+/* Description sits at the bottom of the column, smaller and tighter. */
+.prod__desc {
+  margin-top: auto;
+  padding-top: var(--space-8);
+  max-width: 34ch;
+  font-size: var(--text-sm);
+  line-height: var(--leading-normal);
+  color: var(--fg-secondary);
+}
+
+/* Accordion body — mono, a touch bigger, tight leading. */
+.prod__point {
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  line-height: var(--leading-normal);
+  color: var(--fg-secondary);
+}
+
+/* Accordion headings smaller here than the left title block, uppercase. */
+.prod__accordion .accordion__title {
+  font-size: var(--text-base);
+  text-transform: uppercase;
+}
+
+/* Tighter rows on the right side. */
+.prod__accordion .accordion__trigger {
+  padding-block: var(--space-4);
+}
+
+.prod__accordion .accordion__panel-inner {
+  padding-bottom: var(--space-5);
+}
+
+.prod__cta {
+  margin-top: var(--space-10);
+}
+
+/* ---- Centred image (dark placeholder until real art lands) ---- */
+.prod__media {
+  position: relative;
+}
+
+.prod__img {
+  width: 100%;
+  aspect-ratio: 4 / 3; /* shorter than before — less tall in the centre */
+  object-fit: cover;
+  display: block;
+  /* Bottom-right brand chamfer, matching the rest of the imagery. */
+  clip-path: polygon(
+    0 0,
+    100% 0,
+    100% calc(100% - 28px),
+    calc(100% - 28px) 100%,
+    0 100%
+  );
+}
+
+.prod__img--placeholder {
+  background: var(--bg-inverse);
+}
+
+@media (max-width: 960px) {
+  .prod__panel {
+    grid-template-columns: 1fr;
+    gap: var(--space-10);
+  }
+  .prod__info {
+    aspect-ratio: auto; /* stacked layout — no image to match */
+  }
+  .prod__media {
+    order: -1;
+    max-width: 460px;
+    margin-inline: auto;
+  }
+}
+
+@media (max-width: 640px) {
+  /* Stretched tabs would be too cramped — let them scroll instead. */
+  .prod__tabs {
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .prod__tabs::-webkit-scrollbar {
+    display: none;
+  }
+  .prod__tab {
+    flex: 0 0 auto;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .prod__info,
+  .prod__media,
+  .prod__aside {
+    animation: none;
+  }
+}

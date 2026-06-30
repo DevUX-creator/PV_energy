@@ -1,0 +1,180 @@
+.offices__title {
+  margin-top: var(--space-4);
+}
+
+.offices__lead {
+  margin-top: var(--space-6);
+  max-width: var(--max-width-text);
+  font-size: var(--text-fluid-lead);
+  color: var(--fg-secondary);
+}
+
+/* Split panel: office cards (left) + media box (right). */
+.offices__panel {
+  margin-top: var(--gap-section-header);
+  display: grid;
+  grid-template-columns: 1fr 1.25fr;
+  gap: var(--space-6);
+  align-items: stretch;
+}
+
+.offices__list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+/* Clickable office card. */
+.offices__card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: clamp(1.25rem, 2vw, 1.75rem);
+  text-align: left;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  /* Brand silhouette — sharp corners + a single diagonal cut, like buttons. */
+  --chamfer-cut: clamp(1rem, 2vw, 1.5rem);
+  border-radius: var(--radius-sm);
+  clip-path: var(--chamfer);
+  cursor: pointer;
+  transition: border-color var(--transition-fast),
+    background-color var(--transition-fast), transform var(--transition-fast);
+}
+
+.offices__card:hover {
+  border-color: var(--border-strong);
+  transform: translateY(-2px);
+}
+
+.offices__card:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 3px;
+}
+
+.offices__card.is-active {
+  border-color: var(--primary);
+  background: var(--primary-soft);
+}
+
+.offices__card-city {
+  font-family: var(--font-display);
+  font-size: var(--text-fluid-h5);
+  font-weight: var(--font-semibold);
+  color: var(--fg-primary);
+}
+
+.offices__card-address {
+  font-size: var(--text-sm);
+  line-height: var(--leading-normal);
+  color: var(--fg-secondary);
+}
+
+.offices__card-phone {
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  color: var(--fg-secondary);
+}
+
+.offices__card-cta {
+  margin-top: var(--space-2);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  letter-spacing: var(--tracking-eyebrow);
+  text-transform: uppercase;
+  color: var(--accent);
+  opacity: 0;
+  transition: opacity var(--transition-fast);
+}
+
+.offices__card:hover .offices__card-cta,
+.offices__card.is-active .offices__card-cta {
+  opacity: 1;
+}
+
+/* Media box — photo by default, swaps to the map. */
+.offices__media {
+  position: relative;
+  overflow: hidden;
+  min-height: clamp(20rem, 48vh, 35rem);
+  border: 1px solid var(--border);
+  --chamfer-cut: clamp(1.75rem, 3vw, 3rem);
+  border-radius: var(--radius-sm);
+  clip-path: var(--chamfer);
+  background: var(--bg-muted);
+}
+
+.offices__image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.offices__hint {
+  position: absolute;
+  left: var(--space-4);
+  bottom: var(--space-4);
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--radius-full);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  letter-spacing: var(--tracking-wide);
+  color: var(--fg-primary);
+  background: var(--glass-fill);
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--glass-border);
+}
+
+.offices__map {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.offices__breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  background: var(--glass-fill);
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
+  border-bottom: 1px solid var(--glass-border);
+}
+
+.offices__back {
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  color: var(--fg-primary);
+  cursor: pointer;
+  transition: color var(--transition-fast);
+}
+
+.offices__back:hover {
+  color: var(--accent);
+}
+
+.offices__crumb {
+  font-size: var(--text-sm);
+  color: var(--fg-secondary);
+}
+
+.offices__map-frame {
+  flex: 1;
+  width: 100%;
+  border: 0;
+  display: block;
+}
+
+@media (max-width: 768px) {
+  .offices__panel {
+    grid-template-columns: 1fr;
+  }
+
+  .offices__media {
+    min-height: 20rem;
+  }
+}

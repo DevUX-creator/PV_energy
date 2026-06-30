@@ -1,0 +1,25 @@
+.industries__title {
+  margin-top: var(--space-4);
+  max-width: 16ch;
+}
+
+.industries__list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  margin-top: var(--gap-section-header);
+}
+
+.industries__chip {
+  padding: 0.6rem 1rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-full);
+  font-size: var(--text-sm);
+  color: var(--fg-secondary);
+  transition: border-color var(--transition-fast), color var(--transition-fast);
+}
+
+.industries__chip:hover {
+  border-color: var(--primary);
+  color: var(--fg-on-inverse);
+}
