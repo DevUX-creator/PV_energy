@@ -70,6 +70,22 @@
   gap: var(--space-6);
 }
 
+/* Prev/next switcher — mobile only (the list is the switcher on desktop). */
+.ww-show__nav {
+  display: none;
+}
+
+.ww-show__nav-label {
+  flex: 1;
+  text-align: center;
+  font-family: var(--font-display);
+  font-size: clamp(1.4rem, 6vw, 2rem);
+  font-weight: var(--font-bold);
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+  color: var(--fg-primary);
+}
+
 .ww-show__img-wrap {
   position: relative;
   width: 100%;
@@ -168,16 +184,28 @@
     align-items: flex-start;
     gap: var(--space-10);
     /* When stacked there's no second column to align to — drop the tag-col
-       gutter so the list sits flush with the section's left edge. */
+       gutter so the content sits flush with the section's left edge. */
     padding-inline: 0;
   }
 
-  /* Swap to the one-word labels so the switching title never crops. */
-  .ww-show__item-full {
+  /* Replace the tall vertical list with a compact arrow switcher. */
+  .ww-show__list {
     display: none;
   }
-  .ww-show__item-short {
-    display: inline;
+
+  .ww-show__nav {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+    width: 100%;
+  }
+
+  /* Media spans the full available width on small screens. */
+  .ww-show__media {
+    width: 100%;
+  }
+  .ww-show__img-wrap {
+    max-width: none;
   }
 }
 

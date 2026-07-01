@@ -2,6 +2,7 @@
 
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import gsap from "gsap";
+import IconButton from "@/components/ui/IconButton";
 import { SHOWCASE_SERVICES } from "./config";
 import "./whatWeDo.css";
 
@@ -24,6 +25,9 @@ export default function WhatWeDo() {
   const movedRef = useRef(false);
   const [active, setActive] = useState(0);
   const [inView, setInView] = useState(false);
+
+  // Small-screen stepping: wrap around the service list with the arrows.
+  const step = (dir: 1 | -1) => setActive((i) => (i + dir + N) % N);
 
   // Only let a clip play while the showcase is on screen — otherwise the
   // looping video keeps decoding off-screen and janks scrolling.
@@ -120,6 +124,24 @@ export default function WhatWeDo() {
         </div>
 
         <div className="ww-show__media">
+          {/* Small-screen switcher: prev / current service / next. The list
+              above is hidden at ≤768px; these arrows step through instead. */}
+          <div className="ww-show__nav">
+            <IconButton
+              direction="left"
+              onClick={() => step(-1)}
+              ariaLabel="Previous service"
+            />
+            <span className="ww-show__nav-label" aria-live="polite">
+              {SHOWCASE_SERVICES[active].name}
+            </span>
+            <IconButton
+              direction="right"
+              onClick={() => step(1)}
+              ariaLabel="Next service"
+            />
+          </div>
+
           <div ref={imgWrapRef} className="ww-show__img-wrap">
             <div ref={imgStackRef} className="ww-show__img-stack">
               {SHOWCASE_SERVICES.map((s, i) =>
