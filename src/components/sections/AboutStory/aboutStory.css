@@ -124,6 +124,12 @@
     grid-template-columns: 1fr;
     gap: var(--space-6);
   }
+  /* Stacked layout: don't pin the company block (the overlap would cover it
+     before it can be read) — let it scroll normally. */
+  .about-company {
+    position: relative;
+    top: auto;
+  }
   .about-company__grid {
     grid-template-columns: 1fr;
     gap: var(--space-12);
