@@ -123,13 +123,18 @@
 }
 
 /* ---- Responsive (basic — full pass deferred) ------------------------ */
-/* Tablet + down: shrink the image so the text gets more room (was 2 : 5). */
+/* Tablet + down: shrink the image so the text gets more room (was 2 : 5), and
+   keep the (JS-driven) rows shorter — see the smaller expanded height in JS;
+   this matches the reduced-motion static fallback. */
 @media (max-width: 1024px) {
   .about-svc__info {
     flex: 3;
   }
   .about-svc__img {
     flex: 4;
+  }
+  .about-services.is-static .about-svc {
+    height: clamp(200px, 30vh, 320px);
   }
 }
 

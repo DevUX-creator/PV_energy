@@ -55,6 +55,12 @@ export default function AboutServices() {
       return;
     }
 
+    // Shorter cards (hence shorter images) on tablet + mobile. Width changes
+    // reload the page (SmoothScroll), so reading this once here is fine.
+    const expandedH = window.matchMedia("(max-width: 1024px)").matches
+      ? 320
+      : EXPANDED_H;
+
     const rows = gsap.utils.toArray<HTMLElement>(".about-svc", root);
     const triggers = rows.map((row) => {
       const img = row.querySelector<HTMLElement>(".about-svc__img-inner");
@@ -65,7 +71,7 @@ export default function AboutServices() {
         scrub: true,
         onUpdate: (self) => {
           const p = self.progress;
-          row.style.height = `${COLLAPSED_H + (EXPANDED_H - COLLAPSED_H) * p}px`;
+          row.style.height = `${COLLAPSED_H + (expandedH - COLLAPSED_H) * p}px`;
           if (img) img.style.width = `${COLLAPSED_W + (EXPANDED_W - COLLAPSED_W) * p}%`;
         },
       });
