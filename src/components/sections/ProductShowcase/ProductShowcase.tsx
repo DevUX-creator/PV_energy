@@ -7,6 +7,7 @@ import { PRODUCT_DEPARTMENTS } from "../Products/config";
 import ProductTabs from "./ProductTabs";
 import ProductPanel from "./ProductPanel";
 import type { ShowcaseProduct } from "./types";
+import { gsap, registerGsapPlugins } from "@/lib/gsap";
 import "./productShowcase.css";
 
 // Flatten both departments into a single tab list, keeping the department
@@ -46,6 +47,33 @@ export default function ProductShowcase() {
     // The title's height (hence the offset) can shift once webfonts load.
     document.fonts?.ready.then(setOffset).catch(() => {});
     return () => window.removeEventListener("resize", setOffset);
+  }, []);
+
+  // Blur + fade the title out as it scrolls up toward the pin, so it dissolves
+  // instead of sliding behind the header. Only while the section actually pins
+  // (>960) and motion is allowed.
+  useEffect(() => {
+    const section = document.getElementById("products");
+    const head = section?.querySelector<HTMLElement>(".prod__head");
+    if (!section || !head) return;
+
+    registerGsapPlugins();
+    const mm = gsap.matchMedia();
+    mm.add("(min-width: 961px) and (prefers-reduced-motion: no-preference)", () => {
+      gsap.to(head, {
+        autoAlpha: 0,
+        filter: "blur(12px)",
+        y: -24,
+        ease: "none",
+        scrollTrigger: {
+          trigger: head,
+          start: "top top",
+          end: "bottom top",
+          scrub: true,
+        },
+      });
+    });
+    return () => mm.revert();
   }, []);
 
   return (
