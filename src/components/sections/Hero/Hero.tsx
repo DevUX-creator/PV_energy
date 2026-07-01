@@ -73,11 +73,11 @@ export default function Hero() {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
     registerGsapPlugins();
-    // Target the real content boxes (on mobile .hero__inner is display:contents
-    // and generates no box, so animating it wouldn't affect the title/buttons).
-    const targets = root.querySelectorAll(
-      ".hero__title, .hero__actions, .hero__footer"
-    );
+    // Target the container wrappers, NOT the reveal-faded elements: the intro
+    // reveal sets [data-hero-fade] (incl. .hero__actions) to autoAlpha:0, and a
+    // scrubbed exit tween would capture that 0 as its start and hide them for
+    // good. .hero__inner / .hero__footer are never reveal-faded, so they're safe.
+    const targets = root.querySelectorAll(".hero__inner, .hero__footer");
 
     const ctx = gsap.context(() => {
       // Triggered off the hero with start "top top" → progress is 0 at the
