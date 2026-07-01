@@ -29,6 +29,14 @@ export default function Logo3D({ className = "" }: { className?: string }) {
     const container = ref.current;
     if (!container) return;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    // The mark tilts toward the cursor — a hover effect. Skip the heavy
+    // three.js load on touch / phones and just show the flat SVG fallback.
+    if (
+      !window.matchMedia(
+        "(min-width: 769px) and (hover: hover) and (pointer: fine)"
+      ).matches
+    )
+      return;
 
     let disposed = false;
     let cleanup = () => {};

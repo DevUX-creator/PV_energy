@@ -5,42 +5,43 @@ import { SmoothScroll } from "@/components/providers/SmoothScroll";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import CookieConsent from "@/components/ui/CookieConsent";
+import {
+  SITE_URL,
+  SITE_NAME,
+  SITE_TAGLINE,
+  SITE_DESCRIPTION,
+  SITE_KEYWORDS,
+  buildOrganizationJsonLd,
+} from "@/lib/site";
 import "@/styles/globals.css";
-
-const SITE_URL = "https://pvlinkenergy.com";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: "PV Link Energy — Empowering Global Energy Flows",
-    template: "%s | PV Link Energy",
+    default: `${SITE_NAME} — ${SITE_TAGLINE}`,
+    template: `%s | ${SITE_NAME}`,
   },
-  description:
-    "PV Link Energy is an international energy and commodities trading company delivering LPG, distillates, fuel oil, bitumen, base oil and fertilizers across global markets with precision and purpose.",
-  keywords: [
-    "energy trading",
-    "commodities trading",
-    "LPG",
-    "fuel oil",
-    "bitumen",
-    "base oil",
-    "urea",
-    "fertilizers",
-    "supply and distribution",
-    "shipping and chartering",
-  ],
-  authors: [{ name: "PV Link Energy" }],
-  creator: "PV Link Energy",
-  publisher: "PV Link Energy",
-  alternates: { canonical: SITE_URL },
+  description: SITE_DESCRIPTION,
+  keywords: SITE_KEYWORDS,
+  applicationName: SITE_NAME,
+  authors: [{ name: SITE_NAME }],
+  creator: SITE_NAME,
+  publisher: SITE_NAME,
+  category: "Energy & Commodities Trading",
+  // Home canonical; each page overrides. metadataBase resolves the "/".
+  alternates: { canonical: "/" },
   openGraph: {
     type: "website",
     locale: "en_US",
     url: SITE_URL,
-    siteName: "PV Link Energy",
-    title: "PV Link Energy — Empowering Global Energy Flows",
-    description:
-      "Critical energy and agricultural commodities across global markets — trading, supply, distribution, storage, shipping, and risk management.",
+    siteName: SITE_NAME,
+    title: `${SITE_NAME} — ${SITE_TAGLINE}`,
+    description: SITE_DESCRIPTION,
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: `${SITE_NAME} — ${SITE_TAGLINE}`,
+    description: SITE_DESCRIPTION,
   },
   robots: {
     index: true,
@@ -53,6 +54,13 @@ export const metadata: Metadata = {
       "max-video-preview": -1,
     },
   },
+  // Geo hints for the HQ; the full multi-location detail lives in the JSON-LD.
+  other: {
+    "geo.region": "AE-DU",
+    "geo.placename": "Dubai",
+    "geo.position": "25.189;55.28",
+    ICBM: "25.189, 55.28",
+  },
 };
 
 export const viewport: Viewport = {
@@ -60,22 +68,7 @@ export const viewport: Viewport = {
   colorScheme: "light",
 };
 
-const ORG_JSON_LD = {
-  "@context": "https://schema.org",
-  "@type": "Organization",
-  name: "PV Link Energy",
-  url: SITE_URL,
-  description:
-    "International energy and commodities trading company specializing in the supply, distribution, and risk-managed movement of essential energy and agro resources.",
-  email: "info@pvlinkenergy.com",
-  telephone: "+971 4 577 5989",
-  address: {
-    "@type": "PostalAddress",
-    streetAddress: "201, Emaar Square Building 4, Downtown",
-    addressLocality: "Dubai",
-    addressCountry: "AE",
-  },
-};
+const ORG_JSON_LD = buildOrganizationJsonLd();
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (

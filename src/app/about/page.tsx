@@ -7,8 +7,15 @@ import AboutFinale from "@/components/sections/AboutFinale";
 export const metadata: Metadata = {
   title: "About",
   description:
-    "PV Link Energy — an international energy and commodities trading company connecting supply and demand across global markets with precision and purpose.",
+    "PV Link Energy is an international energy & commodities trading company connecting supply and demand across global markets — end-to-end from sourcing to delivery, with offices in Dubai, Athens and Hong Kong.",
   alternates: { canonical: "/about" },
+  openGraph: {
+    title: "About PV Link Energy",
+    description:
+      "International energy & commodities trader connecting supply and demand across global markets — offices in Dubai, Athens and Hong Kong.",
+    url: "/about",
+    type: "website",
+  },
 };
 
 export default function AboutPage() {

@@ -29,6 +29,16 @@ export default function GridDeformImage({ src, alt, className = "" }: GridDeform
     const img = imgRef.current;
     if (!container || !img) return;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    // The deform is a cursor-driven hover effect — pointless on touch and a
+    // heavy WebGL/three.js cost on phones. Only load it on a hover-capable
+    // desktop viewport; everywhere else the plain <img> stays. (Width changes
+    // reload the page via SmoothScroll, so this stays correct.)
+    if (
+      !window.matchMedia(
+        "(min-width: 769px) and (hover: hover) and (pointer: fine)"
+      ).matches
+    )
+      return;
 
     let disposed = false;
     let cleanup = () => {};
