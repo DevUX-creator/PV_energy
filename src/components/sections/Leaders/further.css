@@ -56,11 +56,7 @@
   padding: clamp(1.5rem, 2.5vw, 2em);
   border: 1px solid var(--border);
   background: #232326; /* lifted from the section so the stack reads */
-  /* Brand silhouette — sharp-ish corners with a single diagonal cut, like
-     the buttons (not a big radius). */
-  --chamfer-cut: clamp(1.5rem, 3vw, 2.75rem);
   border-radius: var(--radius-sm);
-  clip-path: var(--chamfer);
 }
 
 /* card-content flex 3 (= .card-content). Top-aligned like the demo so the
@@ -129,7 +125,9 @@
   display: block;
 }
 
-/* Mobile (= @900): no pin (handled in JS), stack vertically, hide thumb. */
+/* Mobile (≤768): no pin (handled in JS), stack vertically. The image sits on
+   top of each card, then the title, copy and Contact Us button with an
+   explicit rhythm. */
 @media (max-width: 768px) {
   .further__outro {
     height: auto;
@@ -137,8 +135,29 @@
   }
   .further__card-inner {
     flex-direction: column;
+    min-height: auto; /* size to content — no pinned stack on mobile */
+    gap: var(--space-6); /* image → title */
   }
+  /* Image on top, full width. */
   .further__card-img {
-    display: none;
+    display: block;
+    order: -1;
+    flex: none;
+    align-self: stretch;
+    width: 100%;
+  }
+  /* Replace the desktop tall title gap + uniform content gap with an explicit
+     vertical rhythm. */
+  .further__card-content {
+    gap: 0;
+  }
+  .further__card-title {
+    margin-bottom: 0;
+  }
+  .further__card-copy {
+    margin-top: var(--space-6); /* ~24px below the title */
+  }
+  .further__card-content .text-btn {
+    margin-top: var(--space-16); /* ~40px below the copy */
   }
 }
