@@ -6,9 +6,12 @@
 
 .section.prod {
   /* Pinned: stays put while the dark Leaders section scrolls up and
-     overlaps it (same stacking move as the sticky Hero under About). */
+     overlaps it (same stacking move as the sticky Hero under About).
+     The negative top (= the title-block height, measured in JS) pins the
+     section from the TABS: the title scrolls away first, then the tabs settle
+     at the viewport top. */
   position: sticky;
-  top: 0;
+  top: calc(-1 * var(--prod-pin-offset, 0px));
   z-index: 0;
   background: var(--bg-surface); /* opaque — match the section above */
   /* Same top rhythm as the second section (About). */
