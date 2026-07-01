@@ -41,6 +41,10 @@
   display: flex;
   align-items: flex-end;
   justify-content: flex-start;
+  /* Wrap the info below the (nowrap, oversized) headline when they can't fit
+     side-by-side, instead of overflowing the container and getting cropped by
+     the global body overflow-x: clip. Side-by-side survives on wide desktops. */
+  flex-wrap: wrap;
   gap: 62px;
 }
 
