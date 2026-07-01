@@ -173,8 +173,8 @@
     align-items: stretch;
     justify-content: flex-start;
     row-gap: var(--space-8);
-    /* move all content up, just below the header */
-    padding-top: calc(var(--header-height) + var(--space-8));
+    /* clear the fixed header with a comfortable gap (not glued to the nav) */
+    padding-top: calc(var(--header-height) + var(--space-16));
     padding-bottom: var(--space-10);
     /* inner drops its own padding below (display:contents) — provide it here */
     padding-inline: var(--container-padding);
