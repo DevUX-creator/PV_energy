@@ -56,10 +56,17 @@
 }
 
 /* Tablet band (768–1024): drop the right gutter so the tag stays in the left
-   column and the content stretches to the right edge for more room. */
+   column and the content stretches to the right edge. A slightly wider tag
+   gutter keeps "What We Do" on one line (no stacked words), plus a 40px gap
+   to the content. The showcase inner mirrors the same tag-col + 40px offset
+   so the heading and the showcase share one left edge. */
 @media (min-width: 769px) and (max-width: 1024px) {
+  .about-overlap {
+    --tag-col: 7.5rem;
+  }
   .about__head {
     grid-template-columns: var(--tag-col) 1fr;
+    column-gap: 40px;
   }
 }
 
