@@ -193,6 +193,13 @@
 }
 
 @media (max-width: 960px) {
+  /* Don't pin the products section on small screens: the panel stacks and is
+     taller than the viewport, so pinning let the dark Leaders block scroll up
+     and cover it before it could be read. Let it scroll normally instead. */
+  .section.prod {
+    position: static;
+  }
+
   .prod__panel {
     grid-template-columns: 1fr;
     gap: var(--space-10);
