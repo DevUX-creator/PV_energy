@@ -98,7 +98,10 @@
 .about-svc__img-inner {
   width: 26%; /* collapsed; JS animates to 100% */
   height: 100%;
-  border-radius: var(--radius-lg);
+  /* Match the AboutStory company image — brand chamfer + small radius. */
+  --chamfer-cut: clamp(1.25rem, 2.5vw, 2.25rem);
+  border-radius: var(--radius-sm);
+  clip-path: var(--chamfer);
   overflow: hidden;
   will-change: width;
 }
