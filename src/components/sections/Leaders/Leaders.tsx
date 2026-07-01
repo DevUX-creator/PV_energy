@@ -46,7 +46,7 @@ export default function Leaders() {
     // card UP from below the frame to its resting spot, one after another
     // (stagger). Animating each card's own y leaves no transformed ancestor
     // between card and photo, so the blur survives.
-    mm.add("(min-width: 769px) and (prefers-reduced-motion: no-preference)", () => {
+    mm.add("(min-width: 1025px) and (prefers-reduced-motion: no-preference)", () => {
       // The side gap (distance from viewport edge to the stage) becomes the
       // pad used for top + bottom too, so all four sides match exactly.
       const pad = Math.round(stage.getBoundingClientRect().left);
@@ -102,9 +102,10 @@ export default function Leaders() {
       );
     });
 
-    // Mobile: no pin/sweep — banner photo, cards stacked below with a
-    // simple staggered reveal.
-    mm.add("(max-width: 768px) and (prefers-reduced-motion: no-preference)", () => {
+    // Tablet + mobile (≤1024): no pin/sweep — banner photo, cards laid out
+    // below (2×2 grid on tablet, single column on phones) with a simple
+    // staggered reveal so they still appear one after another.
+    mm.add("(max-width: 1024px) and (prefers-reduced-motion: no-preference)", () => {
       gsap.from(cards, {
         y: 40,
         autoAlpha: 0,

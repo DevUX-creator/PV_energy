@@ -242,9 +242,9 @@
   }
 }
 
-/* Mobile: drop the pin/sweep — photo becomes a banner and the cards stack in
-   normal flow below it so they stay readable. */
-@media (max-width: 768px) {
+/* Tablet + mobile (≤1024): drop the pin/sweep — the photo becomes a banner
+   and the cards sit in normal flow below it so they stay readable. */
+@media (max-width: 1024px) {
   .leaders__stage {
     height: auto;
     display: flex;
@@ -259,15 +259,34 @@
   }
   .leaders__cards {
     position: static;
-    flex-direction: column;
     gap: var(--space-4);
     padding: 0;
   }
   .leaders__card {
     flex: 0 0 auto;
+    transform: none; /* no fly/levitation offset in the static layout */
+  }
+}
+
+/* Tablet band (769–1024): 2×2 grid of equal-sized glass cards. */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .leaders__cards {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .leaders__card {
+    aspect-ratio: 1; /* equal width AND height across all four */
+  }
+}
+
+/* Phones (≤768): single full-width column. */
+@media (max-width: 768px) {
+  .leaders__cards {
+    flex-direction: column;
+  }
+  .leaders__card {
     width: 100%;
     aspect-ratio: auto;
     min-height: 200px;
-    transform: none; /* no fly/levitation offset in the stacked layout */
   }
 }
