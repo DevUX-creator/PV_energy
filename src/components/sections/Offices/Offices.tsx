@@ -31,7 +31,7 @@ export default function Offices() {
         </p>
       </RevealSection>
 
-      <div className="offices__panel">
+      <div className={`offices__panel${active ? " is-detail" : ""}`}>
         <div className="offices__list" role="list">
           {OFFICES.map((office) => {
             const isActive = office.id === activeId;

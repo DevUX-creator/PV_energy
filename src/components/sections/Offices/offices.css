@@ -174,7 +174,19 @@
     grid-template-columns: 1fr;
   }
 
+  /* Master–detail: space is tight, so show only the office list and drop the
+     photo entirely. Picking an office swaps the list for its map; the map's
+     "← Back" button clears the selection and returns to the list. */
   .offices__media {
-    min-height: 20rem;
+    display: none;
+  }
+
+  .offices__panel.is-detail .offices__list {
+    display: none;
+  }
+
+  .offices__panel.is-detail .offices__media {
+    display: block;
+    min-height: 60vh;
   }
 }
