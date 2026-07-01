@@ -214,8 +214,10 @@
   }
 }
 
-@media (max-width: 640px) {
-  /* Stretched tabs would be too cramped — let them scroll instead. */
+@media (max-width: 960px) {
+  /* Below this the 10 stretched tabs get cramped and their nowrap labels
+     overflow their shrunken boxes (widening the section). Let the strip
+     scroll horizontally instead — matches where the panel stacks. */
   .prod__tabs {
     overflow-x: auto;
     scrollbar-width: none;
