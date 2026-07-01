@@ -22,6 +22,7 @@ type ActionButtonProps = CommonProps & {
   href?: undefined;
   type?: "button" | "submit" | "reset";
   onClick?: () => void;
+  disabled?: boolean;
 };
 
 type ButtonProps = LinkButtonProps | ActionButtonProps;
@@ -87,6 +88,7 @@ export default function Button(props: ButtonProps) {
       className={classes}
       aria-label={ariaLabel}
       onClick={props.onClick}
+      disabled={props.disabled}
     >
       {inner}
     </button>

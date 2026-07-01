@@ -6,9 +6,12 @@ const SITE_URL = "https://pvlinkenergy.com";
 /** Flatten the nav trees into a unique set of routes. */
 function collectRoutes(): string[] {
   const routes = new Set<string>(["/"]);
+  // Strip hash fragments (e.g. /legal#imprint → /legal) so deep-linked
+  // anchors collapse to their canonical page in the sitemap.
+  const add = (href: string) => routes.add(href.split("#")[0]);
   [...MAIN_NAV, ...LEGAL_NAV].forEach((item) => {
-    routes.add(item.href);
-    item.children?.forEach((child) => routes.add(child.href));
+    add(item.href);
+    item.children?.forEach((child) => add(child.href));
   });
   return [...routes];
 }

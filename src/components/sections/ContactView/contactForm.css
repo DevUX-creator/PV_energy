@@ -1,3 +1,8 @@
+/* ===================================================================
+   Contact form — lives inside the dark glass card (.contact-view__card).
+   Inputs are styled for a dark surface: translucent fill, light text,
+   hairline borders that warm to accent on focus.
+   =================================================================== */
 .contact-form {
   display: flex;
   flex-direction: column;
@@ -14,6 +19,7 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-2);
+  min-width: 0;
 }
 
 .contact-form__field label {
@@ -22,20 +28,22 @@
   font-weight: var(--font-medium);
   letter-spacing: var(--tracking-eyebrow);
   text-transform: uppercase;
-  color: var(--fg-tertiary);
+  color: rgba(255, 255, 255, 0.55);
 }
 
 .contact-form__field input,
-.contact-form__field textarea {
+.contact-form__field textarea,
+.contact-form__select {
   width: 100%;
   padding: 0.85rem 1rem;
   font: inherit;
   font-size: var(--text-base);
-  color: var(--fg-primary);
-  background: var(--bg-surface);
-  border: 1px solid var(--border);
+  color: var(--fg-on-inverse);
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.14);
   border-radius: var(--radius-md);
-  transition: border-color var(--transition-fast), background-color var(--transition-fast);
+  transition: border-color var(--transition-fast),
+    background-color var(--transition-fast);
 }
 
 .contact-form__field textarea {
@@ -46,31 +54,62 @@
 
 .contact-form__field input::placeholder,
 .contact-form__field textarea::placeholder {
-  color: var(--fg-tertiary);
+  color: rgba(255, 255, 255, 0.35);
 }
 
 .contact-form__field input:hover,
-.contact-form__field textarea:hover {
-  border-color: var(--border-strong);
+.contact-form__field textarea:hover,
+.contact-form__select:hover {
+  border-color: rgba(255, 255, 255, 0.3);
 }
 
 .contact-form__field input:focus-visible,
-.contact-form__field textarea:focus-visible {
+.contact-form__field textarea:focus-visible,
+.contact-form__select:focus-visible {
   outline: none;
   border-color: var(--accent);
-  background: var(--bg-elevated);
+  background: rgba(255, 255, 255, 0.07);
 }
 
 .contact-form__field input[aria-invalid="true"],
-.contact-form__field textarea[aria-invalid="true"] {
-  border-color: var(--color-negative);
+.contact-form__field textarea[aria-invalid="true"],
+.contact-form__select[aria-invalid="true"] {
+  border-color: var(--color-negative, #e5484d);
+}
+
+/* ---- Select (custom chevron, native menu) -------------------------- */
+.contact-form__select-wrap {
+  position: relative;
+}
+
+.contact-form__select {
+  appearance: none;
+  -webkit-appearance: none;
+  padding-right: 2.75rem;
+  cursor: pointer;
+}
+
+.contact-form__select option {
+  color: #111;
+}
+
+.contact-form__select-icon {
+  position: absolute;
+  top: 50%;
+  right: 1rem;
+  width: 1.1rem;
+  height: 1.1rem;
+  transform: translateY(-50%);
+  color: rgba(255, 255, 255, 0.55);
+  pointer-events: none;
 }
 
 .contact-form__error {
   font-size: var(--text-sm);
-  color: var(--color-negative);
+  color: var(--color-negative, #e5484d);
 }
 
+/* ---- Actions ------------------------------------------------------- */
 .contact-form__actions {
   display: flex;
   flex-wrap: wrap;
@@ -79,13 +118,38 @@
   margin-top: var(--space-2);
 }
 
-.contact-form__sent {
+.contact-form__hint {
   margin: 0;
-  font-size: var(--text-sm);
-  color: var(--fg-secondary);
+  flex: 1;
+  min-width: 14ch;
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: rgba(255, 255, 255, 0.45);
 }
 
-.contact-form__sent a {
+/* ---- Success state ------------------------------------------------- */
+.contact-form__done {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  padding: var(--space-4) 0;
+}
+
+.contact-form__done-title {
+  font-family: var(--font-display);
+  font-size: var(--text-fluid-h3);
+  font-weight: var(--font-semibold);
+  color: var(--fg-on-inverse);
+}
+
+.contact-form__done-text {
+  max-width: 46ch;
+  font-size: var(--text-base);
+  line-height: var(--leading-relaxed);
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.contact-form__done-text a {
   color: var(--accent);
   text-decoration: underline;
   text-underline-offset: 2px;

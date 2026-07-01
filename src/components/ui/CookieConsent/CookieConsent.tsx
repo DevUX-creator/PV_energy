@@ -131,11 +131,11 @@ export default function CookieConsent() {
           We use essential cookies to make this site work. With your permission,
           we&rsquo;d also use analytics cookies to understand how the site is
           used and improve it. See our{" "}
-          <a className="cookie__link" href="/cookie-policy">
+          <a className="cookie__link" href="/legal#cookie-policy">
             Cookie Policy
           </a>{" "}
           and{" "}
-          <a className="cookie__link" href="/privacy-policy">
+          <a className="cookie__link" href="/legal#privacy-policy">
             Privacy Policy
           </a>
           .

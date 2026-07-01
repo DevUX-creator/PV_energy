@@ -45,7 +45,7 @@ export const MAIN_NAV: NavItem[] = [
 
 /** Secondary / legal links, typically rendered in the footer. */
 export const LEGAL_NAV: NavItem[] = [
-  { label: "Imprint", href: "/imprint" },
-  { label: "Privacy Policy", href: "/privacy-policy" },
-  { label: "Cookie Policy", href: "/cookie-policy" },
+  { label: "Imprint", href: "/legal#imprint" },
+  { label: "Privacy Policy", href: "/legal#privacy-policy" },
+  { label: "Cookie Policy", href: "/legal#cookie-policy" },
 ];

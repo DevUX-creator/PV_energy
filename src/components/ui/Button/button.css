@@ -36,6 +36,13 @@
   transition: color 0.5s cubic-bezier(0.83, 0, 0.17, 1);
 }
 
+/* Disabled — dimmed, no interaction (used by gated form submits). */
+.btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
 /* Fill layer — slides up from the bottom on hover/focus. */
 .btn__fill {
   position: absolute;
