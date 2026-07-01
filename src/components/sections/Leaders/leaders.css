@@ -242,9 +242,54 @@
   }
 }
 
-/* Tablet + mobile (≤1024): drop the pin/sweep — the photo becomes a banner
-   and the cards sit in normal flow below it so they stay readable. */
-@media (max-width: 1024px) {
+/* Tablet band (769–1024): drop the pin/sweep but keep the cards ON the photo —
+   a static 2×2 grid of glass cards centred over the image, shorter than the
+   desktop portrait cards. Card layout: number top-left, kicker top-right,
+   title below. */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .leaders__stage {
+    height: 72svh;
+  }
+  .leaders__cards {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    align-content: center; /* centre the 2×2 block over the photo */
+    gap: var(--space-4);
+    padding: var(--space-6);
+  }
+  .leaders__card {
+    aspect-ratio: auto; /* content height — not tall squares */
+    min-height: 8.5rem;
+    transform: none; /* no fly/levitation offset here */
+    display: grid;
+    grid-template-columns: 1fr auto;
+    grid-template-rows: auto 1fr;
+    grid-template-areas:
+      "no kicker"
+      "title title";
+    column-gap: var(--space-4);
+    row-gap: var(--space-4);
+  }
+  .leaders__card-no {
+    grid-area: no;
+    margin-bottom: 0; /* clear the desktop 40px spacer */
+    font-size: var(--text-2xl); /* smaller number */
+  }
+  .leaders__card-kicker {
+    grid-area: kicker;
+    justify-self: end;
+    text-align: right;
+  }
+  .leaders__card-title {
+    grid-area: title;
+    align-self: end; /* sit at the bottom of the card */
+    margin-top: 0;
+  }
+}
+
+/* Phones (≤768): drop the pin/sweep — photo becomes a banner and the cards
+   stack full-width below it so they stay readable. */
+@media (max-width: 768px) {
   .leaders__stage {
     height: auto;
     display: flex;
@@ -259,34 +304,15 @@
   }
   .leaders__cards {
     position: static;
+    flex-direction: column;
     gap: var(--space-4);
     padding: 0;
   }
   .leaders__card {
     flex: 0 0 auto;
-    transform: none; /* no fly/levitation offset in the static layout */
-  }
-}
-
-/* Tablet band (769–1024): 2×2 grid of equal-sized glass cards. */
-@media (min-width: 769px) and (max-width: 1024px) {
-  .leaders__cards {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-  }
-  .leaders__card {
-    aspect-ratio: 1; /* equal width AND height across all four */
-  }
-}
-
-/* Phones (≤768): single full-width column. */
-@media (max-width: 768px) {
-  .leaders__cards {
-    flex-direction: column;
-  }
-  .leaders__card {
     width: 100%;
     aspect-ratio: auto;
     min-height: 200px;
+    transform: none; /* no fly/levitation offset in the stacked layout */
   }
 }
