@@ -143,7 +143,25 @@
     flex-direction: column;
     gap: var(--space-5);
   }
-  .about-svc {
-    gap: var(--space-6);
+  /* Stack: image on top, text below, at natural height (the JS scroll
+     animation is skipped at this width). */
+  .about-svc,
+  .about-services.is-static .about-svc {
+    flex-direction: column;
+    height: auto;
+    overflow: visible;
+    gap: var(--space-5);
+  }
+  .about-svc__img {
+    order: -1; /* image on top */
+    padding-block: 0;
+  }
+  .about-svc__img-inner {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 16 / 10;
+  }
+  .about-svc__info {
+    padding-block: 0;
   }
 }

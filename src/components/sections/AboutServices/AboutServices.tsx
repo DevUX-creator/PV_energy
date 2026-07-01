@@ -55,8 +55,13 @@ export default function AboutServices() {
       return;
     }
 
-    // Shorter cards (hence shorter images) on tablet + mobile. Width changes
-    // reload the page (SmoothScroll), so reading this once here is fine.
+    // Phones + small tablets: CSS stacks image-over-text at natural height, so
+    // skip the scroll-driven height/width animation (it would force the fixed
+    // row height and clip the copy). Width changes reload the page (SmoothScroll).
+    if (!window.matchMedia("(min-width: 769px)").matches) return;
+
+    // Shorter cards (hence shorter images) on tablet. Width changes reload the
+    // page, so reading this once here is fine.
     const expandedH = window.matchMedia("(max-width: 1024px)").matches
       ? 320
       : EXPANDED_H;
