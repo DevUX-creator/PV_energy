@@ -242,20 +242,15 @@
   }
 }
 
-/* Tablet band (769–1024): drop the pin/sweep but keep the cards ON the photo —
-   a static 2×2 grid of glass cards centred over the image, shorter than the
-   desktop portrait cards. Card layout: number top-left, kicker top-right,
-   title below. */
-@media (min-width: 769px) and (max-width: 1024px) {
-  .leaders__stage {
-    height: 72svh;
-  }
+/* Tablet + mobile (≤1024): drop the pin/sweep but keep the cards ON the photo.
+   Shared glass-card treatment — shorter than the desktop portrait cards, with
+   a compact internal layout (number top-left, kicker top-right, title below).
+   The grid is anchored to the bottom of the photo; the column count and the
+   stage height differ per range below. */
+@media (max-width: 1024px) {
   .leaders__cards {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    /* Anchor the 2×2 block to the BOTTOM of the photo; the uniform padding
-       makes the bottom gap match the left/right gaps. */
-    align-content: end;
+    align-content: end; /* cards settle at the bottom of the photo */
     gap: var(--space-4);
     padding: var(--space-6);
   }
@@ -286,42 +281,28 @@
     grid-area: title;
     align-self: end; /* sit at the bottom of the card */
     margin-top: 0;
+    font-size: var(--text-base); /* 20px → 16px */
   }
 }
 
-/* Smaller card title (20px → 16px) on tablet + phones. */
-@media (max-width: 1024px) {
-  .leaders__card-title {
-    font-size: var(--text-base);
+/* Tablet band (769–1024): 2×2 grid over a fixed-height photo. */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .leaders__stage {
+    height: 72svh;
+  }
+  .leaders__cards {
+    grid-template-columns: repeat(2, 1fr);
   }
 }
 
-/* Phones (≤768): drop the pin/sweep — photo becomes a banner and the cards
-   stack full-width below it so they stay readable. */
+/* Phones (≤768): single column stacked over the photo. The stage grows to fit
+   all four cards (the photo, absolute behind them, stretches to match). */
 @media (max-width: 768px) {
   .leaders__stage {
     height: auto;
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-4);
-    overflow: visible;
-  }
-  .leaders__bg {
-    position: relative;
-    height: 60svh;
-    border-radius: var(--radius-lg);
   }
   .leaders__cards {
-    position: static;
-    flex-direction: column;
-    gap: var(--space-4);
-    padding: 0;
-  }
-  .leaders__card {
-    flex: 0 0 auto;
-    width: 100%;
-    aspect-ratio: auto;
-    min-height: 200px;
-    transform: none; /* no fly/levitation offset in the stacked layout */
+    position: relative; /* in flow → the stage sizes to the stacked cards */
+    grid-template-columns: 1fr;
   }
 }
