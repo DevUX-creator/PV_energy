@@ -7,6 +7,9 @@
 export type ShowcaseService = {
   id: string;
   name: string;
+  /** One-word label used on small screens so the switching title never
+   *  crops (the list titles don't wrap). Falls back to `name`. */
+  short: string;
   copy: string;
   image: string;
   /** Optional clip — loops on hover; its first frame (poster) is the still.
@@ -19,6 +22,7 @@ export const SHOWCASE_SERVICES: ShowcaseService[] = [
   {
     id: "trading",
     name: "Trading",
+    short: "Trading",
     copy: "We buy, sell, and move energy and agro commodities across global markets — turning supply and demand into reliable, well-priced flows.",
     image: "/WhatWeDo/trading-poster.jpg",
     video: "/WhatWeDo/trading.mp4",
@@ -27,6 +31,7 @@ export const SHOWCASE_SERVICES: ShowcaseService[] = [
   {
     id: "supply-distribution",
     name: "Supply & Distribution",
+    short: "Supply",
     copy: "From source to destination, we keep product moving — coordinating volumes, terminals, and transport so deliveries arrive on-spec and on time.",
     image: "/WhatWeDo/supply-poster.jpg",
     video: "/WhatWeDo/supply.mp4",
@@ -35,18 +40,21 @@ export const SHOWCASE_SERVICES: ShowcaseService[] = [
   {
     id: "storage-blending",
     name: "Storage & Blending",
+    short: "Storage",
     copy: "Strategic storage and precision blending let us hold, condition, and tailor products to the exact grades our partners need.",
     image: "/WhatWeDo/storage.webp",
   },
   {
     id: "shipping-chartering",
     name: "Shipping & Chartering",
+    short: "Shipping",
     copy: "We charter and manage vessels across key routes, handling logistics end-to-end so cargo moves safely and efficiently by sea.",
     image: "/WhatWeDo/shipping.webp",
   },
   {
     id: "hedging-risk",
     name: "Risk Management",
+    short: "Risk",
     copy: "We manage price and market exposure with disciplined hedging, protecting every trade against volatility.",
     image: "/WhatWeDo/hedging-poster.jpg",
     video: "/WhatWeDo/hedging.mp4",
@@ -55,6 +63,7 @@ export const SHOWCASE_SERVICES: ShowcaseService[] = [
   {
     id: "financial-solutions",
     name: "Financial Solutions",
+    short: "Finance",
     copy: "Trade finance and structured solutions that keep deals liquid, bankable, and moving — backed by strong financial expertise.",
     image: "/WhatWeDo/finance.webp",
   },

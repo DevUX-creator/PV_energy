@@ -56,6 +56,11 @@
   color: var(--bg-surface); /* reads on the dark indicator bar */
 }
 
+/* Desktop shows the full name; the one-word label is used on small screens. */
+.ww-show__item-short {
+  display: none;
+}
+
 /* ---- Right: image + copy + index ---- */
 .ww-show__media {
   flex: 1;
@@ -153,6 +158,17 @@
     flex-direction: column;
     align-items: flex-start;
     gap: var(--space-10);
+    /* When stacked there's no second column to align to — drop the tag-col
+       gutter so the list sits flush with the section's left edge. */
+    padding-inline: 0;
+  }
+
+  /* Swap to the one-word labels so the switching title never crops. */
+  .ww-show__item-full {
+    display: none;
+  }
+  .ww-show__item-short {
+    display: inline;
   }
 }
 

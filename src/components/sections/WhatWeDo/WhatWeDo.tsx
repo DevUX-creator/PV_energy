@@ -89,9 +89,14 @@ export default function WhatWeDo() {
         <div
           ref={listRef}
           className="ww-show__list"
-          // Leaving the list returns to Trading (index 0) — it's the only
-          // clip that auto-plays at rest; the others play on hover only.
-          onMouseLeave={() => setActive(0)}
+          // On hover devices, leaving the list returns to Trading (index 0) —
+          // the only clip that auto-plays at rest. On touch there's no hover,
+          // so a tap should stick; skip the reset for coarse pointers.
+          onMouseLeave={() => {
+            if (window.matchMedia("(hover: hover) and (pointer: fine)").matches) {
+              setActive(0);
+            }
+          }}
         >
           <div ref={indicatorRef} className="ww-show__indicator" aria-hidden="true" />
           <ul className="ww-show__items">
@@ -103,10 +108,12 @@ export default function WhatWeDo() {
                 }}
                 className={`ww-show__item ${i === active ? "is-active" : ""}`.trim()}
                 onMouseEnter={() => setActive(i)}
+                onClick={() => setActive(i)}
                 onFocus={() => setActive(i)}
                 tabIndex={0}
               >
-                {s.name}
+                <span className="ww-show__item-full">{s.name}</span>
+                <span className="ww-show__item-short">{s.short}</span>
               </li>
             ))}
           </ul>
