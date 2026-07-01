@@ -212,12 +212,25 @@
   .prod__tabs {
     overflow-x: auto;
     scrollbar-width: none;
+    /* keep the horizontal drag on the strip; no page bounce/nav */
+    overscroll-behavior-x: contain;
   }
   .prod__tabs::-webkit-scrollbar {
     display: none;
   }
   .prod__tab {
     flex: 0 0 auto;
+  }
+
+  /* The sliding underline is a separately-composited absolute + transform
+     element; during momentum scroll it visibly lags ("floats") behind the
+     tabs. Drop it on touch and mark the active tab with an inset underline
+     that is part of the tab, so it scrolls perfectly in sync. */
+  .prod__tab-indicator {
+    display: none;
+  }
+  .prod__tab.is-active {
+    box-shadow: inset 0 -2px 0 var(--accent);
   }
 }
 
