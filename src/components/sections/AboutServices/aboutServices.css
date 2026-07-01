@@ -123,6 +123,16 @@
 }
 
 /* ---- Responsive (basic — full pass deferred) ------------------------ */
+/* Tablet + down: shrink the image so the text gets more room (was 2 : 5). */
+@media (max-width: 1024px) {
+  .about-svc__info {
+    flex: 3;
+  }
+  .about-svc__img {
+    flex: 4;
+  }
+}
+
 @media (max-width: 768px) {
   .about-services__header {
     flex-direction: column;
