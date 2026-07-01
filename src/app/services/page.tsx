@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Preloader from "@/components/ui/Preloader";
 import ServicesHero from "@/components/sections/ServicesHero";
 
 export const metadata: Metadata = {
@@ -10,10 +11,15 @@ export const metadata: Metadata = {
   robots: { index: false, follow: true },
 };
 
+// While the Services page is under construction we build it in local dev, but
+// production (what the client sees) keeps the "coming soon" placeholder. Remove
+// this gate — and render <ServicesHero /> etc. directly — at launch.
+const SHOW_WIP = process.env.NODE_ENV !== "production";
+
 export default function ServicesPage() {
   return (
     <main id="main-content">
-      <ServicesHero />
+      {SHOW_WIP ? <ServicesHero /> : <Preloader label="Services" />}
     </main>
   );
 }
