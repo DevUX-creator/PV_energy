@@ -1,0 +1,47 @@
+/* Services intro band — dark grey, bottom-anchored content (à la About hero).
+   Inverse token remap so the copy reads light on the dark surface. */
+.services-hero {
+  position: relative;
+  background: #26262a;
+  color: var(--fg-on-inverse);
+  --fg-primary: var(--fg-on-inverse);
+  --fg-secondary: rgba(238, 244, 251, 0.72);
+  --fg-tertiary: rgba(238, 244, 251, 0.55);
+  --border: rgba(238, 244, 251, 0.16);
+}
+
+.services-hero__inner {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-end; /* content sits toward the bottom of the band */
+  gap: var(--space-6);
+  min-height: clamp(420px, 62svh, 620px);
+  /* Clear the fixed header; drop the content off the bottom edge. */
+  padding-top: calc(var(--header-height) + var(--space-16));
+  padding-bottom: var(--space-16);
+}
+
+/* Eyebrow pill — translucent light chip on the dark band. */
+.services-hero__tag {
+  color: var(--fg-on-inverse);
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.services-hero__title {
+  max-width: 20ch;
+  font-family: var(--font-display);
+  font-weight: var(--font-bold);
+  font-size: clamp(2.5rem, 6.5vw, 6rem);
+  line-height: 1;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  color: var(--fg-primary);
+}
+
+.services-hero__lead {
+  max-width: 62ch;
+  font-size: var(--text-fluid-lead);
+  line-height: var(--leading-relaxed);
+  color: var(--fg-secondary);
+}

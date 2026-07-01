@@ -1,19 +1,19 @@
 import type { Metadata } from "next";
-import Preloader from "@/components/ui/Preloader";
+import ServicesHero from "@/components/sections/ServicesHero";
 
 export const metadata: Metadata = {
   title: "Services",
-  description: "PV Link Energy services — coming soon.",
+  description:
+    "PV Link Energy's services span the full commodity value chain — trading, supply & distribution, storage & blending, shipping & chartering, hedging & risk management, and financial solutions.",
   alternates: { canonical: "/services" },
-  // Thin placeholder — keep it out of the index until the real page ships.
+  // WIP — being built section by section; keep out of the index until complete.
   robots: { index: false, follow: true },
 };
 
-// TEMPORARY — the Services subpages aren't built yet.
 export default function ServicesPage() {
   return (
     <main id="main-content">
-      <Preloader label="Services" />
+      <ServicesHero />
     </main>
   );
 }
