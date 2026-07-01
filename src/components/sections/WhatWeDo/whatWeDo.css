@@ -209,6 +209,14 @@
   }
 }
 
+/* Large-phone / small-tablet band (541–768): the full-width graphic has room
+   to breathe, so add ~100px of height. */
+@media (min-width: 541px) and (max-width: 768px) {
+  .ww-show {
+    --ww-img-h: calc(clamp(220px, 30vh, 320px) + 100px);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .ww-show__copy.is-active {
     animation: none;
