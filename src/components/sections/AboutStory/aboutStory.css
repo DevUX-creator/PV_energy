@@ -44,10 +44,10 @@
 
 .about-company__grid {
   display: grid;
-  grid-template-columns: 40% 32%;
+  grid-template-columns: 40% 40%;
   gap: var(--col-gap);
   align-items: start;
-  /* leaves ~20% open on the right, matching the reference's trailing column */
+  /* info column widened a touch so the paragraphs stretch a bit more */
 }
 
 .about-company__asset {
@@ -109,7 +109,7 @@
 
 .about-company__info p {
   margin: 0;
-  font-size: var(--text-fluid-body);
+  font-size: var(--text-base);
   line-height: var(--leading-relaxed);
   color: var(--fg-secondary);
 }

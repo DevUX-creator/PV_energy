@@ -89,9 +89,9 @@ export default function AboutStory() {
               <RevealText split="none">
                 <p>
                   We manage every step of the commodity value chain — sourcing,
-                  trading, storage, blending, shipping, financing and final
-                  delivery — and integrate them into single, accountable
-                  solutions that remove complexity from origin to destination.
+                  trading, storage, blending, shipping, financing and delivery —
+                  integrated into single, accountable solutions that remove
+                  complexity from origin to destination.
                 </p>
               </RevealText>
               <RevealText split="none" delay={0.06}>
@@ -99,8 +99,7 @@ export default function AboutStory() {
                   Across 20+ countries and five strategic hubs, we pair deep
                   market knowledge with real-time analytics and disciplined risk
                   management. We&apos;re a lean, relationship-led operator —
-                  fast, transparent, and genuinely accountable for every cargo we
-                  move.
+                  fast, transparent, and accountable for every cargo we move.
                 </p>
               </RevealText>
               <RevealText split="none" delay={0.12}>
