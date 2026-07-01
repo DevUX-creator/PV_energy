@@ -73,7 +73,11 @@ export default function Hero() {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
     registerGsapPlugins();
-    const targets = root.querySelectorAll(".hero__inner, .hero__footer");
+    // Target the real content boxes (on mobile .hero__inner is display:contents
+    // and generates no box, so animating it wouldn't affect the title/buttons).
+    const targets = root.querySelectorAll(
+      ".hero__title, .hero__actions, .hero__footer"
+    );
 
     const ctx = gsap.context(() => {
       // Triggered off the hero with start "top top" → progress is 0 at the
