@@ -82,9 +82,24 @@
   }
 }
 
-/* Hide the office button on small screens (aircenter hides it too). */
+/* On small screens there's still room for both controls — keep the burger
+   (left) and "Our Offices" (right), but pull the logo out of the centre to
+   sit 16px right of the burger, which frees the space the office button needs. */
 @media (max-width: 768px) {
+  .header__inner {
+    grid-template-columns: auto auto 1fr;
+  }
+
+  .header__logo {
+    justify-self: start;
+    margin-left: 16px;
+  }
+}
+
+/* Reclaim width on the narrowest phones so "Our Offices" never clips. */
+@media (max-width: 400px) {
   .office-btn {
-    display: none;
+    padding-inline: 12px;
+    gap: 6px;
   }
 }
