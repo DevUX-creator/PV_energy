@@ -253,7 +253,9 @@
   .leaders__cards {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    align-content: center; /* centre the 2×2 block over the photo */
+    /* Anchor the 2×2 block to the BOTTOM of the photo; the uniform padding
+       makes the bottom gap match the left/right gaps. */
+    align-content: end;
     gap: var(--space-4);
     padding: var(--space-6);
   }
@@ -284,6 +286,13 @@
     grid-area: title;
     align-self: end; /* sit at the bottom of the card */
     margin-top: 0;
+  }
+}
+
+/* Smaller card title (20px → 16px) on tablet + phones. */
+@media (max-width: 1024px) {
+  .leaders__card-title {
+    font-size: var(--text-base);
   }
 }
 
