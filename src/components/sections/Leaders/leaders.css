@@ -304,5 +304,7 @@
   .leaders__cards {
     position: relative; /* in flow → the stage sizes to the stacked cards */
     grid-template-columns: 1fr;
+    /* Extra top padding = a band of photo above the (bottom-anchored) cards. */
+    padding-top: var(--space-20);
   }
 }
