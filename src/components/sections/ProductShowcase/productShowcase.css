@@ -193,11 +193,14 @@
 }
 
 @media (max-width: 960px) {
-  /* Don't pin the products section on small screens: the panel stacks and is
-     taller than the viewport, so pinning let the dark Leaders block scroll up
-     and cover it before it could be read. Let it scroll normally instead. */
+  /* Don't PIN the products section on small screens: the panel stacks taller
+     than the viewport, so pinning let the dark Leaders block cover it before it
+     could be read. Use position:relative (not static) so it scrolls normally
+     but stays a positioned, opaque layer over the sticky Hero beneath it —
+     static would paint under the pinned Hero and let its video show through. */
   .section.prod {
-    position: static;
+    position: relative;
+    top: auto;
   }
 
   .prod__panel {
