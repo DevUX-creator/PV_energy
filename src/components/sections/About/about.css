@@ -55,6 +55,14 @@
   margin-top: var(--space-16);
 }
 
+/* Tablet band (768–1024): drop the right gutter so the tag stays in the left
+   column and the content stretches to the right edge for more room. */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .about__head {
+    grid-template-columns: var(--tag-col) 1fr;
+  }
+}
+
 @media (max-width: 768px) {
   .about__head {
     grid-template-columns: 1fr;

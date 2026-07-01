@@ -153,6 +153,14 @@
   background: var(--accent);
 }
 
+/* Tablet band (768–1024): match the 2-column header — keep the left tag-col
+   gutter but let the showcase run to the right edge. */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .ww-show__inner {
+    padding-inline: var(--tag-col) 0;
+  }
+}
+
 @media (max-width: 768px) {
   .ww-show__inner {
     flex-direction: column;
