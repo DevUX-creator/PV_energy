@@ -35,15 +35,16 @@
 .contact-form__field textarea,
 .contact-form__select {
   width: 100%;
-  padding: 0.85rem 1rem;
+  padding: 0.55rem 0;
   font: inherit;
   font-size: var(--text-base);
   color: var(--fg-on-inverse);
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  border-radius: var(--radius-md);
-  transition: border-color var(--transition-fast),
-    background-color var(--transition-fast);
+  /* Simple hairline underline instead of a full boxed field. */
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 0;
+  transition: border-color var(--transition-fast);
 }
 
 .contact-form__field textarea {
@@ -60,21 +61,20 @@
 .contact-form__field input:hover,
 .contact-form__field textarea:hover,
 .contact-form__select:hover {
-  border-color: rgba(255, 255, 255, 0.3);
+  border-bottom-color: rgba(255, 255, 255, 0.45);
 }
 
 .contact-form__field input:focus-visible,
 .contact-form__field textarea:focus-visible,
 .contact-form__select:focus-visible {
   outline: none;
-  border-color: var(--accent);
-  background: rgba(255, 255, 255, 0.07);
+  border-bottom-color: var(--accent);
 }
 
 .contact-form__field input[aria-invalid="true"],
 .contact-form__field textarea[aria-invalid="true"],
 .contact-form__select[aria-invalid="true"] {
-  border-color: var(--color-negative, #e5484d);
+  border-bottom-color: var(--color-negative, #e5484d);
 }
 
 /* ---- Select (custom chevron, native menu) -------------------------- */
@@ -85,7 +85,7 @@
 .contact-form__select {
   appearance: none;
   -webkit-appearance: none;
-  padding-right: 2.75rem;
+  padding-right: 1.75rem;
   cursor: pointer;
 }
 
@@ -96,7 +96,7 @@
 .contact-form__select-icon {
   position: absolute;
   top: 50%;
-  right: 1rem;
+  right: 0;
   width: 1.1rem;
   height: 1.1rem;
   transform: translateY(-50%);
