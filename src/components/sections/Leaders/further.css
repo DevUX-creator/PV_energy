@@ -47,9 +47,10 @@
   position: relative;
   will-change: transform;
   width: 100%;
-  /* Tall, uniform cards so each one travels far enough to clearly stack and
-     overlap the card beneath it as it pins. */
-  min-height: clamp(22rem, 56svh, 36rem);
+  /* Uniform card height so the pinned stack overlaps cleanly — kept just tall
+     enough for the content (was much taller, which left a big empty band under
+     the Contact Us button). */
+  min-height: clamp(15rem, 34svh, 23rem);
   display: flex;
   gap: clamp(2rem, 4vw, 4em);
   padding: clamp(1.5rem, 2.5vw, 2em);
