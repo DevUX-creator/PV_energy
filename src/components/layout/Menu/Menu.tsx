@@ -213,7 +213,7 @@ export default function Menu() {
 
           <div className="menu__inner">
             {mode === "offices" ? (
-              <div className="offices-ov__grid">
+              <div className={`offices-ov__grid${active ? " is-detail" : ""}`}>
                 {OFFICES.map((o) => {
                   const isA = o.id === activeId;
                   return (

@@ -204,4 +204,19 @@
     border-top: 1px solid var(--line);
     min-height: 18rem;
   }
+
+  /* Master–detail: space is tight, so show only the office list and drop the
+     photo. Picking an office swaps the list for its map; the map's "Back"
+     button clears the selection and returns to the list. */
+  .offices-ov__media {
+    display: none;
+  }
+  .offices-ov__grid.is-detail .offices-ov__office {
+    display: none;
+  }
+  .offices-ov__grid.is-detail .offices-ov__media {
+    display: block;
+    border-top: 0;
+    min-height: 60vh;
+  }
 }
