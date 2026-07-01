@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Section from "@/components/ui/Section";
 import RevealText from "@/animations/RevealText";
 import { PRODUCT_DEPARTMENTS } from "../Products/config";
@@ -23,6 +23,30 @@ const PRODUCTS: ShowcaseProduct[] = PRODUCT_DEPARTMENTS.flatMap((dept) =>
 export default function ProductShowcase() {
   const [active, setActive] = useState(0);
   const product = PRODUCTS[active];
+
+  // The section is sticky (the dark Leaders block scrolls up and overlaps it).
+  // Pin from the TABS rather than the title: measure the offset from the
+  // section top down to the tabs and feed it to the CSS as --prod-pin-offset.
+  // The stylesheet subtracts a header clearance from it, so the title scrolls
+  // away, leaving a gap below the fixed nav, then the tabs settle there (not
+  // jammed under the header). Height is dynamic (responsive + wrapping).
+  useEffect(() => {
+    const section = document.getElementById("products");
+    const tabs = section?.querySelector<HTMLElement>(".prod__tabs");
+    if (!section || !tabs) return;
+
+    const setOffset = () => {
+      const offset =
+        tabs.getBoundingClientRect().top - section.getBoundingClientRect().top;
+      section.style.setProperty("--prod-pin-offset", `${Math.round(offset)}px`);
+    };
+    setOffset();
+
+    window.addEventListener("resize", setOffset);
+    // The title's height (hence the offset) can shift once webfonts load.
+    document.fonts?.ready.then(setOffset).catch(() => {});
+    return () => window.removeEventListener("resize", setOffset);
+  }, []);
 
   return (
     <Section id="products" width="wide" className="prod" ariaLabel="Products">
