@@ -117,8 +117,8 @@ export default function AboutHero() {
           <div className="about-hero__info">
             <RevealText eager split="none" delay={0.5}>
               <p className="about-hero__tagline">
-                Energy &amp; agricultural commodities,
-                <br />
+                Energy &amp; agricultural commodities,{" "}
+                <br className="about-hero__tagline-br" />
                 moved with precision and purpose.
               </p>
             </RevealText>
