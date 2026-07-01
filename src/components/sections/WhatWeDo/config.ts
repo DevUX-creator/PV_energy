@@ -46,7 +46,7 @@ export const SHOWCASE_SERVICES: ShowcaseService[] = [
   },
   {
     id: "hedging-risk",
-    name: "Hedging & Risk Management",
+    name: "Risk Management",
     copy: "We manage price and market exposure with disciplined hedging, protecting every trade against volatility.",
     image: "/WhatWeDo/hedging-poster.jpg",
     video: "/WhatWeDo/hedging.mp4",
