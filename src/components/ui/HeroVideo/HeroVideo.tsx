@@ -62,13 +62,26 @@ export default function HeroVideo({
     }
   }, [allowed, visible, showSecond]);
 
+  // Endless 1 → 2 → 1 → 2 … cycle: when a clip ends, restart the other from
+  // the top (while it's still hidden under the crossfade) and reveal it.
   const handleFirstEnded = () => {
-    setShowSecond(true);
     const v = secondRef.current;
     if (v) {
+      v.currentTime = 0;
       v.muted = true;
       v.play().catch(() => {});
     }
+    setShowSecond(true);
+  };
+
+  const handleSecondEnded = () => {
+    const v = firstRef.current;
+    if (v) {
+      v.currentTime = 0;
+      v.muted = true;
+      v.play().catch(() => {});
+    }
+    setShowSecond(false);
   };
 
   return (
@@ -82,10 +95,10 @@ export default function HeroVideo({
         ref={secondRef}
         className="hero-video__clip hero-video__clip--second"
         muted
-        loop
         playsInline
         preload="auto"
         poster={poster}
+        onEnded={handleSecondEnded}
       >
         <source src={second} type="video/mp4" />
       </video>

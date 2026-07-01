@@ -73,11 +73,14 @@ export default function Hero() {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
     registerGsapPlugins();
-    // Target the container wrappers, NOT the reveal-faded elements: the intro
-    // reveal sets [data-hero-fade] (incl. .hero__actions) to autoAlpha:0, and a
-    // scrubbed exit tween would capture that 0 as its start and hide them for
-    // good. .hero__inner / .hero__footer are never reveal-faded, so they're safe.
-    const targets = root.querySelectorAll(".hero__inner, .hero__footer");
+    // Target real (never reveal-faded) elements: title, the actions wrapper,
+    // and the footer. The intro reveal fades their *children* ([data-hero-fade]
+    // / .hero__word), not these boxes, so a scrubbed exit tween can capture a
+    // clean start value. These work on both desktop and mobile — unlike
+    // .hero__inner, which is display:contents on mobile and can't be animated.
+    const targets = root.querySelectorAll(
+      ".hero__title, .hero__actions, .hero__footer"
+    );
 
     const ctx = gsap.context(() => {
       // Triggered off the hero with start "top top" → progress is 0 at the
@@ -117,11 +120,13 @@ export default function Hero() {
           <span className="hero__word hero__word--energy">ENERGY</span>
         </h1>
 
-        <div className="hero__actions" data-hero-fade>
-          <Button href="/contact">Contact Us</Button>
-          <Button href="/services" variant="outline" showArrow={false}>
-            Explore Services
-          </Button>
+        <div className="hero__actions">
+          <div className="hero__actions-inner" data-hero-fade>
+            <Button href="/contact">Contact Us</Button>
+            <Button href="/services" variant="outline" showArrow={false}>
+              Explore Services
+            </Button>
+          </div>
         </div>
       </Container>
 

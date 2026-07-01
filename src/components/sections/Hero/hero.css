@@ -86,7 +86,9 @@
   margin-right: -0.05em;
 }
 
-.hero__actions {
+/* .hero__actions is a bare wrapper (never reveal-faded) so the scroll-exit
+   can blur/fade it safely; the intro reveal fades the inner row instead. */
+.hero__actions-inner {
   display: flex;
   flex-wrap: wrap;
   gap: var(--space-4);
@@ -173,8 +175,8 @@
     align-items: stretch;
     justify-content: flex-start;
     row-gap: var(--space-8);
-    /* clear the fixed header with a comfortable gap (not glued to the nav) */
-    padding-top: calc(var(--header-height) + var(--space-16));
+    /* clear the fixed header, then drop the content ~80px below the nav */
+    padding-top: calc(var(--header-height) + 5rem);
     padding-bottom: var(--space-10);
     /* inner drops its own padding below (display:contents) — provide it here */
     padding-inline: var(--container-padding);
@@ -228,8 +230,13 @@
     gap: var(--space-6);
   }
 
-  /* Two equal-width buttons: side by side when they fit, else stacked. */
+  /* Two equal-width buttons: side by side when they fit, else stacked.
+     Extra top margin (on top of the column row-gap) sets ~40px of breathing
+     room between the subtext and the buttons. */
   .hero__actions {
+    margin-top: var(--space-3);
+  }
+  .hero__actions-inner {
     flex-wrap: wrap;
     gap: var(--space-3);
   }
