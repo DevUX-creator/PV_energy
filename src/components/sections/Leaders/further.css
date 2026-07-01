@@ -93,9 +93,11 @@
   color: rgba(238, 244, 251, 0.88); /* brighter than --fg-secondary so the copy reads clearly */
 }
 
-/* card-img flex 1, 16/9 (= .card-img). */
+/* card-img flex 1, 16/9 (= .card-img). Align to the top so the figure keeps
+   its 16:9 ratio instead of stretching to the (tall) card height. */
 .further__card-img {
   flex: 1;
+  align-self: flex-start;
   margin: 0;
   aspect-ratio: 16 / 9;
   border-radius: var(--radius-md);
