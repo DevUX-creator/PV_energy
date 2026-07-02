@@ -1,15 +1,24 @@
 .section.svc-cta {
   position: relative;
   z-index: 1;
+  min-height: 100svh;
+  overflow: hidden;
   background: #1c1c1e;
 }
 
 .svc-cta__inner {
+  position: relative;
+  z-index: 2; /* content over the falling chips */
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
   gap: var(--space-6);
+  /* Let drags fall through to the chips behind; keep the button clickable. */
+  pointer-events: none;
+}
+.svc-cta__inner .btn {
+  pointer-events: auto;
 }
 
 /* Light pill on the dark surface (same fix as the Leaders tag). */
@@ -41,17 +50,16 @@
   margin-top: var(--space-4);
 }
 
-/* ---- Falling service chips (physics) ---- */
+/* ---- Falling service chips (physics) — fill the whole section ---- */
 .svc-cta__stage {
-  position: relative;
-  width: 100%;
-  height: clamp(300px, 42vh, 460px);
-  margin-top: var(--gap-section-header);
+  position: absolute;
+  inset: 0;
+  z-index: 1; /* behind the CTA content */
   overflow: hidden;
   touch-action: pan-y; /* page still scrolls; drag grabs chips */
 }
 
-/* Small mono chip; positioned by physics (JS sets transform). */
+/* Small white mono chip; positioned by physics (JS sets transform). */
 .svc-cta__chip {
   position: absolute;
   top: 0;
@@ -68,6 +76,8 @@
   cursor: grab;
   user-select: none;
   opacity: 0;
+  background: #fff;
+  color: #1c1c1e;
   --chamfer-cut: 0.65rem;
   border-radius: var(--radius-sm);
   clip-path: var(--chamfer);
@@ -77,27 +87,15 @@
   cursor: grabbing;
 }
 
-.svc-cta__chip--blue {
-  background: var(--accent);
-  color: var(--accent-contrast);
-}
-.svc-cta__chip--light {
-  background: #eef2f7;
-  color: #1c1c1e;
-}
-.svc-cta__chip--outline {
-  background: transparent;
-  color: #fff;
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.4);
-}
-
-/* Reduced-motion / no-JS: static wrap. */
+/* Reduced-motion / no-JS: static wrap near the bottom. */
 .svc-cta__stage.is-static {
-  height: auto;
+  position: relative;
+  inset: auto;
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
   gap: var(--space-3);
+  margin-top: var(--gap-section-header);
 }
 .svc-cta__stage.is-static .svc-cta__chip {
   position: static;

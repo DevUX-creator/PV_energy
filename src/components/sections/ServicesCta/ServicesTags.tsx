@@ -10,11 +10,9 @@ const SERVICES = [
   "Hedging & Risk Management",
   "Financial Solutions",
 ];
-const TONES = ["blue", "light", "outline", "blue", "light", "outline"];
-
 /**
- * ServicesTags — the six services as small physics chips that drop in, pile up
- * and can be dragged (Matter.js). Decorative; sits in the CTA section.
+ * ServicesTags — the six services as small white physics chips that fall from
+ * the top of the section to the bottom, pile up and can be dragged (Matter.js).
  */
 export default function ServicesTags() {
   const stageRef = useRef<HTMLDivElement>(null);
@@ -56,7 +54,7 @@ export default function ServicesTags() {
         const w = el.offsetWidth;
         const h = el.offsetHeight;
         const x = w / 2 + 30 + Math.random() * Math.max(1, W - w - 60);
-        const y = -100 - i * 80;
+        const y = -40 - i * 55; // just above the top edge, lightly staggered
         const body = Bodies.rectangle(x, y, w, h, {
           restitution: 0.35,
           friction: 0.5,
@@ -123,8 +121,8 @@ export default function ServicesTags() {
 
   return (
     <div ref={stageRef} className="svc-cta__stage" aria-hidden="true">
-      {SERVICES.map((s, i) => (
-        <div key={s} className={`svc-cta__chip svc-cta__chip--${TONES[i]}`}>
+      {SERVICES.map((s) => (
+        <div key={s} className="svc-cta__chip">
           {s}
         </div>
       ))}
