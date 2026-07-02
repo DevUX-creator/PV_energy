@@ -2,7 +2,7 @@
    the dotted particle globe centred. Intro copy is hidden for now. */
 .services-hero {
   position: relative;
-  background: #ffffff; /* white */
+  background: #dcdcdc; /* light grey (matches the Figma frosted-orb frame) */
   min-height: 100svh;
   display: flex;
   align-items: center;
