@@ -160,9 +160,11 @@ export default function Globe({ className = "" }: { className?: string }) {
 
             // Three small light sources — main + two smaller — that drift very
             // gently and whose elliptical shape morphs slightly over time.
-            vec3 L1 = normalize(vec3(-0.5 + 0.08 * sin(uTime * 0.11), 0.48 + 0.05 * sin(uTime * 0.09), 0.85));
-            vec3 L2 = normalize(vec3(0.9, -0.15 + 0.06 * sin(uTime * 0.13 + 1.0), 0.5));
-            vec3 L3 = normalize(vec3(0.15, -0.6, 0.55 + 0.06 * sin(uTime * 0.1 + 2.0)));
+            // Kept on the FRONT hemisphere (strong +z) so the drift is always
+            // visible on the face we're looking at; x/y glide gently.
+            vec3 L1 = normalize(vec3(-0.28 + 0.34 * sin(uTime * 0.15), 0.24 + 0.30 * sin(uTime * 0.11 + 1.0), 1.0));
+            vec3 L2 = normalize(vec3(0.32 + 0.30 * sin(uTime * 0.13 + 2.0), -0.20 + 0.26 * sin(uTime * 0.17), 0.95));
+            vec3 L3 = normalize(vec3(-0.12 + 0.26 * sin(uTime * 0.10 + 3.0), 0.34 + 0.22 * sin(uTime * 0.14 + 1.5), 0.9));
             col += ellipseSpot(N, L1, 0.62 + 0.12 * sin(uTime * 0.20), 0.48 + 0.12 * sin(uTime * 0.17 + 1.0)) * 0.12;  // main — broad, soft
             col += ellipseSpot(N, L2, 0.52 + 0.10 * sin(uTime * 0.15 + 2.0), 0.42) * 0.1;
             col += ellipseSpot(N, L3, 0.42, 0.34 + 0.08 * sin(uTime * 0.19 + 3.0)) * 0.08;
