@@ -24,10 +24,11 @@
   aspect-ratio: 1;
 }
 
-/* Wider globe on tablet / mobile. */
+/* Wider globe on tablet / mobile, nudged ~40px lower. */
 @media (max-width: 1024px) {
   .services-hero__globe {
     width: min(82vh, 116vw);
+    transform: translateY(40px);
   }
 }
 
