@@ -389,6 +389,11 @@ export default function Globe({
       let lastY = 0;
       let rotY = -1.9; // start with Europe / Africa facing the viewer
       let rotX = 0.14;
+      let velY = 0; // spin velocity — carries momentum after a drag (inertia)
+      // A touch quicker idle spin on tablet / mobile.
+      const autoSpin = window.matchMedia("(max-width: 1024px)").matches
+        ? AUTO_SPIN * 2.4
+        : AUTO_SPIN;
 
       const onPointerMove = (e: PointerEvent) => {
         const rect = renderer.domElement.getBoundingClientRect();
@@ -397,7 +402,8 @@ export default function Globe({
         hovering = true;
         if (dragging) {
           moved = true;
-          rotY += (e.clientX - lastX) * 0.005;
+          velY = (e.clientX - lastX) * 0.005; // remember the throw velocity
+          rotY += velY;
           rotX = Math.max(-0.6, Math.min(0.6, rotX + (e.clientY - lastY) * 0.005));
           lastX = e.clientX;
           lastY = e.clientY;
@@ -452,7 +458,16 @@ export default function Globe({
 
         pointsMat.uniforms.uTime.value += 0.016;
         sphereMat.uniforms.uTime.value += 0.016;
-        if (!dragging && !markerHover && !lockedRef.current) rotY += AUTO_SPIN;
+        if (!dragging && !markerHover && !lockedRef.current) {
+          if (Math.abs(velY) > 0.0004) {
+            // Momentum: keep spinning in the throw direction, slowing to a stop.
+            rotY += velY;
+            velY *= 0.95;
+          } else {
+            velY = 0;
+            rotY += autoSpin;
+          }
+        }
         group.rotation.y = rotY;
         group.rotation.x += (rotX - group.rotation.x) * 0.1;
 

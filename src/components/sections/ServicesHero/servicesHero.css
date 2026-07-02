@@ -24,6 +24,19 @@
   aspect-ratio: 1;
 }
 
+/* Wider globe on tablet / mobile. */
+@media (max-width: 1024px) {
+  .services-hero__globe {
+    width: min(82vh, 116vw);
+  }
+}
+
+@media (max-width: 768px) {
+  .services-hero__globe {
+    width: min(80vh, 132vw);
+  }
+}
+
 /* Head — title + Contact button, top-left over the globe. */
 .services-hero__head {
   position: absolute;

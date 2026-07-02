@@ -100,17 +100,22 @@ export default function ServicesTags() {
         raf = requestAnimationFrame(draw);
       };
 
-      // Drop the chips only once the section scrolls into view.
+      // Drop the chips one by one once the section scrolls into view.
       let started = false;
+      const timers: number[] = [];
       const io = new IntersectionObserver(
         ([e]) => {
           if (e.isIntersecting && !started) {
             started = true;
-            for (const { body, el } of bodies) {
-              World.add(engine.world, body);
-              el.style.opacity = "1";
-            }
             draw();
+            bodies.forEach(({ body, el }, i) => {
+              timers.push(
+                window.setTimeout(() => {
+                  World.add(engine.world, body);
+                  el.style.opacity = "1";
+                }, i * 550) // staggered — one falls, then the next
+              );
+            });
             io.disconnect();
           }
         },
@@ -128,6 +133,7 @@ export default function ServicesTags() {
 
       cleanup = () => {
         cancelAnimationFrame(raf);
+        timers.forEach((t) => clearTimeout(t));
         io.disconnect();
         window.removeEventListener("resize", onResize);
         Runner.stop(runner);
