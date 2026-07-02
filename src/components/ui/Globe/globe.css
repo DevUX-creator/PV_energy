@@ -1,4 +1,5 @@
 .globe3d {
+  position: relative;
   width: 100%;
   height: 100%;
 }
@@ -11,4 +12,36 @@
   cursor: grab;
   /* Let vertical page scroll through; the globe reacts to cursor move. */
   touch-action: pan-y;
+}
+
+/* Office location chips — dark-grey square with the brand shuriken, projected
+   onto the globe surface (position/opacity set per-frame in JS). */
+.globe-marker {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 5px;
+  background: #35353a;
+  color: #fff;
+  pointer-events: none;
+  opacity: 0;
+  will-change: transform, opacity;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18);
+}
+
+.globe-marker svg {
+  width: 15px;
+  height: 15px;
+  animation: globe-marker-spin 9s linear infinite;
+}
+
+@keyframes globe-marker-spin {
+  to {
+    transform: rotate(360deg);
+  }
 }

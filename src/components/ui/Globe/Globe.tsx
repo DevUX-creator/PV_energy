@@ -313,6 +313,35 @@ export default function Globe({ className = "" }: { className?: string }) {
       );
       group.add(pick);
 
+      // ---- Office markers: dark chips with the brand shuriken, projected onto
+      //      the globe at each office and hidden as they rotate to the back. ---
+      const OFFICES: [number, number][] = [
+        [25.19, 55.28], // Dubai
+        [37.98, 23.72], // Athens
+        [22.32, 114.17], // Hong Kong
+      ];
+      const MARKER_R = R + 0.12;
+      const SHURIKEN =
+        '<svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M12 1 L14.2 9.8 L23 12 L14.2 14.2 L12 23 L9.8 14.2 L1 12 L9.8 9.8 Z"/></svg>';
+      const markers = OFFICES.map(([lat, lng]) => {
+        const u = (lng + 180) / 360;
+        const v = (90 - lat) / 180;
+        const phi = u * Math.PI * 2;
+        const theta = v * Math.PI;
+        const sinT = Math.sin(theta);
+        const home = new THREE.Vector3(
+          -Math.cos(phi) * sinT * MARKER_R,
+          Math.cos(theta) * MARKER_R,
+          Math.sin(phi) * sinT * MARKER_R
+        );
+        const el = document.createElement("div");
+        el.className = "globe-marker";
+        el.innerHTML = SHURIKEN;
+        mount.appendChild(el);
+        return { home, el };
+      });
+      const markerTmp = new THREE.Vector3();
+
       // ---- Interaction ----------------------------------------------------
       const raycaster = new THREE.Raycaster();
       const ndc = new THREE.Vector2(-10, -10);
@@ -381,6 +410,17 @@ export default function Globe({ className = "" }: { className?: string }) {
         group.rotation.y = rotY;
         group.rotation.x += (rotX - group.rotation.x) * 0.1;
 
+        // Project the office chips to screen space; fade at the silhouette.
+        for (const m of markers) {
+          markerTmp.copy(m.home).applyEuler(group.rotation);
+          const nz = markerTmp.z / MARKER_R; // front-facing when > 0
+          markerTmp.project(camera);
+          const sx = (markerTmp.x * 0.5 + 0.5) * width;
+          const sy = (-markerTmp.y * 0.5 + 0.5) * height;
+          m.el.style.transform = `translate(-50%, -50%) translate(${sx}px, ${sy}px)`;
+          m.el.style.opacity = String(Math.max(0, Math.min(1, (nz + 0.05) / 0.3)));
+        }
+
         let hit = false;
         if (hovering) {
           raycaster.setFromCamera(ndc, camera);
@@ -427,6 +467,7 @@ export default function Globe({ className = "" }: { className?: string }) {
         (Array.isArray(pm) ? pm : [pm]).forEach((m) => m.dispose());
         renderer.dispose();
         renderer.domElement.remove();
+        markers.forEach((m) => m.el.remove());
       };
     })();
 
