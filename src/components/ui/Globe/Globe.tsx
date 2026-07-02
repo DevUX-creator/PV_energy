@@ -158,19 +158,19 @@ export default function Globe({ className = "" }: { className?: string }) {
             float land = texture2D(uMap, vUv).r;
             vec3 col = mix(uOcean, uLand, land * 0.72); // blue diffuse continents
 
-            // Three small light sources — main + two smaller — that drift very
-            // gently and whose elliptical shape morphs slightly over time.
-            // Kept on the FRONT hemisphere (strong +z) so the drift is always
-            // visible on the face we're looking at; x/y glide gently.
-            vec3 L1 = normalize(vec3(-0.28 + 0.34 * sin(uTime * 0.15), 0.24 + 0.30 * sin(uTime * 0.11 + 1.0), 1.0));
-            vec3 L2 = normalize(vec3(0.32 + 0.30 * sin(uTime * 0.13 + 2.0), -0.20 + 0.26 * sin(uTime * 0.17), 0.95));
-            vec3 L3 = normalize(vec3(-0.12 + 0.26 * sin(uTime * 0.10 + 3.0), 0.34 + 0.22 * sin(uTime * 0.14 + 1.5), 0.9));
-            col += ellipseSpot(N, L1, 0.62 + 0.12 * sin(uTime * 0.20), 0.48 + 0.12 * sin(uTime * 0.17 + 1.0)) * 0.12;  // main — broad, soft
-            col += ellipseSpot(N, L2, 0.52 + 0.10 * sin(uTime * 0.15 + 2.0), 0.42) * 0.1;
-            col += ellipseSpot(N, L3, 0.42, 0.34 + 0.08 * sin(uTime * 0.19 + 3.0)) * 0.08;
+            // All on the FRONT hemisphere (strong +z) so their movement reads on
+            // the face we look at. Three distinct sizes/densities; the main one
+            // is static to anchor the lighting, the other two drift.
+            vec3 L1 = normalize(vec3(-0.20, 0.22, 1.0)); // main — broad, low density, static
+            vec3 L2 = normalize(vec3(0.34 + 0.30 * sin(uTime * 0.13 + 2.0), -0.22 + 0.24 * sin(uTime * 0.17), 0.95)); // medium, denser
+            vec3 L3 = normalize(vec3(-0.14 + 0.28 * sin(uTime * 0.10 + 3.0), 0.34 + 0.20 * sin(uTime * 0.14 + 1.5), 0.9)); // small, low
+            col += ellipseSpot(N, L1, 0.72, 0.56) * 0.1;
+            col += ellipseSpot(N, L2, 0.42 + 0.06 * sin(uTime * 0.15), 0.34) * 0.15;
+            col += ellipseSpot(N, L3, 0.26, 0.20 + 0.05 * sin(uTime * 0.19)) * 0.09;
 
             float facing = clamp(dot(N, normalize(vV)), 0.0, 1.0);
-            col = mix(col, uRim, pow(1.0 - facing, 2.4)); // bright soft rim
+            // Wider soft glowing ring near the visible edge (lower exponent).
+            col = mix(col, uRim, pow(1.0 - facing, 1.7));
             gl_FragColor = vec4(col, 1.0);
           }
         `,
