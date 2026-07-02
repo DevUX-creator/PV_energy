@@ -21,13 +21,21 @@
   aspect-ratio: 1;
 }
 
-/* Title — top-left, over the globe. Size matches the home "Delivering …"
-   headline; second word greyed like the home swap word. */
-.services-hero__title {
+/* Head — title + Contact button, top-left over the globe. */
+.services-hero__head {
   position: absolute;
   z-index: 2;
   top: calc(var(--header-height) + var(--space-8));
   left: var(--container-padding);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-8);
+}
+
+/* Title size matches the home "Delivering …" headline; second word greyed
+   like the home swap word (swaps to the office city on marker hover). */
+.services-hero__title {
   font-family: var(--font-display);
   font-weight: var(--font-bold);
   font-size: clamp(2.5rem, 7.5vw, 7rem);

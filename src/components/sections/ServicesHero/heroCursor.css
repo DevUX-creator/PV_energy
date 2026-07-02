@@ -37,7 +37,17 @@
   height: 38px;
   border: 1.5px solid rgba(0, 0, 0, 0.55);
   border-radius: 6px;
+  transition: border-color 0.2s ease, background-color 0.2s ease, width 0.2s ease,
+    height 0.2s ease;
   will-change: transform;
+}
+
+/* Near an office marker → the cursor "locks on" in brand blue. */
+.services-hero.is-near .hero-cursor__box {
+  width: 34px;
+  height: 34px;
+  border-color: #0857d6;
+  background: rgba(8, 87, 214, 0.08);
 }
 
 /* Hide the native cursor once the custom one is active. */

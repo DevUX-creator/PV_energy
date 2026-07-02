@@ -41,8 +41,14 @@
   transition: transform 0.6s cubic-bezier(0.25, 0.74, 0.22, 0.99);
 }
 
-.globe-marker:hover svg {
+.globe-marker:hover svg,
+.globe-marker.is-active svg {
   transform: rotate(90deg);
+}
+
+/* Active (cursor locked on) → brand blue chip. */
+.globe-marker.is-active {
+  background: #0857d6;
 }
 
 @media (prefers-reduced-motion: reduce) {

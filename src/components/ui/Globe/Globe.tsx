@@ -37,8 +37,23 @@ const RIM = 0xfcfcfe; // bright soft rim
  * floating particle "blanket" of the world map above it. Drag to rotate;
  * hovering lifts/highlights/grows the dots and leaves a fading, rippling trail.
  */
-export default function Globe({ className = "" }: { className?: string }) {
+type Office = { lat: number; lng: number };
+type GlobeState = { near: boolean; active: number | null };
+
+export default function Globe({
+  className = "",
+  offices,
+  onState,
+}: {
+  className?: string;
+  offices?: Office[];
+  onState?: (s: GlobeState) => void;
+}) {
   const mountRef = useRef<HTMLDivElement>(null);
+  const onStateRef = useRef(onState);
+  onStateRef.current = onState;
+  const officesRef = useRef(offices);
+  officesRef.current = offices;
 
   useEffect(() => {
     const mount = mountRef.current;
@@ -315,11 +330,13 @@ export default function Globe({ className = "" }: { className?: string }) {
 
       // ---- Office markers: dark chips with the brand shuriken, projected onto
       //      the globe at each office and hidden as they rotate to the back. ---
-      const OFFICES: [number, number][] = [
-        [25.19, 55.28], // Dubai
-        [37.98, 23.72], // Athens
-        [22.32, 114.17], // Hong Kong
-      ];
+      const OFFICES: [number, number][] = (
+        officesRef.current ?? [
+          { lat: 25.19, lng: 55.28 }, // Dubai
+          { lat: 37.98, lng: 23.72 }, // Athens
+          { lat: 22.32, lng: 114.17 }, // Hong Kong
+        ]
+      ).map((o) => [o.lat, o.lng]);
       const MARKER_R = R + 0.02; // sit right on the surface
       // The exact "Our Offices" mark from the header (top-right control).
       const SHURIKEN =
@@ -339,8 +356,6 @@ export default function Globe({ className = "" }: { className?: string }) {
         const el = document.createElement("div");
         el.className = "globe-marker";
         el.innerHTML = SHURIKEN;
-        el.addEventListener("mouseenter", () => (markerHover = true));
-        el.addEventListener("mouseleave", () => (markerHover = false));
         mount.appendChild(el);
         return { home, el };
       });
@@ -403,6 +418,8 @@ export default function Globe({ className = "" }: { className?: string }) {
       });
       io.observe(mount);
 
+      let prevNear = false;
+      let prevActive: number | null = null;
       let raf = 0;
       const loop = () => {
         raf = requestAnimationFrame(loop);
@@ -414,8 +431,14 @@ export default function Globe({ className = "" }: { className?: string }) {
         group.rotation.y = rotY;
         group.rotation.x += (rotX - group.rotation.x) * 0.1;
 
-        // Project the office chips to screen space; fade at the silhouette.
-        for (const m of markers) {
+        // Project the office chips to screen space; fade at the silhouette and
+        // find the one nearest the cursor (drives the near/active state).
+        const cx = (ndc.x * 0.5 + 0.5) * width;
+        const cy = (-ndc.y * 0.5 + 0.5) * height;
+        let nearestDist = Infinity;
+        let nearestIdx = -1;
+        for (let i = 0; i < markers.length; i++) {
+          const m = markers[i];
           markerTmp.copy(m.home).applyEuler(group.rotation);
           const nz = markerTmp.z / MARKER_R; // front-facing when > 0
           markerTmp.project(camera);
@@ -424,9 +447,23 @@ export default function Globe({ className = "" }: { className?: string }) {
           const op = Math.max(0, Math.min(1, (nz + 0.05) / 0.3));
           m.el.style.transform = `translate(-50%, -50%) translate(${sx}px, ${sy}px)`;
           m.el.style.opacity = String(op);
-          // Only front-facing chips are interactive (don't capture clicks while
-          // hidden on the back).
           m.el.style.pointerEvents = op > 0.5 ? "auto" : "none";
+          if (hovering && op > 0.6) {
+            const d = Math.hypot(sx - cx, sy - cy);
+            if (d < nearestDist) {
+              nearestDist = d;
+              nearestIdx = i;
+            }
+          }
+        }
+        const near = nearestDist < 120;
+        const active = nearestDist < 46 ? nearestIdx : null;
+        markerHover = active !== null; // pause rotation while over a marker
+        markers.forEach((m, i) => m.el.classList.toggle("is-active", i === active));
+        if (near !== prevNear || active !== prevActive) {
+          prevNear = near;
+          prevActive = active;
+          onStateRef.current?.({ near, active });
         }
 
         let hit = false;
