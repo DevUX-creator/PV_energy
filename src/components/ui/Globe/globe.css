@@ -1,12 +1,14 @@
-.globe {
+.globe3d {
   width: 100%;
   height: 100%;
-  aspect-ratio: 1;
-  /* Fades in after cobe's first frame (set in JS). */
+}
+
+/* three's canvas — fades in after the first frame (opacity set to 1 in JS). */
+.globe3d canvas {
+  display: block;
   opacity: 0;
   transition: opacity 1s ease;
   cursor: grab;
-  /* Horizontal drag spins the globe; vertical still scrolls the page. */
+  /* Let vertical page scroll through; the globe reacts to cursor move. */
   touch-action: pan-y;
-  contain: layout paint size;
 }
