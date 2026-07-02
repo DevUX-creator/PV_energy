@@ -12,7 +12,12 @@ function BlurSwap({ value, className = "" }: { value: string; className?: string
   const [display, setDisplay] = useState(value);
   const [out, setOut] = useState(false);
   useEffect(() => {
-    if (value === display) return;
+    // If we're already showing the target, make sure we're not stuck blurred
+    // (a hover swap can be interrupted when the value flips back mid-transition).
+    if (value === display) {
+      setOut(false);
+      return;
+    }
     setOut(true);
     const t = setTimeout(() => {
       setDisplay(value);

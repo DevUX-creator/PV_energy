@@ -1,0 +1,46 @@
+.section.svc-cta {
+  position: relative;
+  z-index: 1;
+  background: #1c1c1e;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-6);
+}
+
+/* Light pill on the dark surface (same fix as the Leaders tag). */
+.svc-cta__tag {
+  margin-bottom: var(--space-2);
+  color: #0a0a0a;
+  background: var(--bg-muted);
+}
+
+.svc-cta__title {
+  max-width: 20ch;
+  font-size: clamp(2rem, 5vw, 4.5rem);
+  line-height: 1.02;
+  letter-spacing: -0.01em;
+  text-transform: uppercase;
+}
+
+.svc-cta__text {
+  max-width: 56ch;
+  font-size: var(--text-fluid-lead);
+  line-height: var(--leading-relaxed);
+  color: var(--fg-secondary);
+}
+
+.svc-cta__actions {
+  margin-top: var(--space-4);
+}
+
+/* Blue primary with black ink hover, matching the rest of the section. */
+.svc-cta .btn--primary {
+  background: var(--accent);
+  color: var(--accent-contrast);
+  --btn-fill: var(--primary);
+}
+.svc-cta .btn--primary:hover,
+.svc-cta .btn--primary:focus-visible {
+  color: #fff;
+}

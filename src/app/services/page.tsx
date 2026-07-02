@@ -3,6 +3,8 @@ import Preloader from "@/components/ui/Preloader";
 import ServicesHero from "@/components/sections/ServicesHero";
 import ServicesOverview from "@/components/sections/ServicesOverview";
 import ServicesBand from "@/components/sections/ServicesBand";
+import ServicesApproach from "@/components/sections/ServicesApproach";
+import ServicesCta from "@/components/sections/ServicesCta";
 
 export const metadata: Metadata = {
   title: "Services",
@@ -26,6 +28,8 @@ export default function ServicesPage() {
           <ServicesHero />
           <ServicesOverview />
           <ServicesBand />
+          <ServicesApproach />
+          <ServicesCta />
         </>
       ) : (
         <Preloader label="Services" />
