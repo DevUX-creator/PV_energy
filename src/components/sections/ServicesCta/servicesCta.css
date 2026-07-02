@@ -14,6 +14,8 @@
 
 /* Light pill on the dark surface (same fix as the Leaders tag). */
 .svc-cta__tag {
+  /* .section-tag defaults to align-self:start — centre it here. */
+  align-self: center;
   margin-bottom: var(--space-8); /* breathing room before the headline */
   color: #0a0a0a;
   background: var(--bg-muted);
