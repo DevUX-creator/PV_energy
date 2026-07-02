@@ -12,7 +12,7 @@ const GAP = 0.03; // "air" between the sphere and the dot blanket
 const RADIUS_JITTER = 0.012; // per-dot radial variation
 const DENSITY = 3; // particles per land pixel
 const AUTO_SPIN = 0.0006; // idle rotation speed (rad/frame) — super slow
-const DOT_SIZE = 0.014; // base world size of a dot — small "lights"
+const DOT_SIZE = 0.022; // base world size of a dot — small "lights"
 
 // Hover: lift + highlight + grow, with a fading trail behind the cursor.
 const HOVER_RADIUS = 0.34; // influence radius per trail sample
@@ -20,15 +20,15 @@ const HOVER_LIFT = 0.12; // how far dots rise in the gap
 const HOVER_SIZE_BOOST = 1.4; // extra size under the cursor
 const HOVER_HIGHLIGHT: [number, number, number] = [0.25, 0.85, 1.0]; // bright cyan
 const TRAIL_N = 32; // trail length (recent cursor samples)
-const TRAIL_DECAY = 0.92; // per-frame strength falloff → the trail fades
+const TRAIL_DECAY = 0.94; // per-frame strength falloff → longer, flowing trail
 
 // Dot base colours — small bright "lights", blended per region.
 const DOT_MAIN: [number, number, number] = [0.5, 0.7, 1.0]; // bright blue
 const DOT_ACCENT: [number, number, number] = [0.28, 0.52, 0.95]; // deeper blue
 
-// Sphere body colours (soft matte): near-white oceans, faint blue land shades.
+// Sphere body colours (soft matte): near-white oceans, mild blue land shades.
 const OCEAN = 0xeef2f7;
-const LAND = 0xc6d3ec;
+const LAND = 0xbcc9e6;
 
 /**
  * Globe — a matte sphere (light-grey oceans, bluish continents, lit softly from
@@ -113,6 +113,7 @@ export default function Globe({ className = "" }: { className?: string }) {
           uMap: { value: mapTex },
           uOcean: { value: new THREE.Color(OCEAN) },
           uLand: { value: new THREE.Color(LAND) },
+          uTime: { value: 0 },
         },
         vertexShader: `
           varying vec3 vN;
@@ -130,15 +131,28 @@ export default function Globe({ className = "" }: { className?: string }) {
           uniform sampler2D uMap;
           uniform vec3 uOcean;
           uniform vec3 uLand;
+          uniform float uTime;
           varying vec3 vN;
           varying vec3 vV;
           varying vec2 vUv;
           void main() {
+            vec3 N = normalize(vN);
             float land = texture2D(uMap, vUv).r;
-            vec3 base = mix(uOcean, uLand, land * 0.8); // soft blurred shades
-            float facing = clamp(dot(normalize(vN), normalize(vV)), 0.0, 1.0);
-            float glow = pow(facing, 1.3); // gentle centre light — mostly matte
-            gl_FragColor = vec4(base * (0.87 + 0.15 * glow), 1.0);
+            vec3 base = mix(uOcean, uLand, land * 0.62); // mild bluish continents
+
+            // Soft matte light that slowly moves across the planet.
+            vec3 L = normalize(vec3(sin(uTime * 0.13) * 0.9, 0.4, cos(uTime * 0.13) * 0.9 + 0.35));
+            float wrap = clamp(0.6 + 0.45 * dot(N, L), 0.0, 1.25); // soft wrap diffuse
+            vec3 col = base * wrap;
+
+            // Moving soft bloom — the light that falls on the planet.
+            col += pow(max(dot(N, L), 0.0), 3.5) * 0.4;
+
+            // Slight rim glow at the edges.
+            float facing = clamp(dot(N, normalize(vV)), 0.0, 1.0);
+            col += pow(1.0 - facing, 2.5) * vec3(0.82, 0.88, 1.0) * 0.5;
+
+            gl_FragColor = vec4(col, 1.0);
           }
         `,
       });
@@ -214,8 +228,6 @@ export default function Globe({ className = "" }: { className?: string }) {
           void main() {
             vec3 p = position;
             vec3 nrm = normalize(p);
-            // Idle fluid drift — the blanket gently breathes.
-            p += nrm * (sin(uTime * 1.3 + p.x * 7.0 + p.y * 5.0 + p.z * 6.0) * 0.006);
             // Hover trail: strongest at the newest sample, fading behind it.
             float f = 0.0;
             for (int i = 0; i < ${TRAIL_N}; i++) {
@@ -224,6 +236,10 @@ export default function Globe({ className = "" }: { className?: string }) {
               f = max(f, infl * tr.w);
             }
             f = clamp(f, 0.0, 1.0);
+            // Fluid wavy drift — gentle everywhere, wavier under the hover.
+            float w = sin(uTime * 0.9 + p.x * 6.0 + p.y * 3.0) * 0.5
+                    + sin(uTime * 1.4 + p.z * 7.0 - p.y * 4.0) * 0.5;
+            p += nrm * (w * (0.008 + f * 0.022));
             p += nrm * (uLift * f);
             vColor = mix(color, uHighlight, f);
             vec4 mv = modelViewMatrix * vec4(p, 1.0);
@@ -322,6 +338,7 @@ export default function Globe({ className = "" }: { className?: string }) {
         if (!visible) return;
 
         pointsMat.uniforms.uTime.value += 0.016;
+        sphereMat.uniforms.uTime.value += 0.016;
         if (!dragging) rotY += AUTO_SPIN;
         group.rotation.y = rotY;
         group.rotation.x += (rotX - group.rotation.x) * 0.1;
