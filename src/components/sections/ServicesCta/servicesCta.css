@@ -1,15 +1,9 @@
 .section.svc-cta {
   position: relative;
   z-index: 1;
-  min-height: 78svh;
+  min-height: 100svh;
   overflow: hidden;
   background: #1c1c1e;
-}
-
-@media (max-width: 768px) {
-  .section.svc-cta {
-    min-height: 68svh;
-  }
 }
 
 .svc-cta__inner {
@@ -62,7 +56,14 @@
   inset: 0;
   z-index: 1; /* behind the CTA content */
   overflow: hidden;
-  touch-action: pan-y; /* page still scrolls; drag grabs chips */
+  touch-action: pan-y; /* page still scrolls; drag grabs chips (desktop) */
+}
+
+/* On touch the chips aren't draggable — let all touches scroll the page. */
+@media (hover: none), (pointer: coarse) {
+  .svc-cta__stage {
+    pointer-events: none;
+  }
 }
 
 /* Small white mono chip; positioned by physics (JS sets transform). */

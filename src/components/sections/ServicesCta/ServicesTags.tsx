@@ -50,6 +50,8 @@ export default function ServicesTags() {
       ];
       World.add(engine.world, walls);
 
+      // Build the bodies but DON'T drop them yet — wait until the section is
+      // in view (see the IntersectionObserver below).
       const bodies = blocks.map((el, i) => {
         const w = el.offsetWidth;
         const h = el.offsetHeight;
@@ -62,25 +64,28 @@ export default function ServicesTags() {
           chamfer: { radius: 6 },
           angle: (Math.random() - 0.5) * 0.4,
         });
-        World.add(engine.world, body);
-        el.style.opacity = "1";
         return { el, body, w, h };
       });
 
-      const mouse = Mouse.create(stage);
-      const m = mouse as unknown as {
-        element: HTMLElement;
-        mousewheel: EventListener;
-      };
-      m.element.removeEventListener("wheel", m.mousewheel);
-      m.element.removeEventListener("DOMMouseScroll", m.mousewheel);
-      World.add(
-        engine.world,
-        MouseConstraint.create(engine, {
-          mouse,
-          constraint: { stiffness: 0.2, render: { visible: false } },
-        })
-      );
+      // Drag only on hover/fine-pointer devices — on touch, Matter's own touch
+      // listeners would swallow the swipe and make the section hard to scroll.
+      const canDrag = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
+      if (canDrag) {
+        const mouse = Mouse.create(stage);
+        const m = mouse as unknown as {
+          element: HTMLElement;
+          mousewheel: EventListener;
+        };
+        m.element.removeEventListener("wheel", m.mousewheel);
+        m.element.removeEventListener("DOMMouseScroll", m.mousewheel);
+        World.add(
+          engine.world,
+          MouseConstraint.create(engine, {
+            mouse,
+            constraint: { stiffness: 0.2, render: { visible: false } },
+          })
+        );
+      }
 
       const runner = Runner.create();
       Runner.run(runner, engine);
@@ -94,7 +99,24 @@ export default function ServicesTags() {
         }
         raf = requestAnimationFrame(draw);
       };
-      draw();
+
+      // Drop the chips only once the section scrolls into view.
+      let started = false;
+      const io = new IntersectionObserver(
+        ([e]) => {
+          if (e.isIntersecting && !started) {
+            started = true;
+            for (const { body, el } of bodies) {
+              World.add(engine.world, body);
+              el.style.opacity = "1";
+            }
+            draw();
+            io.disconnect();
+          }
+        },
+        { threshold: 0.25 }
+      );
+      io.observe(stage);
 
       const onResize = () => {
         W = stage.clientWidth;
@@ -106,6 +128,7 @@ export default function ServicesTags() {
 
       cleanup = () => {
         cancelAnimationFrame(raf);
+        io.disconnect();
         window.removeEventListener("resize", onResize);
         Runner.stop(runner);
         World.clear(engine.world, false);
