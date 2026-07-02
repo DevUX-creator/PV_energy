@@ -50,7 +50,7 @@ export default function ServicesOverview() {
       ariaLabel="What we do"
     >
       <RevealSection>
-        <p className="eyebrow">Our services</p>
+        <span className="section-tag">Our services</span>
         <h2 className="svc-overview__title">
           Everything the value chain needs
         </h2>
