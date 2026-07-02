@@ -33,14 +33,21 @@
   order: 2;
 }
 
-/* Grey-box image placeholder (temporary). */
 .svc-approach__media {
+  margin: 0;
   aspect-ratio: 4 / 3;
+  overflow: hidden;
   background: var(--bg-muted);
-  border: 1px solid var(--border);
   --chamfer-cut: clamp(1.25rem, 2.5vw, 2.25rem);
   border-radius: var(--radius-sm);
   clip-path: var(--chamfer);
+}
+
+.svc-approach__media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
 }
 
 .svc-approach__text {

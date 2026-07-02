@@ -1,6 +1,7 @@
 import Section from "@/components/ui/Section";
 import RevealText from "@/animations/RevealText";
 import Button from "@/components/ui/Button";
+import ServicesTags from "./ServicesTags";
 import "./servicesCta.css";
 
 /**
@@ -37,6 +38,8 @@ export default function ServicesCta() {
           </div>
         </RevealText>
       </div>
+
+      <ServicesTags />
     </Section>
   );
 }

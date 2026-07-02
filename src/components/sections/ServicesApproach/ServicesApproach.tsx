@@ -9,16 +9,19 @@ const POINTS = [
     n: "01",
     title: "Compliance you can count on",
     copy: "Every cargo moves to international standards — sanctions screening, AML/KYC, IMO marine rules and ISO-certified facilities — with independent inspection and clean documentation at every step.",
+    img: "/Services/approach-1.webp",
   },
   {
     n: "02",
     title: "Flexible by design",
     copy: "Spot, term or just-in-time; DDP or DAP; prepayment through to structured finance — we shape contracts, delivery and funding around your commercial goals and capital cycles.",
+    img: "/Services/approach-2.webp",
   },
   {
     n: "03",
     title: "Transparent execution",
     copy: "From negotiation to settlement you get dependable execution and real-time visibility — chain-of-custody tracking, proactive updates, and one point of contact accountable for the outcome.",
+    img: "/Services/approach-3.webp",
   },
 ];
 
@@ -47,8 +50,10 @@ export default function ServicesApproach() {
       <div className="svc-approach__rows">
         {POINTS.map((p) => (
           <div className="svc-approach__row" key={p.n}>
-            {/* TODO: replace with real imagery */}
-            <div className="svc-approach__media" aria-hidden="true" />
+            <figure className="svc-approach__media">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={p.img} alt={p.title} loading="lazy" />
+            </figure>
             <div className="svc-approach__text">
               <span className="svc-approach__num">{p.n}</span>
               <h3 className="svc-approach__name">{p.title}</h3>
