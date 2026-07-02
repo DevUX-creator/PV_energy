@@ -12,7 +12,7 @@ export default function ServicesHero() {
       <h1 className="services-hero__title">
         Services
         <br />
-        <span className="services-hero__title-grey">everywhere</span>
+        <span className="services-hero__title-grey">borderless</span>
       </h1>
 
       <Container width="wide" className="services-hero__inner">
