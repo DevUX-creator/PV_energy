@@ -163,9 +163,9 @@ export default function Globe({ className = "" }: { className?: string }) {
             vec3 L1 = normalize(vec3(-0.20, 0.22, 1.0)); // main — broad, low density, static
             vec3 L2 = normalize(vec3(0.34 + 0.30 * sin(uTime * 0.13 + 2.0), -0.22 + 0.24 * sin(uTime * 0.17), 0.95)); // medium, denser
             vec3 L3 = normalize(vec3(-0.14 + 0.28 * sin(uTime * 0.10 + 3.0), 0.34 + 0.20 * sin(uTime * 0.14 + 1.5), 0.9)); // small, low
-            col += ellipseSpot(N, L1, 0.95, 0.78) * 0.1;
-            col += ellipseSpot(N, L2, 0.42 + 0.06 * sin(uTime * 0.15), 0.34) * 0.15;
-            col += ellipseSpot(N, L3, 0.26, 0.20 + 0.05 * sin(uTime * 0.19)) * 0.09;
+            col += ellipseSpot(N, L1, 1.25, 1.0) * 0.08;
+            col += ellipseSpot(N, L2, 0.62 + 0.08 * sin(uTime * 0.15), 0.5) * 0.11;
+            col += ellipseSpot(N, L3, 0.4, 0.3 + 0.06 * sin(uTime * 0.19)) * 0.07;
 
             float facing = clamp(dot(N, normalize(vV)), 0.0, 1.0);
             // Wider soft glowing ring near the visible edge (lower exponent).
@@ -351,8 +351,8 @@ export default function Globe({ className = "" }: { className?: string }) {
       let dragging = false;
       let lastX = 0;
       let lastY = 0;
-      let rotY = 0;
-      let rotX = 0.08;
+      let rotY = -1.9; // start with Europe / Africa facing the viewer
+      let rotX = 0.14;
 
       const onPointerMove = (e: PointerEvent) => {
         const rect = renderer.domElement.getBoundingClientRect();
