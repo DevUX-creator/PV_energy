@@ -26,9 +26,9 @@ const TRAIL_DECAY = 0.94; // per-frame strength falloff → longer, flowing trai
 const DOT_MAIN: [number, number, number] = [0.5, 0.7, 1.0]; // bright blue
 const DOT_ACCENT: [number, number, number] = [0.28, 0.52, 0.95]; // deeper blue
 
-// Sphere body colours (soft matte): near-white oceans, mild blue land shades.
-const OCEAN = 0xeef2f7;
-const LAND = 0xbcc9e6;
+// Sphere body colours (soft matte): near-white oceans, very faint blue land.
+const OCEAN = 0xf0f2f6;
+const LAND = 0xd2daea;
 
 /**
  * Globe — a matte sphere (light-grey oceans, bluish continents, lit softly from
@@ -92,11 +92,11 @@ export default function Globe({ className = "" }: { className?: string }) {
       bcvs.height = MH;
       const bctx = bcvs.getContext("2d")!;
       const small = document.createElement("canvas");
-      small.width = 48;
-      small.height = 24;
+      small.width = 30;
+      small.height = 15;
       const sctx = small.getContext("2d")!;
       sctx.imageSmoothingEnabled = true;
-      sctx.drawImage(cvs, 0, 0, 48, 24);
+      sctx.drawImage(cvs, 0, 0, 30, 15);
       bctx.imageSmoothingEnabled = true;
       bctx.drawImage(small, 0, 0, MW, MH);
 
@@ -138,19 +138,20 @@ export default function Globe({ className = "" }: { className?: string }) {
           void main() {
             vec3 N = normalize(vN);
             float land = texture2D(uMap, vUv).r;
-            vec3 base = mix(uOcean, uLand, land * 0.62); // mild bluish continents
+            vec3 base = mix(uOcean, uLand, land * 0.4); // very faint blurred shades
 
-            // Soft matte light that slowly moves across the planet.
+            // Warm ~4000K light that slowly moves across the planet → matte gradient.
+            vec3 warm = vec3(1.0, 0.93, 0.83);
             vec3 L = normalize(vec3(sin(uTime * 0.13) * 0.9, 0.4, cos(uTime * 0.13) * 0.9 + 0.35));
-            float wrap = clamp(0.6 + 0.45 * dot(N, L), 0.0, 1.25); // soft wrap diffuse
-            vec3 col = base * wrap;
+            float wrap = clamp(0.58 + 0.5 * dot(N, L), 0.0, 1.3);
+            vec3 col = base * wrap * mix(vec3(1.0), warm, 0.55);
 
-            // Moving soft bloom — the light that falls on the planet.
-            col += pow(max(dot(N, L), 0.0), 3.5) * 0.4;
+            // Moving warm bloom — the light that falls on the planet.
+            col += pow(max(dot(N, L), 0.0), 3.0) * warm * 0.4;
 
-            // Slight rim glow at the edges.
+            // Slight cool rim at the very edge.
             float facing = clamp(dot(N, normalize(vV)), 0.0, 1.0);
-            col += pow(1.0 - facing, 2.5) * vec3(0.82, 0.88, 1.0) * 0.5;
+            col += pow(1.0 - facing, 3.0) * vec3(0.86, 0.9, 1.0) * 0.35;
 
             gl_FragColor = vec4(col, 1.0);
           }
@@ -158,6 +159,37 @@ export default function Globe({ className = "" }: { className?: string }) {
       });
       const sphere = new THREE.Mesh(sphereGeo, sphereMat);
       group.add(sphere);
+
+      // Slight outer glow — a soft halo just outside the silhouette.
+      const glowGeo = new THREE.SphereGeometry(R * 1.13, 48, 48);
+      const glowMat = new THREE.ShaderMaterial({
+        transparent: true,
+        depthWrite: false,
+        side: THREE.BackSide,
+        uniforms: { uColor: { value: new THREE.Color(0xc4d4ee) }, uIntensity: { value: 0.5 } },
+        vertexShader: `
+          varying vec3 vN;
+          varying vec3 vV;
+          void main() {
+            vec4 wp = modelMatrix * vec4(position, 1.0);
+            vN = normalize(mat3(modelMatrix) * normal);
+            vV = normalize(cameraPosition - wp.xyz);
+            gl_Position = projectionMatrix * viewMatrix * wp;
+          }
+        `,
+        fragmentShader: `
+          uniform vec3 uColor;
+          uniform float uIntensity;
+          varying vec3 vN;
+          varying vec3 vV;
+          void main() {
+            float fres = pow(1.0 - max(dot(normalize(vN), normalize(vV)), 0.0), 3.0);
+            gl_FragColor = vec4(uColor, fres * uIntensity);
+          }
+        `,
+      });
+      const glow = new THREE.Mesh(glowGeo, glowMat);
+      group.add(glow);
 
       // ---- Dot blanket ----------------------------------------------------
       // Positions use three's own sphere formula so the dots line up with the
@@ -205,6 +237,7 @@ export default function Globe({ className = "" }: { className?: string }) {
         depthWrite: false,
         uniforms: {
           uTrail: { value: trail },
+          uCursorNow: { value: new THREE.Vector4(999, 999, 999, 0) },
           uTime: { value: 0 },
           uInfluence: { value: HOVER_RADIUS },
           uLift: { value: HOVER_LIFT },
@@ -216,6 +249,7 @@ export default function Globe({ className = "" }: { className?: string }) {
         vertexShader: `
           attribute vec3 color;
           uniform vec4 uTrail[${TRAIL_N}];
+          uniform vec4 uCursorNow;
           uniform float uTime;
           uniform float uInfluence;
           uniform float uLift;
@@ -240,7 +274,11 @@ export default function Globe({ className = "" }: { className?: string }) {
             float w = sin(uTime * 0.9 + p.x * 6.0 + p.y * 3.0) * 0.5
                     + sin(uTime * 1.4 + p.z * 7.0 - p.y * 4.0) * 0.5;
             p += nrm * (w * (0.008 + f * 0.022));
-            p += nrm * (uLift * f);
+            // Ripple flowing outward from the cursor — like air moving through
+            // the blanket after you drop it.
+            float dcn = distance(p, uCursorNow.xyz);
+            float ripple = sin(dcn * 14.0 - uTime * 6.5) * exp(-dcn * 3.2) * uCursorNow.w;
+            p += nrm * (uLift * f + ripple * 0.07);
             vColor = mix(color, uHighlight, f);
             vec4 mv = modelViewMatrix * vec4(p, 1.0);
             // Feather the silhouette: dots facing away fade out (soft rim, no
@@ -356,9 +394,15 @@ export default function Globe({ className = "" }: { className?: string }) {
 
         // Age the trail, then stamp the current cursor into the ring buffer.
         for (let i = 0; i < TRAIL_N; i++) trail[i].w *= TRAIL_DECAY;
+        const now = pointsMat.uniforms.uCursorNow.value as InstanceType<
+          typeof THREE.Vector4
+        >;
         if (hit) {
           trail[writeIdx].set(cursorLocal.x, cursorLocal.y, cursorLocal.z, 1);
           writeIdx = (writeIdx + 1) % TRAIL_N;
+          now.set(cursorLocal.x, cursorLocal.y, cursorLocal.z, 1);
+        } else {
+          now.w *= 0.9; // let the ripple settle out
         }
 
         renderer.render(scene, camera);
@@ -380,6 +424,8 @@ export default function Globe({ className = "" }: { className?: string }) {
         mapTex.dispose();
         sphereGeo.dispose();
         sphereMat.dispose();
+        glowGeo.dispose();
+        glowMat.dispose();
         pick.geometry.dispose();
         const pm = pick.material;
         (Array.isArray(pm) ? pm : [pm]).forEach((m) => m.dispose());
