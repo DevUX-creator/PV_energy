@@ -7,32 +7,32 @@ const SERVICES = [
   {
     id: "trading",
     name: "Trading",
-    copy: "We buy, sell and move energy and agricultural commodities across global markets — turning supply and demand into reliable, well-priced flows.",
+    copy: "Physical trading of crude, LPG, refined fuels and agricultural products across global markets — reliable execution and total transparency from negotiation to settlement.",
   },
   {
     id: "supply-distribution",
     name: "Supply & Distribution",
-    copy: "From source to destination, we keep product moving — coordinating volumes, terminals and transport so deliveries arrive on-spec and on time.",
+    copy: "From source to site — sourcing from trusted suppliers and delivering by road, rail, sea and pipeline, with optimized routes and full chain-of-custody transparency.",
   },
   {
     id: "storage-blending",
     name: "Storage & Blending",
-    copy: "Strategic storage and precision blending let us hold, condition and tailor products to the exact grades our partners need.",
+    copy: "Bulk storage with top-tier terminal partners, plus custom blending and additive management to tailor specifications, secure availability and meet every regulatory standard.",
   },
   {
     id: "shipping-chartering",
     name: "Shipping & Chartering",
-    copy: "We charter and manage vessels across key routes, handling logistics end-to-end so cargo moves safely and efficiently by sea.",
+    copy: "Chartering tankers and dry-bulk vessels in sync with our trading desk — competitive freight, route flexibility and IMO-compliant, end-to-end marine execution.",
   },
   {
     id: "hedging-risk",
     name: "Hedging & Risk Management",
-    copy: "We manage price and market exposure with disciplined hedging, protecting every trade against volatility.",
+    copy: "Structured hedging — futures, options, swaps and structured products — with a comprehensive approach to price, credit, operational and regulatory risk.",
   },
   {
     id: "financial-solutions",
     name: "Financial Solutions",
-    copy: "Trade finance and structured solutions that keep deals liquid, bankable and moving — backed by strong financial expertise.",
+    copy: "Tailored trade finance and structured, commodity-backed funding — from working capital to project finance — that keeps deals liquid, bankable and ready to scale.",
   },
 ];
 
