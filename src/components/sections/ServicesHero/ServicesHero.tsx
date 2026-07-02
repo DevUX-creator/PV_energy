@@ -10,9 +10,9 @@ export default function ServicesHero() {
   return (
     <section className="services-hero" aria-label="Services">
       <h1 className="services-hero__title">
-        Services that
+        Services
         <br />
-        span the globe
+        <span className="services-hero__title-grey">worldwide</span>
       </h1>
 
       <Container width="wide" className="services-hero__inner">
