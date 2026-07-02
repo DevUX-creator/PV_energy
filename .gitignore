@@ -39,3 +39,6 @@ yarn-error.log*
 
 # reference / working archives
 *.zip
+
+# local reference/preview screenshots
+/img*.png

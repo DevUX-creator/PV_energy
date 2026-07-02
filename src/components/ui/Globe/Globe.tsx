@@ -8,11 +8,11 @@ const MAP_SRC = "/GlobalReach/world-dots.png";
 
 // ---- Tunables (dial these with the design) --------------------------------
 const R = 1; // base sphere radius
-const GAP = 0.06; // "air" between the sphere and the dot blanket
+const GAP = 0.03; // "air" between the sphere and the dot blanket
 const RADIUS_JITTER = 0.012; // per-dot radial variation
 const DENSITY = 3; // particles per land pixel
 const AUTO_SPIN = 0.0006; // idle rotation speed (rad/frame) — super slow
-const DOT_SIZE = 0.02; // base world size of a dot
+const DOT_SIZE = 0.014; // base world size of a dot — small "lights"
 
 // Hover: lift + highlight + grow, with a fading trail behind the cursor.
 const HOVER_RADIUS = 0.34; // influence radius per trail sample
@@ -22,13 +22,13 @@ const HOVER_HIGHLIGHT: [number, number, number] = [0.25, 0.85, 1.0]; // bright c
 const TRAIL_N = 32; // trail length (recent cursor samples)
 const TRAIL_DECAY = 0.92; // per-frame strength falloff → the trail fades
 
-// Dot base colours — blended per region so patches read more/less blue.
-const DOT_MAIN: [number, number, number] = [0.42, 0.6, 0.9]; // medium blue
-const DOT_ACCENT: [number, number, number] = [0.18, 0.4, 0.85]; // deeper blue
+// Dot base colours — small bright "lights", blended per region.
+const DOT_MAIN: [number, number, number] = [0.5, 0.7, 1.0]; // bright blue
+const DOT_ACCENT: [number, number, number] = [0.28, 0.52, 0.95]; // deeper blue
 
-// Sphere body colours (matte, lit from inside): light-grey oceans, blue land.
-const OCEAN = 0xe9edf3;
-const LAND = 0x9bb2dc;
+// Sphere body colours (soft matte): near-white oceans, faint blue land shades.
+const OCEAN = 0xeef2f7;
+const LAND = 0xc6d3ec;
 
 /**
  * Globe — a matte sphere (light-grey oceans, bluish continents, lit softly from
@@ -85,7 +85,22 @@ export default function Globe({ className = "" }: { className?: string }) {
       cx.drawImage(img, 0, 0, MW, MH);
       const data = cx.getImageData(0, 0, MW, MH).data;
 
-      const mapTex = new THREE.CanvasTexture(cvs);
+      // Blurred copy of the mask for the sphere tint → continents read as soft
+      // shades, not defined shapes (down-sample then up-sample smoothed).
+      const bcvs = document.createElement("canvas");
+      bcvs.width = MW;
+      bcvs.height = MH;
+      const bctx = bcvs.getContext("2d")!;
+      const small = document.createElement("canvas");
+      small.width = 48;
+      small.height = 24;
+      const sctx = small.getContext("2d")!;
+      sctx.imageSmoothingEnabled = true;
+      sctx.drawImage(cvs, 0, 0, 48, 24);
+      bctx.imageSmoothingEnabled = true;
+      bctx.drawImage(small, 0, 0, MW, MH);
+
+      const mapTex = new THREE.CanvasTexture(bcvs);
       mapTex.minFilter = THREE.LinearFilter;
       mapTex.magFilter = THREE.LinearFilter;
       mapTex.wrapS = THREE.RepeatWrapping;
@@ -120,10 +135,10 @@ export default function Globe({ className = "" }: { className?: string }) {
           varying vec2 vUv;
           void main() {
             float land = texture2D(uMap, vUv).r;
-            vec3 base = mix(uOcean, uLand, smoothstep(0.35, 0.65, land));
+            vec3 base = mix(uOcean, uLand, land * 0.8); // soft blurred shades
             float facing = clamp(dot(normalize(vN), normalize(vV)), 0.0, 1.0);
-            float glow = pow(facing, 1.4); // brighter toward the centre
-            gl_FragColor = vec4(base * (0.72 + 0.34 * glow), 1.0);
+            float glow = pow(facing, 1.3); // gentle centre light — mostly matte
+            gl_FragColor = vec4(base * (0.87 + 0.15 * glow), 1.0);
           }
         `,
       });
@@ -167,19 +182,6 @@ export default function Globe({ className = "" }: { className?: string }) {
       geo.setAttribute("position", new THREE.BufferAttribute(new Float32Array(homes), 3));
       geo.setAttribute("color", new THREE.BufferAttribute(new Float32Array(cols), 3));
 
-      // Soft round sprite.
-      const ts = 64;
-      const tc = document.createElement("canvas");
-      tc.width = tc.height = ts;
-      const tcx = tc.getContext("2d")!;
-      const grad = tcx.createRadialGradient(ts / 2, ts / 2, 0, ts / 2, ts / 2, ts / 2);
-      grad.addColorStop(0, "rgba(255,255,255,1)");
-      grad.addColorStop(0.5, "rgba(255,255,255,0.85)");
-      grad.addColorStop(1, "rgba(255,255,255,0)");
-      tcx.fillStyle = grad;
-      tcx.fillRect(0, 0, ts, ts);
-      const disc = new THREE.CanvasTexture(tc);
-
       // Trail: a ring buffer of recent cursor samples (xyz + strength).
       const trail = Array.from({ length: TRAIL_N }, () => new THREE.Vector4(999, 999, 999, 0));
       let writeIdx = 0;
@@ -188,8 +190,8 @@ export default function Globe({ className = "" }: { className?: string }) {
         transparent: true,
         depthWrite: false,
         uniforms: {
-          uTex: { value: disc },
           uTrail: { value: trail },
+          uTime: { value: 0 },
           uInfluence: { value: HOVER_RADIUS },
           uLift: { value: HOVER_LIFT },
           uSizeBoost: { value: HOVER_SIZE_BOOST },
@@ -200,6 +202,7 @@ export default function Globe({ className = "" }: { className?: string }) {
         vertexShader: `
           attribute vec3 color;
           uniform vec4 uTrail[${TRAIL_N}];
+          uniform float uTime;
           uniform float uInfluence;
           uniform float uLift;
           uniform float uSizeBoost;
@@ -207,8 +210,13 @@ export default function Globe({ className = "" }: { className?: string }) {
           uniform float uSize;
           uniform float uSizeScale;
           varying vec3 vColor;
+          varying float vFacing;
           void main() {
             vec3 p = position;
+            vec3 nrm = normalize(p);
+            // Idle fluid drift — the blanket gently breathes.
+            p += nrm * (sin(uTime * 1.3 + p.x * 7.0 + p.y * 5.0 + p.z * 6.0) * 0.006);
+            // Hover trail: strongest at the newest sample, fading behind it.
             float f = 0.0;
             for (int i = 0; i < ${TRAIL_N}; i++) {
               vec4 tr = uTrail[i];
@@ -216,21 +224,29 @@ export default function Globe({ className = "" }: { className?: string }) {
               f = max(f, infl * tr.w);
             }
             f = clamp(f, 0.0, 1.0);
-            p += normalize(p) * (uLift * f);
+            p += nrm * (uLift * f);
             vColor = mix(color, uHighlight, f);
             vec4 mv = modelViewMatrix * vec4(p, 1.0);
+            // Feather the silhouette: dots facing away fade out (soft rim, no
+            // hard ring of dots floating off the edge).
+            vec3 viewNrm = normalize((modelViewMatrix * vec4(nrm, 0.0)).xyz);
+            vFacing = dot(viewNrm, normalize(-mv.xyz));
             float size = uSize * (1.0 + uSizeBoost * f);
             gl_PointSize = size * uSizeScale / -mv.z;
             gl_Position = projectionMatrix * mv;
           }
         `,
         fragmentShader: `
-          uniform sampler2D uTex;
           varying vec3 vColor;
+          varying float vFacing;
           void main() {
-            vec4 t = texture2D(uTex, gl_PointCoord);
-            if (t.a < 0.05) discard;
-            gl_FragColor = vec4(vColor, t.a);
+            // Procedural round light: white-hot core → coloured glow → soft edge.
+            float d = distance(gl_PointCoord, vec2(0.5));
+            float core = smoothstep(0.5, 0.0, d);
+            float alpha = core * smoothstep(-0.05, 0.45, vFacing);
+            if (alpha < 0.02) discard;
+            vec3 col = mix(vColor, vec3(1.0), pow(core, 3.0) * 0.65);
+            gl_FragColor = vec4(col, alpha);
           }
         `,
       });
@@ -305,6 +321,7 @@ export default function Globe({ className = "" }: { className?: string }) {
         raf = requestAnimationFrame(loop);
         if (!visible) return;
 
+        pointsMat.uniforms.uTime.value += 0.016;
         if (!dragging) rotY += AUTO_SPIN;
         group.rotation.y = rotY;
         group.rotation.x += (rotX - group.rotation.x) * 0.1;
@@ -343,7 +360,6 @@ export default function Globe({ className = "" }: { className?: string }) {
         window.removeEventListener("pointerup", onPointerUp);
         geo.dispose();
         pointsMat.dispose();
-        disc.dispose();
         mapTex.dispose();
         sphereGeo.dispose();
         sphereMat.dispose();
