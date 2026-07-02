@@ -1,5 +1,6 @@
 import Container from "@/components/ui/Container";
 import Globe from "@/components/ui/Globe";
+import HeroCursor from "./HeroCursor";
 import "./servicesHero.css";
 
 /**
@@ -25,6 +26,8 @@ export default function ServicesHero() {
         From sourcing to final delivery, we provide best-in-class energy &amp;
         commodities services across every major market — worldwide.
       </p>
+
+      <HeroCursor />
     </section>
   );
 }

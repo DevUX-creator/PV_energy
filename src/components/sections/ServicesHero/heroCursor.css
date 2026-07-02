@@ -1,0 +1,48 @@
+.hero-cursor {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  pointer-events: none; /* interactions pass through to the globe */
+  opacity: 0;
+  transition: opacity 0.35s ease;
+}
+
+/* Full-span crosshair lines that follow the pointer. */
+.hero-cursor__h {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 1px;
+  background: rgba(0, 0, 0, 0.13);
+  will-change: transform;
+}
+
+.hero-cursor__v {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 1px;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.13);
+  will-change: transform;
+}
+
+/* Outline square at the intersection — a touch bigger than the map chips. */
+.hero-cursor__box {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 38px;
+  height: 38px;
+  border: 1.5px solid rgba(0, 0, 0, 0.55);
+  border-radius: 6px;
+  will-change: transform;
+}
+
+/* Hide the native cursor once the custom one is active. */
+.has-hero-cursor,
+.has-hero-cursor .globe3d canvas,
+.has-hero-cursor .globe-marker {
+  cursor: none;
+}
