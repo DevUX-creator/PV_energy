@@ -2,22 +2,23 @@ import Section from "@/components/ui/Section";
 import RevealSection from "@/animations/RevealSection";
 import "./servicesApproach.css";
 
-// Differentiators (from docs/content — the About page's "how we work" themes).
+// Service-delivery principles — distinct from the home / About "how we work"
+// themes to avoid duplicate copy.
 const POINTS = [
   {
     n: "01",
-    title: "End-to-end integration",
-    copy: "One partner from sourcing to delivery — we fold trading, logistics, storage, financing and risk into a single accountable solution, so you deal with one team, not a chain of hand-offs.",
+    title: "Compliance you can count on",
+    copy: "Every cargo moves to international standards — sanctions screening, AML/KYC, IMO marine rules and ISO-certified facilities — with independent inspection and clean documentation at every step.",
   },
   {
     n: "02",
-    title: "Data-backed decisions",
-    copy: "We pair deep market expertise with real-time analytics, price forecasting and risk assessment to optimise every trade — and keep you informed with proactive updates and shipment tracking.",
+    title: "Flexible by design",
+    copy: "Spot, term or just-in-time; DDP or DAP; prepayment through to structured finance — we shape contracts, delivery and funding around your commercial goals and capital cycles.",
   },
   {
     n: "03",
-    title: "Global reach, local execution",
-    copy: "Active across five strategic hubs — the Middle East, Asia-Pacific, Europe (ARA), West Africa and the Americas — we combine worldwide market access with local expertise, compliance and on-the-ground relationships.",
+    title: "Transparent execution",
+    copy: "From negotiation to settlement you get dependable execution and real-time visibility — chain-of-custody tracking, proactive updates, and one point of contact accountable for the outcome.",
   },
 ];
 
@@ -35,10 +36,11 @@ export default function ServicesApproach() {
     >
       <RevealSection>
         <span className="section-tag">How we work</span>
-        <h2 className="svc-approach__title">Built around your operations</h2>
+        <h2 className="svc-approach__title">How we deliver</h2>
         <p className="svc-approach__lead">
-          A lean, relationship-led operator — fast, transparent, and genuinely
-          accountable for every cargo we move.
+          Six services, one operating standard — coordinated execution, strict
+          compliance, and commercial structures shaped around how your business
+          actually runs.
         </p>
       </RevealSection>
 
