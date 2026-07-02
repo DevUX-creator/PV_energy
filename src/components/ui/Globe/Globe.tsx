@@ -18,7 +18,7 @@ const DOT_SIZE = 0.022; // base world size of a dot — small "lights"
 const HOVER_RADIUS = 0.34;
 const HOVER_LIFT = 0.12;
 const HOVER_SIZE_BOOST = 1.4;
-const HOVER_HIGHLIGHT: [number, number, number] = [0.03, 0.34, 0.84]; // brand blue (#0857d6)
+const HOVER_HIGHLIGHT: [number, number, number] = [0.05, 0.32, 1.5]; // punchy brand blue (blue-dominant for additive)
 const TRAIL_N = 32;
 const TRAIL_DECAY = 0.965; // higher = the hover trail lingers longer (slower)
 
@@ -259,6 +259,7 @@ export default function Globe({ className = "" }: { className?: string }) {
           uniform float uSizeScale;
           varying vec3 vColor;
           varying float vFacing;
+          varying float vGlow;
           void main() {
             vec3 p = position;
             vec3 nrm = normalize(p);
@@ -278,6 +279,7 @@ export default function Globe({ className = "" }: { className?: string }) {
             float ripple = sin(dcn * 12.0 - uTime * 2.8) * exp(-dcn * 3.2) * uCursorNow.w;
             p += nrm * (uLift * f + ripple * 0.07);
             vColor = mix(color, uHighlight, f);
+            vGlow = f;
             vec4 mv = modelViewMatrix * vec4(p, 1.0);
             // Feather the silhouette so dots fade at the rim (no hard ring).
             vec3 viewNrm = normalize((modelViewMatrix * vec4(nrm, 0.0)).xyz);
@@ -290,12 +292,14 @@ export default function Globe({ className = "" }: { className?: string }) {
         fragmentShader: `
           varying vec3 vColor;
           varying float vFacing;
+          varying float vGlow;
           void main() {
             // Small glowing light: tight bright core + soft halo (additive).
             float d = distance(gl_PointCoord, vec2(0.5));
             float halo = smoothstep(0.5, 0.0, d);
             float core = smoothstep(0.24, 0.0, d);
-            float a = (halo * 0.5 + core * 0.55) * smoothstep(-0.05, 0.45, vFacing);
+            // Hovered dots add more so the brand blue reads near the cursor.
+            float a = (halo * 0.5 + core * 0.55) * (1.0 + vGlow * 1.8) * smoothstep(-0.05, 0.45, vFacing);
             if (a < 0.01) discard;
             gl_FragColor = vec4(vColor, a);
           }
