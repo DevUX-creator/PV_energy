@@ -11,7 +11,7 @@ const R = 1; // base sphere radius
 const GAP = 0.03; // "air" between the glass and the dot blanket
 const RADIUS_JITTER = 0.012; // per-dot radial variation
 const DENSITY = 3; // particles per land pixel
-const AUTO_SPIN = 0.0003; // idle rotation speed (rad/frame) — very slow
+const AUTO_SPIN = -0.0003; // idle rotation speed (rad/frame) — very slow
 const DOT_SIZE = 0.022; // base world size of a dot — small "lights"
 
 // Hover: lift + highlight + grow, with a fading trail behind the cursor.
@@ -324,6 +324,7 @@ export default function Globe({ className = "" }: { className?: string }) {
       // The exact "Our Offices" mark from the header (top-right control).
       const SHURIKEN =
         '<svg viewBox="0 0 16 16" width="16" height="16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8 0v4c0 2.4 1.76 4 4 4h4M0 8h6m2 8v-6" stroke="currentColor" stroke-width="1.5"/></svg>';
+      let markerHover = false; // hovering a chip pauses the rotation
       const markers = OFFICES.map(([lat, lng]) => {
         const u = (lng + 180) / 360;
         const v = (90 - lat) / 180;
@@ -338,6 +339,8 @@ export default function Globe({ className = "" }: { className?: string }) {
         const el = document.createElement("div");
         el.className = "globe-marker";
         el.innerHTML = SHURIKEN;
+        el.addEventListener("mouseenter", () => (markerHover = true));
+        el.addEventListener("mouseleave", () => (markerHover = false));
         mount.appendChild(el);
         return { home, el };
       });
@@ -407,7 +410,7 @@ export default function Globe({ className = "" }: { className?: string }) {
 
         pointsMat.uniforms.uTime.value += 0.016;
         sphereMat.uniforms.uTime.value += 0.016;
-        if (!dragging) rotY += AUTO_SPIN;
+        if (!dragging && !markerHover) rotY += AUTO_SPIN;
         group.rotation.y = rotY;
         group.rotation.x += (rotX - group.rotation.x) * 0.1;
 

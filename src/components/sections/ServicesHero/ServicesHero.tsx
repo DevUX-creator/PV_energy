@@ -3,25 +3,28 @@ import Globe from "@/components/ui/Globe";
 import "./servicesHero.css";
 
 /**
- * ServicesHero — WIP. Prototyping a dotted particle globe (à la the reference)
- * on a warm off-white band. The intro copy is temporarily hidden while the
- * globe is dialled in.
+ * ServicesHero — the interactive dotted frosted-glass globe as the centrepiece,
+ * with the section title top-left and a supporting line bottom-right.
  */
 export default function ServicesHero() {
   return (
     <section className="services-hero" aria-label="Services">
+      <h1 className="services-hero__title">
+        Services that
+        <br />
+        span the globe
+      </h1>
+
       <Container width="wide" className="services-hero__inner">
-        {/* Intro copy temporarily hidden while prototyping the globe.
-        <span className="section-tag services-hero__tag">Services</span>
-        <h1 className="services-hero__title">
-          Across the energy &amp; commodities supply chain
-        </h1>
-        <p className="services-hero__lead">…</p>
-        */}
         <div className="services-hero__globe">
           <Globe />
         </div>
       </Container>
+
+      <p className="services-hero__sub">
+        From sourcing to final delivery, we provide best-in-class energy &amp;
+        commodities services across every major market — worldwide.
+      </p>
     </section>
   );
 }

@@ -1,21 +1,18 @@
-/* Services intro band — WIP. Warm off-white surface (like the reference) with
-   the dotted particle globe centred. Intro copy is hidden for now. */
+/* Services hero — frosted-glass globe centrepiece on a light-grey surface,
+   with the title top-left and a supporting line bottom-right. */
 .services-hero {
   position: relative;
   background: #dcdcdc; /* light grey (matches the Figma frosted-orb frame) */
   min-height: 100svh;
-  display: flex;
-  align-items: center;
   overflow: hidden;
-  /* Clear the fixed header. */
-  padding-top: var(--header-height);
 }
 
 .services-hero__inner {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 100%;
+  min-height: 100svh;
+  padding-top: var(--header-height);
 }
 
 .services-hero__globe {
@@ -24,19 +21,43 @@
   aspect-ratio: 1;
 }
 
-/* Hidden-for-now intro styles kept for when the copy returns. */
+/* Title — top-left, over the globe. */
 .services-hero__title {
-  max-width: 20ch;
+  position: absolute;
+  z-index: 2;
+  top: calc(var(--header-height) + var(--space-8));
+  left: var(--container-padding);
+  max-width: 15ch;
   font-family: var(--font-display);
   font-weight: var(--font-bold);
-  font-size: clamp(2.5rem, 6.5vw, 6rem);
+  font-size: clamp(2.25rem, 5.5vw, 5rem);
   line-height: 1;
   letter-spacing: -0.02em;
   text-transform: uppercase;
+  color: var(--fg-primary);
 }
 
-.services-hero__lead {
-  max-width: 62ch;
-  font-size: var(--text-fluid-lead);
+/* Supporting line — bottom-right. */
+.services-hero__sub {
+  position: absolute;
+  z-index: 2;
+  bottom: var(--space-12);
+  right: var(--container-padding);
+  max-width: 46ch;
+  text-align: right;
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
   line-height: var(--leading-relaxed);
+  color: var(--fg-secondary);
+}
+
+@media (max-width: 768px) {
+  .services-hero__title {
+    font-size: clamp(2rem, 9vw, 3rem);
+  }
+  .services-hero__sub {
+    left: var(--container-padding);
+    max-width: none;
+    text-align: left;
+  }
 }
