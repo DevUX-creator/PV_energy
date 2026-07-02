@@ -1,0 +1,85 @@
+/* Full-bleed cinematic band with a gentle scroll parallax. Sits above the
+   sticky hero in the stack, so keep it opaque. */
+.svc-band {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  height: clamp(420px, 72vh, 800px);
+  overflow: hidden;
+  background: #1c1c1e;
+}
+
+/* Taller than the band so the parallax drift never reveals an edge. */
+.svc-band__img {
+  position: absolute;
+  inset: -8% 0;
+  width: 100%;
+  height: 116%;
+  object-fit: cover;
+  object-position: center 55%;
+  display: block;
+  will-change: transform;
+}
+
+/* Contrast wash so the caption stays legible over the photo. */
+.svc-band__overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    90deg,
+    rgba(8, 8, 8, 0.55) 0%,
+    rgba(8, 8, 8, 0.2) 45%,
+    rgba(8, 8, 8, 0) 75%
+  );
+}
+
+/* Caption — centre-left, shuriken + line. */
+.svc-band__caption {
+  position: absolute;
+  z-index: 2;
+  top: 50%;
+  left: var(--container-padding);
+  transform: translateY(-50%);
+  max-width: 32ch;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-5);
+  color: #fff;
+  text-shadow: 0 2px 28px rgba(0, 0, 0, 0.45);
+}
+
+.svc-band__icon {
+  display: inline-flex;
+  width: clamp(1.5rem, 2.4vw, 2.25rem);
+  height: clamp(1.5rem, 2.4vw, 2.25rem);
+  color: #fff;
+  animation: svc-band-spin 9s linear infinite;
+}
+
+.svc-band__icon svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.svc-band__text {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-weight: var(--font-medium);
+  font-size: var(--text-lg);
+  line-height: var(--leading-normal);
+}
+
+@keyframes svc-band-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .svc-band__icon {
+    animation: none;
+  }
+}

@@ -4,6 +4,8 @@
   position: relative;
   z-index: 1;
   background: var(--bg-base);
+  /* Same tight top rhythm as the home overlap sections (About / products). */
+  padding-top: var(--container-padding);
 }
 
 .svc-overview__title {
