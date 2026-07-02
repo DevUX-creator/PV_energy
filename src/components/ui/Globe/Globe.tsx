@@ -18,7 +18,7 @@ const DOT_SIZE = 0.022; // base world size of a dot — small "lights"
 const HOVER_RADIUS = 0.34;
 const HOVER_LIFT = 0.12;
 const HOVER_SIZE_BOOST = 1.4;
-const HOVER_HIGHLIGHT: [number, number, number] = [0.05, 0.32, 1.5]; // punchy brand blue (blue-dominant for additive)
+const HOVER_HIGHLIGHT: [number, number, number] = [0.03, 0.34, 0.84]; // brand blue (#0857d6)
 const TRAIL_N = 32;
 const TRAIL_DECAY = 0.965; // higher = the hover trail lingers longer (slower)
 
@@ -107,6 +107,20 @@ export default function Globe({ className = "" }: { className?: string }) {
       mapTex.wrapS = THREE.RepeatWrapping;
       mapTex.wrapT = THREE.ClampToEdgeWrapping;
 
+      // Organic "gobo" blob shapes for the light spots (from Figma).
+      const texLoader = new THREE.TextureLoader();
+      const [ltA, ltB] = await Promise.all([
+        texLoader.loadAsync("/GlobalReach/light-1.png"),
+        texLoader.loadAsync("/GlobalReach/light-2.png"),
+      ]);
+      if (disposed) return;
+      [ltA, ltB].forEach((t) => {
+        t.minFilter = THREE.LinearFilter;
+        t.magFilter = THREE.LinearFilter;
+        t.wrapS = THREE.ClampToEdgeWrapping;
+        t.wrapT = THREE.ClampToEdgeWrapping;
+      });
+
       // ---- Frosted-glass body --------------------------------------------
       const sphereGeo = new THREE.SphereGeometry(R, 96, 96);
       const sphereMat = new THREE.ShaderMaterial({
@@ -115,6 +129,8 @@ export default function Globe({ className = "" }: { className?: string }) {
           uOcean: { value: new THREE.Color(OCEAN) },
           uLand: { value: new THREE.Color(LAND) },
           uRim: { value: new THREE.Color(RIM) },
+          uLightA: { value: ltA },
+          uLightB: { value: ltB },
           uTime: { value: 0 },
         },
         vertexShader: `
@@ -134,23 +150,29 @@ export default function Globe({ className = "" }: { className?: string }) {
           uniform vec3 uOcean;
           uniform vec3 uLand;
           uniform vec3 uRim;
+          uniform sampler2D uLightA;
+          uniform sampler2D uLightB;
           uniform float uTime;
           varying vec3 vN;
           varying vec3 vV;
           varying vec2 vUv;
 
-          // A small soft ELLIPTICAL light spot around direction L; ax/ay are the
-          // two radii — drift them over time and the ellipse morphs slightly.
-          float ellipseSpot(vec3 N, vec3 L, float ax, float ay) {
+          // An organic light spot: project a soft "blob" gobo texture onto the
+          // tangent plane around direction L. sx/sy are the half-extents, rot
+          // rotates the shape. The texture's brightness = the light.
+          float blobSpot(vec3 N, vec3 L, sampler2D tex, float sx, float sy, float rot) {
             float ndl = dot(N, L);
-            if (ndl <= 0.0) return 0.0;
+            if (ndl <= 0.02) return 0.0;
             vec3 up = abs(L.y) < 0.99 ? vec3(0.0, 1.0, 0.0) : vec3(1.0, 0.0, 0.0);
             vec3 T = normalize(cross(up, L));
             vec3 B = cross(L, T);
             float x = dot(N, T);
             float y = dot(N, B);
-            float r2 = (x * x) / (ax * ax) + (y * y) / (ay * ay);
-            return smoothstep(1.0, 0.0, r2) * ndl;
+            float cr = cos(rot), sr = sin(rot);
+            vec2 uv = vec2((x * cr - y * sr) / sx, (x * sr + y * cr) / sy) + 0.5;
+            if (uv.x < 0.0 || uv.x > 1.0 || uv.y < 0.0 || uv.y > 1.0) return 0.0;
+            float m = texture2D(tex, uv).r;
+            return smoothstep(0.28, 0.7, m) * ndl;
           }
 
           void main() {
@@ -158,15 +180,14 @@ export default function Globe({ className = "" }: { className?: string }) {
             float land = texture2D(uMap, vUv).r;
             vec3 col = mix(uOcean, uLand, land * 0.72); // blue diffuse continents
 
-            // All on the FRONT hemisphere (strong +z) so their movement reads on
-            // the face we look at. Three distinct sizes/densities; the main one
-            // is static to anchor the lighting, the other two drift.
+            // Three organic (blob-shaped) light sources on the FRONT hemisphere.
+            // Distinct sizes/densities; the main one is static, two drift.
             vec3 L1 = normalize(vec3(-0.20, 0.22, 1.0)); // main — broad, low density, static
             vec3 L2 = normalize(vec3(0.34 + 0.30 * sin(uTime * 0.13 + 2.0), -0.22 + 0.24 * sin(uTime * 0.17), 0.95)); // medium, denser
             vec3 L3 = normalize(vec3(-0.14 + 0.28 * sin(uTime * 0.10 + 3.0), 0.34 + 0.20 * sin(uTime * 0.14 + 1.5), 0.9)); // small, low
-            col += ellipseSpot(N, L1, 0.95, 0.78) * 0.1;
-            col += ellipseSpot(N, L2, 0.42 + 0.06 * sin(uTime * 0.15), 0.34) * 0.15;
-            col += ellipseSpot(N, L3, 0.26, 0.20 + 0.05 * sin(uTime * 0.19)) * 0.09;
+            col += blobSpot(N, L1, uLightA, 0.95, 0.62, 0.15) * 0.1;
+            col += blobSpot(N, L2, uLightB, 0.5, 0.42, uTime * 0.05) * 0.15;
+            col += blobSpot(N, L3, uLightA, 0.32, 0.22, -uTime * 0.04 + 1.0) * 0.09;
 
             float facing = clamp(dot(N, normalize(vV)), 0.0, 1.0);
             // Wider soft glowing ring near the visible edge (lower exponent).
@@ -233,7 +254,7 @@ export default function Globe({ className = "" }: { className?: string }) {
       const pointsMat = new THREE.ShaderMaterial({
         transparent: true,
         depthWrite: false,
-        blending: THREE.AdditiveBlending, // white dots glow over the glass
+        blending: THREE.NormalBlending, // so the hovered centre can read true blue
         uniforms: {
           uTrail: { value: trail },
           uCursorNow: { value: new THREE.Vector4(999, 999, 999, 0) },
@@ -299,7 +320,8 @@ export default function Globe({ className = "" }: { className?: string }) {
             float halo = smoothstep(0.5, 0.0, d);
             float core = smoothstep(0.24, 0.0, d);
             // Hovered dots add more so the brand blue reads near the cursor.
-            float a = (halo * 0.5 + core * 0.55) * (1.0 + vGlow * 1.8) * smoothstep(-0.05, 0.45, vFacing);
+            float a = (halo * 0.55 + core * 0.75) * (1.0 + vGlow * 0.6) * smoothstep(-0.05, 0.45, vFacing);
+            a = clamp(a, 0.0, 1.0);
             if (a < 0.01) discard;
             gl_FragColor = vec4(vColor, a);
           }
@@ -421,6 +443,8 @@ export default function Globe({ className = "" }: { className?: string }) {
         geo.dispose();
         pointsMat.dispose();
         mapTex.dispose();
+        ltA.dispose();
+        ltB.dispose();
         sphereGeo.dispose();
         sphereMat.dispose();
         pick.geometry.dispose();
