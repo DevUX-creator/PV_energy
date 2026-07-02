@@ -6,6 +6,12 @@
   background: #1c1c1e;
 }
 
+@media (max-width: 768px) {
+  .section.svc-cta {
+    min-height: 68svh;
+  }
+}
+
 .svc-cta__inner {
   position: relative;
   z-index: 2; /* content over the falling chips */
