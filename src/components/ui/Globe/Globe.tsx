@@ -12,19 +12,23 @@ const GAP = 0.06; // "air" between the sphere and the dot blanket
 const RADIUS_JITTER = 0.012; // per-dot radial variation (organic blanket)
 const DENSITY = 3; // particles per land pixel — denser continents, fewer gaps
 const AUTO_SPIN = 0.0006; // idle rotation speed (rad/frame) — super slow
-const INFLUENCE = 0.34; // cursor repulsion radius (local units)
-const PUSH = 0.3; // how far dots shove away from the cursor
-const EASE = 0.12; // spring-back speed toward home
-const DOT_SIZE = 0.015;
-// Dot colours — blended per region so patches read more/less blue.
+const DOT_SIZE = 0.02; // base world size of a dot
+
+// Hover: lift the blanket + highlight + grow the dots under the cursor.
+const HOVER_RADIUS = 0.42; // influence radius (local units)
+const HOVER_LIFT = 0.12; // how far dots rise (outward) under the cursor
+const HOVER_SIZE_BOOST = 1.4; // extra size at the cursor (×(1+boost))
+const HOVER_HIGHLIGHT: [number, number, number] = [0.6, 0.86, 1.0]; // bright cyan-blue
+
+// Dot base colours — blended per region so patches read more/less blue.
 const DOT_MAIN: [number, number, number] = [0.72, 0.8, 0.95]; // light blue-white
 const DOT_ACCENT: [number, number, number] = [0.28, 0.48, 0.9]; // deeper blue
 
 /**
- * Globe — a soft base sphere with a floating "blanket" of particles that form
- * the world map at a slightly larger radius (air gap between). The dots react
- * to the cursor (repel, then spring back). Custom Three.js; the map is a static
- * land mask, so nothing is fetched at runtime beyond the small PNG.
+ * Globe — an opaque matte sphere (lit softly from the inside) with a floating
+ * "blanket" of particles forming the world map at a larger radius (air gap).
+ * Drag to rotate; hovering lifts the dots in the gap, highlights them and grows
+ * them. Displacement/size/colour run in a GPU shader so density stays cheap.
  */
 export default function Globe({ className = "" }: { className?: string }) {
   const mountRef = useRef<HTMLDivElement>(null);
@@ -45,8 +49,9 @@ export default function Globe({ className = "" }: { className?: string }) {
       let height = mount.clientHeight || 1;
 
       const scene = new THREE.Scene();
-      const camera = new THREE.PerspectiveCamera(35, width / height, 0.1, 100);
-      camera.position.set(0, 0, 3.4);
+      // Pulled back with margin so the globe (and lifted dots) never crop.
+      const camera = new THREE.PerspectiveCamera(34, width / height, 0.1, 100);
+      camera.position.set(0, 0, 4.6);
 
       const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
       renderer.setSize(width, height);
@@ -56,59 +61,45 @@ export default function Globe({ className = "" }: { className?: string }) {
       const group = new THREE.Group();
       scene.add(group);
 
-      // Base sphere — matte translucent "glass": a vertical linear-gradient
-      // body with a fresnel rim, semi-transparent (no shiny specular), so it
-      // reads light and airy on the dark-grey surface rather than a solid ball.
+      // ---- Base sphere: opaque matte orb, softly lit from the inside -------
       const sphereGeo = new THREE.SphereGeometry(R, 64, 64);
       const sphereMat = new THREE.ShaderMaterial({
-        transparent: true,
-        depthWrite: false,
         uniforms: {
-          colorTop: { value: new THREE.Color(0xcdd8ec) },
-          colorBottom: { value: new THREE.Color(0x7f9bcf) },
-          rimStrength: { value: 0.45 },
-          baseAlpha: { value: 0.42 },
+          colorCore: { value: new THREE.Color(0xd8e4f5) }, // inner light
+          colorEdge: { value: new THREE.Color(0x35456b) }, // matte falloff
         },
         vertexShader: `
-          varying vec3 vNormalW;
-          varying vec3 vViewDir;
-          varying float vY;
+          varying vec3 vN;
+          varying vec3 vV;
           void main() {
             vec4 wp = modelMatrix * vec4(position, 1.0);
-            vNormalW = normalize(mat3(modelMatrix) * normal);
-            vViewDir = normalize(cameraPosition - wp.xyz);
-            vY = position.y; // -R (bottom) .. R (top)
+            vN = normalize(mat3(modelMatrix) * normal);
+            vV = normalize(cameraPosition - wp.xyz);
             gl_Position = projectionMatrix * viewMatrix * wp;
           }
         `,
         fragmentShader: `
-          uniform vec3 colorTop;
-          uniform vec3 colorBottom;
-          uniform float rimStrength;
-          uniform float baseAlpha;
-          varying vec3 vNormalW;
-          varying vec3 vViewDir;
-          varying float vY;
+          uniform vec3 colorCore;
+          uniform vec3 colorEdge;
+          varying vec3 vN;
+          varying vec3 vV;
           void main() {
-            float g = clamp(vY * 0.5 + 0.5, 0.0, 1.0);
-            vec3 col = mix(colorBottom, colorTop, g);
-            float fres = pow(1.0 - max(dot(normalize(vNormalW), normalize(vViewDir)), 0.0), 2.0);
-            col += fres * rimStrength;
-            float alpha = clamp(baseAlpha + fres * 0.4, 0.0, 1.0);
-            gl_FragColor = vec4(col, alpha);
+            float facing = clamp(dot(normalize(vN), normalize(vV)), 0.0, 1.0);
+            float glow = pow(facing, 1.6); // brighter toward the centre
+            gl_FragColor = vec4(mix(colorEdge, colorCore, glow), 1.0);
           }
         `,
       });
       const sphere = new THREE.Mesh(sphereGeo, sphereMat);
       group.add(sphere);
 
-      // Load + sample the land mask on a canvas.
-      const img = await new Promise<HTMLImageElement>((res, rej) => {
+      // ---- Sample the land mask -------------------------------------------
+      const img = await new Promise<HTMLImageElement | null>((res) => {
         const im = new Image();
         im.onload = () => res(im);
-        im.onerror = rej;
+        im.onerror = () => res(null);
         im.src = MAP_SRC;
-      }).catch(() => null);
+      });
       if (disposed || !img) return;
 
       const MW = 256;
@@ -121,9 +112,7 @@ export default function Globe({ className = "" }: { className?: string }) {
       cx.drawImage(img, 0, 0, MW, MH);
       const data = cx.getImageData(0, 0, MW, MH).data;
 
-      // Build the dot blanket: DENSITY jittered points per land pixel on R+GAP.
-      // Each dot's colour blends between DOT_MAIN and DOT_ACCENT via a smooth,
-      // low-frequency function of position, so the globe has bluer patches.
+      // DENSITY jittered dots per land pixel, with per-region blue variation.
       const homes: number[] = [];
       const cols: number[] = [];
       for (let y = 0; y < MH; y++) {
@@ -141,11 +130,9 @@ export default function Globe({ className = "" }: { className?: string }) {
             const hz = rr * cosLat * Math.sin(lon);
             homes.push(hx, hy, hz);
 
-            // Smooth regional blend (patches), biased toward MAIN, + a little
-            // per-dot jitter so patches aren't flat.
             const n = Math.sin(hx * 2.3 + hy * 1.7) * Math.cos(hz * 2.1 - hy * 1.3);
-            let t = 0.5 + 0.5 * n; // 0..1
-            t = t * t; // bias toward MAIN
+            let t = 0.5 + 0.5 * n;
+            t = t * t;
             t = Math.min(1, Math.max(0, t + (Math.random() - 0.5) * 0.2));
             cols.push(
               DOT_MAIN[0] + (DOT_ACCENT[0] - DOT_MAIN[0]) * t,
@@ -155,37 +142,72 @@ export default function Globe({ className = "" }: { className?: string }) {
           }
         }
       }
-      const N = homes.length / 3;
-      const home = new Float32Array(homes);
-      const pos = Float32Array.from(home); // live positions
 
       const geo = new THREE.BufferGeometry();
-      geo.setAttribute("position", new THREE.BufferAttribute(pos, 3));
+      geo.setAttribute("position", new THREE.BufferAttribute(new Float32Array(homes), 3));
       geo.setAttribute("color", new THREE.BufferAttribute(new Float32Array(cols), 3));
 
-      // Round soft sprite for each dot.
+      // Soft round sprite.
       const ts = 64;
       const tc = document.createElement("canvas");
       tc.width = tc.height = ts;
       const tcx = tc.getContext("2d")!;
       const grad = tcx.createRadialGradient(ts / 2, ts / 2, 0, ts / 2, ts / 2, ts / 2);
       grad.addColorStop(0, "rgba(255,255,255,1)");
-      grad.addColorStop(0.45, "rgba(255,255,255,0.85)");
+      grad.addColorStop(0.5, "rgba(255,255,255,0.85)");
       grad.addColorStop(1, "rgba(255,255,255,0)");
       tcx.fillStyle = grad;
       tcx.fillRect(0, 0, ts, ts);
       const disc = new THREE.CanvasTexture(tc);
 
-      const mat = new THREE.PointsMaterial({
-        size: DOT_SIZE,
-        map: disc,
+      // Points shader — lift/size/colour respond to the cursor on the GPU.
+      const pointsMat = new THREE.ShaderMaterial({
         transparent: true,
         depthWrite: false,
-        sizeAttenuation: true,
-        vertexColors: true, // per-region blue variation
-        opacity: 0.95,
+        uniforms: {
+          uTex: { value: disc },
+          uCursor: { value: new THREE.Vector3(999, 999, 999) },
+          uStrength: { value: 0 },
+          uInfluence: { value: HOVER_RADIUS },
+          uLift: { value: HOVER_LIFT },
+          uSizeBoost: { value: HOVER_SIZE_BOOST },
+          uHighlight: { value: new THREE.Color(...HOVER_HIGHLIGHT) },
+          uSize: { value: DOT_SIZE },
+          uSizeScale: { value: height * Math.min(window.devicePixelRatio, 2) * 0.5 },
+        },
+        vertexShader: `
+          attribute vec3 color;
+          uniform vec3 uCursor;
+          uniform float uStrength;
+          uniform float uInfluence;
+          uniform float uLift;
+          uniform float uSizeBoost;
+          uniform vec3 uHighlight;
+          uniform float uSize;
+          uniform float uSizeScale;
+          varying vec3 vColor;
+          void main() {
+            vec3 p = position;
+            float f = (1.0 - smoothstep(0.0, uInfluence, distance(p, uCursor))) * uStrength;
+            p += normalize(p) * (uLift * f);          // lift outward in the gap
+            vColor = mix(color, uHighlight, f);        // highlight under cursor
+            vec4 mv = modelViewMatrix * vec4(p, 1.0);
+            float size = uSize * (1.0 + uSizeBoost * f); // grow under cursor
+            gl_PointSize = size * uSizeScale / -mv.z;
+            gl_Position = projectionMatrix * mv;
+          }
+        `,
+        fragmentShader: `
+          uniform sampler2D uTex;
+          varying vec3 vColor;
+          void main() {
+            vec4 t = texture2D(uTex, gl_PointCoord);
+            if (t.a < 0.05) discard;
+            gl_FragColor = vec4(vColor, t.a);
+          }
+        `,
       });
-      const points = new THREE.Points(geo, mat);
+      const points = new THREE.Points(geo, pointsMat);
       group.add(points);
 
       // Invisible sphere at the dot radius to raycast the cursor onto.
@@ -195,22 +217,49 @@ export default function Globe({ className = "" }: { className?: string }) {
       );
       group.add(pick);
 
+      // ---- Interaction: drag to rotate, hover to lift ---------------------
       const raycaster = new THREE.Raycaster();
       const ndc = new THREE.Vector2(-10, -10);
-      const cursor = new THREE.Vector3(999, 999, 999);
-      let hasCursor = false;
+      const cursorLocal = new THREE.Vector3(999, 999, 999);
+      let hovering = false;
+      let dragging = false;
+      let lastX = 0;
+      let lastY = 0;
+      let rotY = 0;
+      let rotX = 0;
 
-      const onMove = (e: PointerEvent) => {
+      const setNdc = (e: PointerEvent) => {
         const rect = renderer.domElement.getBoundingClientRect();
         ndc.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
         ndc.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
-        hasCursor = true;
+        hovering = true;
       };
-      const onLeave = () => {
-        hasCursor = false;
+      const onPointerMove = (e: PointerEvent) => {
+        setNdc(e);
+        if (dragging) {
+          rotY += (e.clientX - lastX) * 0.005;
+          rotX = Math.max(-0.6, Math.min(0.6, rotX + (e.clientY - lastY) * 0.005));
+          lastX = e.clientX;
+          lastY = e.clientY;
+        }
       };
-      renderer.domElement.addEventListener("pointermove", onMove);
-      renderer.domElement.addEventListener("pointerleave", onLeave);
+      const onPointerDown = (e: PointerEvent) => {
+        dragging = true;
+        lastX = e.clientX;
+        lastY = e.clientY;
+        renderer.domElement.style.cursor = "grabbing";
+      };
+      const onPointerUp = () => {
+        dragging = false;
+        renderer.domElement.style.cursor = "grab";
+      };
+      const onPointerLeave = () => {
+        hovering = false;
+      };
+      renderer.domElement.addEventListener("pointerdown", onPointerDown);
+      renderer.domElement.addEventListener("pointerleave", onPointerLeave);
+      window.addEventListener("pointermove", onPointerMove);
+      window.addEventListener("pointerup", onPointerUp);
 
       const onResize = () => {
         width = mount.clientWidth || 1;
@@ -218,74 +267,56 @@ export default function Globe({ className = "" }: { className?: string }) {
         camera.aspect = width / height;
         camera.updateProjectionMatrix();
         renderer.setSize(width, height);
+        pointsMat.uniforms.uSizeScale.value =
+          height * Math.min(window.devicePixelRatio, 2) * 0.5;
       };
       window.addEventListener("resize", onResize);
 
       let visible = true;
-      const io = new IntersectionObserver(
-        ([e]) => (visible = e.isIntersecting),
-        { threshold: 0 }
-      );
+      const io = new IntersectionObserver(([e]) => (visible = e.isIntersecting), {
+        threshold: 0,
+      });
       io.observe(mount);
 
-      const INFL2 = INFLUENCE * INFLUENCE;
       let raf = 0;
       const loop = () => {
         raf = requestAnimationFrame(loop);
         if (!visible) return;
 
-        group.rotation.y += AUTO_SPIN;
+        if (!dragging) rotY += AUTO_SPIN;
+        group.rotation.y = rotY;
+        group.rotation.x += (rotX - group.rotation.x) * 0.1;
 
-        if (hasCursor) {
+        // Cursor → local, and ease the hover strength in/out.
+        let target = 0;
+        if (hovering) {
           raycaster.setFromCamera(ndc, camera);
           const hit = raycaster.intersectObject(pick, false)[0];
-          if (hit) cursor.copy(group.worldToLocal(hit.point.clone()));
-          else cursor.set(999, 999, 999);
-        } else {
-          cursor.set(999, 999, 999);
-        }
-
-        const arr = geo.attributes.position.array as Float32Array;
-        for (let i = 0; i < N; i++) {
-          const j = i * 3;
-          const hx = home[j];
-          const hy = home[j + 1];
-          const hz = home[j + 2];
-          let tx = hx;
-          let ty = hy;
-          let tz = hz;
-          const dx = hx - cursor.x;
-          const dy = hy - cursor.y;
-          const dz = hz - cursor.z;
-          const d2 = dx * dx + dy * dy + dz * dz;
-          if (d2 < INFL2) {
-            const d = Math.sqrt(d2) || 1e-4;
-            const f = ((INFLUENCE - d) / INFLUENCE) * PUSH;
-            tx = hx + (dx / d) * f;
-            ty = hy + (dy / d) * f;
-            tz = hz + (dz / d) * f;
+          if (hit) {
+            cursorLocal.copy(group.worldToLocal(hit.point.clone()));
+            target = 1;
           }
-          arr[j] += (tx - arr[j]) * EASE;
-          arr[j + 1] += (ty - arr[j + 1]) * EASE;
-          arr[j + 2] += (tz - arr[j + 2]) * EASE;
         }
-        geo.attributes.position.needsUpdate = true;
+        const u = pointsMat.uniforms;
+        u.uStrength.value += (target - u.uStrength.value) * 0.1;
+        (u.uCursor.value as InstanceType<typeof THREE.Vector3>).copy(cursorLocal);
 
         renderer.render(scene, camera);
       };
       loop();
-
-      // Fade in once the first frame is up.
       renderer.domElement.style.opacity = "1";
+      renderer.domElement.style.cursor = "grab";
 
       cleanup = () => {
         cancelAnimationFrame(raf);
         io.disconnect();
         window.removeEventListener("resize", onResize);
-        renderer.domElement.removeEventListener("pointermove", onMove);
-        renderer.domElement.removeEventListener("pointerleave", onLeave);
+        renderer.domElement.removeEventListener("pointerdown", onPointerDown);
+        renderer.domElement.removeEventListener("pointerleave", onPointerLeave);
+        window.removeEventListener("pointermove", onPointerMove);
+        window.removeEventListener("pointerup", onPointerUp);
         geo.dispose();
-        mat.dispose();
+        pointsMat.dispose();
         disc.dispose();
         sphereGeo.dispose();
         sphereMat.dispose();
