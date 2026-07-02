@@ -18,7 +18,7 @@ const DOT_SIZE = 0.022; // base world size of a dot — small "lights"
 const HOVER_RADIUS = 0.34;
 const HOVER_LIFT = 0.12;
 const HOVER_SIZE_BOOST = 1.4;
-const HOVER_HIGHLIGHT: [number, number, number] = [0.25, 0.85, 1.0]; // bright cyan
+const HOVER_HIGHLIGHT: [number, number, number] = [0.03, 0.34, 0.84]; // brand blue (#0857d6)
 const TRAIL_N = 32;
 const TRAIL_DECAY = 0.965; // higher = the hover trail lingers longer (slower)
 
@@ -164,7 +164,7 @@ export default function Globe({ className = "" }: { className?: string }) {
             vec3 L1 = normalize(vec3(-0.20, 0.22, 1.0)); // main — broad, low density, static
             vec3 L2 = normalize(vec3(0.34 + 0.30 * sin(uTime * 0.13 + 2.0), -0.22 + 0.24 * sin(uTime * 0.17), 0.95)); // medium, denser
             vec3 L3 = normalize(vec3(-0.14 + 0.28 * sin(uTime * 0.10 + 3.0), 0.34 + 0.20 * sin(uTime * 0.14 + 1.5), 0.9)); // small, low
-            col += ellipseSpot(N, L1, 0.72, 0.56) * 0.1;
+            col += ellipseSpot(N, L1, 0.95, 0.78) * 0.1;
             col += ellipseSpot(N, L2, 0.42 + 0.06 * sin(uTime * 0.15), 0.34) * 0.15;
             col += ellipseSpot(N, L3, 0.26, 0.20 + 0.05 * sin(uTime * 0.19)) * 0.09;
 

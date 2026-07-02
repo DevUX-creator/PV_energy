@@ -19,7 +19,8 @@
 }
 
 .services-hero__globe {
-  width: min(88vmin, 720px);
+  /* Large hero centrepiece — scales with viewport height. */
+  width: min(86vh, 92vw);
   aspect-ratio: 1;
 }
 
