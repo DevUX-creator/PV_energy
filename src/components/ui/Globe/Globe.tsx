@@ -11,7 +11,7 @@ const R = 1; // base sphere radius
 const GAP = 0.03; // "air" between the glass and the dot blanket
 const RADIUS_JITTER = 0.012; // per-dot radial variation
 const DENSITY = 3; // particles per land pixel
-const AUTO_SPIN = 0.0007; // idle rotation speed (rad/frame) — super slow
+const AUTO_SPIN = 0.0003; // idle rotation speed (rad/frame) — very slow
 const DOT_SIZE = 0.022; // base world size of a dot — small "lights"
 
 // Hover: lift + highlight + grow, with a fading trail behind the cursor.
@@ -28,7 +28,7 @@ const DOT_ACCENT: [number, number, number] = [0.82, 0.9, 1.0];
 
 // Frosted-glass body palette (sampled from the Figma reference).
 const OCEAN = 0xededf0; // near-white body
-const LAND = 0xd7d5ea; // faint blue-lavender continents through the glass
+const LAND = 0xb4c2e6; // blue continents seen through the glass
 const RIM = 0xfcfcfe; // bright soft rim
 
 /**
@@ -115,6 +115,7 @@ export default function Globe({ className = "" }: { className?: string }) {
           uOcean: { value: new THREE.Color(OCEAN) },
           uLand: { value: new THREE.Color(LAND) },
           uRim: { value: new THREE.Color(RIM) },
+          uTime: { value: 0 },
         },
         vertexShader: `
           varying vec3 vN;
@@ -133,22 +134,38 @@ export default function Globe({ className = "" }: { className?: string }) {
           uniform vec3 uOcean;
           uniform vec3 uLand;
           uniform vec3 uRim;
+          uniform float uTime;
           varying vec3 vN;
           varying vec3 vV;
           varying vec2 vUv;
+
+          // A small soft ELLIPTICAL light spot around direction L; ax/ay are the
+          // two radii — drift them over time and the ellipse morphs slightly.
+          float ellipseSpot(vec3 N, vec3 L, float ax, float ay) {
+            float ndl = dot(N, L);
+            if (ndl <= 0.0) return 0.0;
+            vec3 up = abs(L.y) < 0.99 ? vec3(0.0, 1.0, 0.0) : vec3(1.0, 0.0, 0.0);
+            vec3 T = normalize(cross(up, L));
+            vec3 B = cross(L, T);
+            float x = dot(N, T);
+            float y = dot(N, B);
+            float r2 = (x * x) / (ax * ax) + (y * y) / (ay * ay);
+            return smoothstep(1.0, 0.0, r2) * ndl;
+          }
+
           void main() {
             vec3 N = normalize(vN);
             float land = texture2D(uMap, vUv).r;
-            vec3 col = mix(uOcean, uLand, land * 0.55); // faint diffuse continents
+            vec3 col = mix(uOcean, uLand, land * 0.72); // blue diffuse continents
 
-            // Three fixed soft light sources on the glass — the sphere rotates
-            // through them. Main + two smaller of different size/density.
-            vec3 L1 = normalize(vec3(-0.5, 0.5, 0.85));  // main
-            vec3 L2 = normalize(vec3(0.9, -0.15, 0.5));  // 2nd
-            vec3 L3 = normalize(vec3(0.15, -0.65, 0.55)); // 3rd
-            col += pow(max(dot(N, L1), 0.0), 3.5) * 0.28; // main: tighter, softer
-            col += pow(max(dot(N, L2), 0.0), 5.0) * 0.26; // 2nd: medium
-            col += pow(max(dot(N, L3), 0.0), 9.0) * 0.2;  // 3rd: small, dense
+            // Three small light sources — main + two smaller — that drift very
+            // gently and whose elliptical shape morphs slightly over time.
+            vec3 L1 = normalize(vec3(-0.5 + 0.08 * sin(uTime * 0.11), 0.48 + 0.05 * sin(uTime * 0.09), 0.85));
+            vec3 L2 = normalize(vec3(0.9, -0.15 + 0.06 * sin(uTime * 0.13 + 1.0), 0.5));
+            vec3 L3 = normalize(vec3(0.15, -0.6, 0.55 + 0.06 * sin(uTime * 0.1 + 2.0)));
+            col += ellipseSpot(N, L1, 0.30 + 0.07 * sin(uTime * 0.20), 0.22 + 0.07 * sin(uTime * 0.17 + 1.0)) * 0.2;  // main
+            col += ellipseSpot(N, L2, 0.24 + 0.05 * sin(uTime * 0.15 + 2.0), 0.19) * 0.18;
+            col += ellipseSpot(N, L3, 0.17, 0.13 + 0.04 * sin(uTime * 0.19 + 3.0)) * 0.15;
 
             float facing = clamp(dot(N, normalize(vV)), 0.0, 1.0);
             col = mix(col, uRim, pow(1.0 - facing, 2.4)); // bright soft rim
@@ -354,6 +371,7 @@ export default function Globe({ className = "" }: { className?: string }) {
         if (!visible) return;
 
         pointsMat.uniforms.uTime.value += 0.016;
+        sphereMat.uniforms.uTime.value += 0.016;
         if (!dragging) rotY += AUTO_SPIN;
         group.rotation.y = rotY;
         group.rotation.x += (rotX - group.rotation.x) * 0.1;
