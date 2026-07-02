@@ -76,7 +76,7 @@
   cursor: grab;
   user-select: none;
   opacity: 0;
-  background: #fff;
+  background: #cfd0d4; /* soft grey */
   color: #1c1c1e;
   --chamfer-cut: 0.65rem;
   border-radius: var(--radius-sm);
