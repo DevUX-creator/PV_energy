@@ -44,16 +44,28 @@ export default function Globe({
   className = "",
   offices,
   onState,
+  onSelect,
+  locked,
+  selected,
 }: {
   className?: string;
   offices?: Office[];
   onState?: (s: GlobeState) => void;
+  onSelect?: (i: number) => void;
+  locked?: boolean;
+  selected?: number | null;
 }) {
   const mountRef = useRef<HTMLDivElement>(null);
   const onStateRef = useRef(onState);
   onStateRef.current = onState;
+  const onSelectRef = useRef(onSelect);
+  onSelectRef.current = onSelect;
   const officesRef = useRef(offices);
   officesRef.current = offices;
+  const lockedRef = useRef(locked);
+  lockedRef.current = locked;
+  const selectedRef = useRef(selected);
+  selectedRef.current = selected;
 
   useEffect(() => {
     const mount = mountRef.current;
@@ -342,7 +354,7 @@ export default function Globe({
       const SHURIKEN =
         '<svg viewBox="0 0 16 16" width="16" height="16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8 0v4c0 2.4 1.76 4 4 4h4M0 8h6m2 8v-6" stroke="currentColor" stroke-width="1.5"/></svg>';
       let markerHover = false; // hovering a chip pauses the rotation
-      const markers = OFFICES.map(([lat, lng]) => {
+      const markers = OFFICES.map(([lat, lng], i) => {
         const u = (lng + 180) / 360;
         const v = (90 - lat) / 180;
         const phi = u * Math.PI * 2;
@@ -356,6 +368,7 @@ export default function Globe({
         const el = document.createElement("div");
         el.className = "globe-marker";
         el.innerHTML = SHURIKEN;
+        el.addEventListener("click", () => onSelectRef.current?.(i));
         mount.appendChild(el);
         return { home, el };
       });
@@ -427,7 +440,7 @@ export default function Globe({
 
         pointsMat.uniforms.uTime.value += 0.016;
         sphereMat.uniforms.uTime.value += 0.016;
-        if (!dragging && !markerHover) rotY += AUTO_SPIN;
+        if (!dragging && !markerHover && !lockedRef.current) rotY += AUTO_SPIN;
         group.rotation.y = rotY;
         group.rotation.x += (rotX - group.rotation.x) * 0.1;
 
@@ -459,7 +472,9 @@ export default function Globe({
         const near = nearestDist < 120;
         const active = nearestDist < 46 ? nearestIdx : null;
         markerHover = active !== null; // pause rotation while over a marker
-        markers.forEach((m, i) => m.el.classList.toggle("is-active", i === active));
+        markers.forEach((m, i) =>
+          m.el.classList.toggle("is-active", i === active || i === selectedRef.current)
+        );
         if (near !== prevNear || active !== prevActive) {
           prevNear = near;
           prevActive = active;

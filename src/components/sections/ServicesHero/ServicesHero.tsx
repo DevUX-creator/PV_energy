@@ -33,18 +33,21 @@ const OFFICES = [
     lng: 55.28,
     city: "Dubai",
     copy: "Our Middle East hub — trading, storage and logistics across the Gulf and the wider region.",
+    phone: "+971 4 577 5989",
   },
   {
     lat: 37.98,
     lng: 23.72,
     city: "Athens",
     copy: "Our European desk — connecting ARA and Mediterranean flows with on-the-ground execution.",
+    phone: "",
   },
   {
     lat: 22.32,
     lng: 114.17,
     city: "Hong Kong",
     copy: "Our Asia-Pacific base — servicing fast-moving demand across the region's key markets.",
+    phone: "+86 020 33974261",
   },
 ];
 
@@ -59,7 +62,12 @@ const DEFAULT_SUB =
 export default function ServicesHero() {
   const [active, setActive] = useState<number | null>(null);
   const [near, setNear] = useState(false);
-  const office = active !== null ? OFFICES[active] : null;
+  const [selected, setSelected] = useState<number | null>(null);
+
+  // Hover previews a location; when you're not hovering, the pinned (clicked)
+  // one stays. Clicking a marker locks the globe on it (or unlocks if repeated).
+  const displayIndex = active ?? selected;
+  const office = displayIndex !== null ? OFFICES[displayIndex] : null;
 
   return (
     <section
@@ -77,6 +85,14 @@ export default function ServicesHero() {
         </h1>
         <div className="services-hero__cta">
           <Button href="/contact">Contact Us</Button>
+          {office?.phone ? (
+            <a
+              className="services-hero__phone"
+              href={`tel:${office.phone.replace(/[^\d+]/g, "")}`}
+            >
+              {office.phone}
+            </a>
+          ) : null}
         </div>
       </div>
 
@@ -84,6 +100,9 @@ export default function ServicesHero() {
         <div className="services-hero__globe">
           <Globe
             offices={OFFICES}
+            selected={selected}
+            locked={selected !== null}
+            onSelect={(i) => setSelected((prev) => (prev === i ? null : i))}
             onState={(s) => {
               setActive(s.active);
               setNear(s.near);

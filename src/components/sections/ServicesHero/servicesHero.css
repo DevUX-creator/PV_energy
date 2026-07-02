@@ -71,6 +71,52 @@
   }
 }
 
+/* CTA row — Contact button + (on selection) the office phone. */
+.services-hero__cta {
+  display: flex;
+  align-items: center;
+  gap: var(--space-5);
+}
+
+/* Primary button here: brand blue base, black ink fill on hover. */
+.services-hero .btn--primary {
+  background: var(--accent);
+  color: var(--accent-contrast);
+  --btn-fill: var(--primary);
+}
+.services-hero .btn--primary:hover,
+.services-hero .btn--primary:focus-visible {
+  color: #fff;
+}
+
+/* Click-to-call chip that appears when a location is selected. */
+.services-hero__phone {
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  font-weight: var(--font-medium);
+  letter-spacing: 0.02em;
+  color: var(--accent);
+  white-space: nowrap;
+  animation: services-phone-in 0.35s ease both;
+}
+.services-hero__phone:hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+@keyframes services-phone-in {
+  from {
+    opacity: 0;
+    filter: blur(6px);
+    transform: translateY(3px);
+  }
+  to {
+    opacity: 1;
+    filter: none;
+    transform: none;
+  }
+}
+
 /* Supporting line — bottom-right. */
 .services-hero__sub {
   position: absolute;
