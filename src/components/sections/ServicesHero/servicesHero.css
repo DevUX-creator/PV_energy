@@ -2,7 +2,7 @@
    the dotted particle globe centred. Intro copy is hidden for now. */
 .services-hero {
   position: relative;
-  background: #26262a; /* dark grey */
+  background: #ffffff; /* white */
   min-height: 100svh;
   display: flex;
   align-items: center;

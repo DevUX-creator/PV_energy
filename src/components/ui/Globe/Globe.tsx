@@ -9,26 +9,31 @@ const MAP_SRC = "/GlobalReach/world-dots.png";
 // ---- Tunables (dial these with the design) --------------------------------
 const R = 1; // base sphere radius
 const GAP = 0.06; // "air" between the sphere and the dot blanket
-const RADIUS_JITTER = 0.012; // per-dot radial variation (organic blanket)
-const DENSITY = 3; // particles per land pixel — denser continents, fewer gaps
+const RADIUS_JITTER = 0.012; // per-dot radial variation
+const DENSITY = 3; // particles per land pixel
 const AUTO_SPIN = 0.0006; // idle rotation speed (rad/frame) — super slow
 const DOT_SIZE = 0.02; // base world size of a dot
 
-// Hover: lift the blanket + highlight + grow the dots under the cursor.
-const HOVER_RADIUS = 0.42; // influence radius (local units)
-const HOVER_LIFT = 0.12; // how far dots rise (outward) under the cursor
-const HOVER_SIZE_BOOST = 1.4; // extra size at the cursor (×(1+boost))
-const HOVER_HIGHLIGHT: [number, number, number] = [0.6, 0.86, 1.0]; // bright cyan-blue
+// Hover: lift + highlight + grow, with a fading trail behind the cursor.
+const HOVER_RADIUS = 0.34; // influence radius per trail sample
+const HOVER_LIFT = 0.12; // how far dots rise in the gap
+const HOVER_SIZE_BOOST = 1.4; // extra size under the cursor
+const HOVER_HIGHLIGHT: [number, number, number] = [0.25, 0.85, 1.0]; // bright cyan
+const TRAIL_N = 32; // trail length (recent cursor samples)
+const TRAIL_DECAY = 0.92; // per-frame strength falloff → the trail fades
 
 // Dot base colours — blended per region so patches read more/less blue.
-const DOT_MAIN: [number, number, number] = [0.72, 0.8, 0.95]; // light blue-white
-const DOT_ACCENT: [number, number, number] = [0.28, 0.48, 0.9]; // deeper blue
+const DOT_MAIN: [number, number, number] = [0.42, 0.6, 0.9]; // medium blue
+const DOT_ACCENT: [number, number, number] = [0.18, 0.4, 0.85]; // deeper blue
+
+// Sphere body colours (matte, lit from inside): light-grey oceans, blue land.
+const OCEAN = 0xe9edf3;
+const LAND = 0x9bb2dc;
 
 /**
- * Globe — an opaque matte sphere (lit softly from the inside) with a floating
- * "blanket" of particles forming the world map at a larger radius (air gap).
- * Drag to rotate; hovering lifts the dots in the gap, highlights them and grows
- * them. Displacement/size/colour run in a GPU shader so density stays cheap.
+ * Globe — a matte sphere (light-grey oceans, bluish continents, lit softly from
+ * inside) with a floating particle "blanket" of the world map above it. Drag to
+ * rotate; hovering lifts/highlights/grows the dots and leaves a fading trail.
  */
 export default function Globe({ className = "" }: { className?: string }) {
   const mountRef = useRef<HTMLDivElement>(null);
@@ -44,56 +49,24 @@ export default function Globe({ className = "" }: { className?: string }) {
     (async () => {
       const THREE = await import("three");
       if (disposed || !mountRef.current) return;
+      const dpr = Math.min(window.devicePixelRatio, 2);
 
       let width = mount.clientWidth || 1;
       let height = mount.clientHeight || 1;
 
       const scene = new THREE.Scene();
-      // Pulled back with margin so the globe (and lifted dots) never crop.
       const camera = new THREE.PerspectiveCamera(34, width / height, 0.1, 100);
       camera.position.set(0, 0, 4.6);
 
       const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
       renderer.setSize(width, height);
-      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      renderer.setPixelRatio(dpr);
       mount.appendChild(renderer.domElement);
 
       const group = new THREE.Group();
       scene.add(group);
 
-      // ---- Base sphere: opaque matte orb, softly lit from the inside -------
-      const sphereGeo = new THREE.SphereGeometry(R, 64, 64);
-      const sphereMat = new THREE.ShaderMaterial({
-        uniforms: {
-          colorCore: { value: new THREE.Color(0xd8e4f5) }, // inner light
-          colorEdge: { value: new THREE.Color(0x35456b) }, // matte falloff
-        },
-        vertexShader: `
-          varying vec3 vN;
-          varying vec3 vV;
-          void main() {
-            vec4 wp = modelMatrix * vec4(position, 1.0);
-            vN = normalize(mat3(modelMatrix) * normal);
-            vV = normalize(cameraPosition - wp.xyz);
-            gl_Position = projectionMatrix * viewMatrix * wp;
-          }
-        `,
-        fragmentShader: `
-          uniform vec3 colorCore;
-          uniform vec3 colorEdge;
-          varying vec3 vN;
-          varying vec3 vV;
-          void main() {
-            float facing = clamp(dot(normalize(vN), normalize(vV)), 0.0, 1.0);
-            float glow = pow(facing, 1.6); // brighter toward the centre
-            gl_FragColor = vec4(mix(colorEdge, colorCore, glow), 1.0);
-          }
-        `,
-      });
-      const sphere = new THREE.Mesh(sphereGeo, sphereMat);
-      group.add(sphere);
-
-      // ---- Sample the land mask -------------------------------------------
+      // Sample the land mask (also reused as the sphere's land texture).
       const img = await new Promise<HTMLImageElement | null>((res) => {
         const im = new Image();
         im.onload = () => res(im);
@@ -112,7 +85,54 @@ export default function Globe({ className = "" }: { className?: string }) {
       cx.drawImage(img, 0, 0, MW, MH);
       const data = cx.getImageData(0, 0, MW, MH).data;
 
-      // DENSITY jittered dots per land pixel, with per-region blue variation.
+      const mapTex = new THREE.CanvasTexture(cvs);
+      mapTex.minFilter = THREE.LinearFilter;
+      mapTex.magFilter = THREE.LinearFilter;
+      mapTex.wrapS = THREE.RepeatWrapping;
+      mapTex.wrapT = THREE.ClampToEdgeWrapping;
+
+      // ---- Base sphere: matte, land/ocean tint, soft inner light ----------
+      const sphereGeo = new THREE.SphereGeometry(R, 96, 96);
+      const sphereMat = new THREE.ShaderMaterial({
+        uniforms: {
+          uMap: { value: mapTex },
+          uOcean: { value: new THREE.Color(OCEAN) },
+          uLand: { value: new THREE.Color(LAND) },
+        },
+        vertexShader: `
+          varying vec3 vN;
+          varying vec3 vV;
+          varying vec2 vUv;
+          void main() {
+            vec4 wp = modelMatrix * vec4(position, 1.0);
+            vN = normalize(mat3(modelMatrix) * normal);
+            vV = normalize(cameraPosition - wp.xyz);
+            vUv = uv;
+            gl_Position = projectionMatrix * viewMatrix * wp;
+          }
+        `,
+        fragmentShader: `
+          uniform sampler2D uMap;
+          uniform vec3 uOcean;
+          uniform vec3 uLand;
+          varying vec3 vN;
+          varying vec3 vV;
+          varying vec2 vUv;
+          void main() {
+            float land = texture2D(uMap, vUv).r;
+            vec3 base = mix(uOcean, uLand, smoothstep(0.35, 0.65, land));
+            float facing = clamp(dot(normalize(vN), normalize(vV)), 0.0, 1.0);
+            float glow = pow(facing, 1.4); // brighter toward the centre
+            gl_FragColor = vec4(base * (0.72 + 0.34 * glow), 1.0);
+          }
+        `,
+      });
+      const sphere = new THREE.Mesh(sphereGeo, sphereMat);
+      group.add(sphere);
+
+      // ---- Dot blanket ----------------------------------------------------
+      // Positions use three's own sphere formula so the dots line up with the
+      // sphere's land texture underneath.
       const homes: number[] = [];
       const cols: number[] = [];
       for (let y = 0; y < MH; y++) {
@@ -121,13 +141,13 @@ export default function Globe({ className = "" }: { className?: string }) {
           for (let d = 0; d < DENSITY; d++) {
             const u = (x + Math.random()) / MW;
             const v = (y + Math.random()) / MH;
-            const lon = u * Math.PI * 2 - Math.PI;
-            const lat = Math.PI / 2 - v * Math.PI;
+            const phi = u * Math.PI * 2;
+            const theta = v * Math.PI;
+            const sinT = Math.sin(theta);
             const rr = R + GAP + (Math.random() - 0.5) * RADIUS_JITTER;
-            const cosLat = Math.cos(lat);
-            const hx = rr * cosLat * Math.cos(lon);
-            const hy = rr * Math.sin(lat);
-            const hz = rr * cosLat * Math.sin(lon);
+            const hx = -Math.cos(phi) * sinT * rr;
+            const hy = Math.cos(theta) * rr;
+            const hz = Math.sin(phi) * sinT * rr;
             homes.push(hx, hy, hz);
 
             const n = Math.sin(hx * 2.3 + hy * 1.7) * Math.cos(hz * 2.1 - hy * 1.3);
@@ -160,25 +180,26 @@ export default function Globe({ className = "" }: { className?: string }) {
       tcx.fillRect(0, 0, ts, ts);
       const disc = new THREE.CanvasTexture(tc);
 
-      // Points shader — lift/size/colour respond to the cursor on the GPU.
+      // Trail: a ring buffer of recent cursor samples (xyz + strength).
+      const trail = Array.from({ length: TRAIL_N }, () => new THREE.Vector4(999, 999, 999, 0));
+      let writeIdx = 0;
+
       const pointsMat = new THREE.ShaderMaterial({
         transparent: true,
         depthWrite: false,
         uniforms: {
           uTex: { value: disc },
-          uCursor: { value: new THREE.Vector3(999, 999, 999) },
-          uStrength: { value: 0 },
+          uTrail: { value: trail },
           uInfluence: { value: HOVER_RADIUS },
           uLift: { value: HOVER_LIFT },
           uSizeBoost: { value: HOVER_SIZE_BOOST },
           uHighlight: { value: new THREE.Color(...HOVER_HIGHLIGHT) },
           uSize: { value: DOT_SIZE },
-          uSizeScale: { value: height * Math.min(window.devicePixelRatio, 2) * 0.5 },
+          uSizeScale: { value: height * dpr * 0.5 },
         },
         vertexShader: `
           attribute vec3 color;
-          uniform vec3 uCursor;
-          uniform float uStrength;
+          uniform vec4 uTrail[${TRAIL_N}];
           uniform float uInfluence;
           uniform float uLift;
           uniform float uSizeBoost;
@@ -188,11 +209,17 @@ export default function Globe({ className = "" }: { className?: string }) {
           varying vec3 vColor;
           void main() {
             vec3 p = position;
-            float f = (1.0 - smoothstep(0.0, uInfluence, distance(p, uCursor))) * uStrength;
-            p += normalize(p) * (uLift * f);          // lift outward in the gap
-            vColor = mix(color, uHighlight, f);        // highlight under cursor
+            float f = 0.0;
+            for (int i = 0; i < ${TRAIL_N}; i++) {
+              vec4 tr = uTrail[i];
+              float infl = 1.0 - smoothstep(0.0, uInfluence, distance(p, tr.xyz));
+              f = max(f, infl * tr.w);
+            }
+            f = clamp(f, 0.0, 1.0);
+            p += normalize(p) * (uLift * f);
+            vColor = mix(color, uHighlight, f);
             vec4 mv = modelViewMatrix * vec4(p, 1.0);
-            float size = uSize * (1.0 + uSizeBoost * f); // grow under cursor
+            float size = uSize * (1.0 + uSizeBoost * f);
             gl_PointSize = size * uSizeScale / -mv.z;
             gl_Position = projectionMatrix * mv;
           }
@@ -210,14 +237,13 @@ export default function Globe({ className = "" }: { className?: string }) {
       const points = new THREE.Points(geo, pointsMat);
       group.add(points);
 
-      // Invisible sphere at the dot radius to raycast the cursor onto.
       const pick = new THREE.Mesh(
         new THREE.SphereGeometry(R + GAP, 24, 24),
         new THREE.MeshBasicMaterial({ visible: false })
       );
       group.add(pick);
 
-      // ---- Interaction: drag to rotate, hover to lift ---------------------
+      // ---- Interaction ----------------------------------------------------
       const raycaster = new THREE.Raycaster();
       const ndc = new THREE.Vector2(-10, -10);
       const cursorLocal = new THREE.Vector3(999, 999, 999);
@@ -228,14 +254,11 @@ export default function Globe({ className = "" }: { className?: string }) {
       let rotY = 0;
       let rotX = 0;
 
-      const setNdc = (e: PointerEvent) => {
+      const onPointerMove = (e: PointerEvent) => {
         const rect = renderer.domElement.getBoundingClientRect();
         ndc.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
         ndc.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
         hovering = true;
-      };
-      const onPointerMove = (e: PointerEvent) => {
-        setNdc(e);
         if (dragging) {
           rotY += (e.clientX - lastX) * 0.005;
           rotX = Math.max(-0.6, Math.min(0.6, rotX + (e.clientY - lastY) * 0.005));
@@ -267,8 +290,7 @@ export default function Globe({ className = "" }: { className?: string }) {
         camera.aspect = width / height;
         camera.updateProjectionMatrix();
         renderer.setSize(width, height);
-        pointsMat.uniforms.uSizeScale.value =
-          height * Math.min(window.devicePixelRatio, 2) * 0.5;
+        pointsMat.uniforms.uSizeScale.value = height * dpr * 0.5;
       };
       window.addEventListener("resize", onResize);
 
@@ -287,19 +309,23 @@ export default function Globe({ className = "" }: { className?: string }) {
         group.rotation.y = rotY;
         group.rotation.x += (rotX - group.rotation.x) * 0.1;
 
-        // Cursor → local, and ease the hover strength in/out.
-        let target = 0;
+        // Cursor → local space.
+        let hit = false;
         if (hovering) {
           raycaster.setFromCamera(ndc, camera);
-          const hit = raycaster.intersectObject(pick, false)[0];
-          if (hit) {
-            cursorLocal.copy(group.worldToLocal(hit.point.clone()));
-            target = 1;
+          const h = raycaster.intersectObject(pick, false)[0];
+          if (h) {
+            cursorLocal.copy(group.worldToLocal(h.point.clone()));
+            hit = true;
           }
         }
-        const u = pointsMat.uniforms;
-        u.uStrength.value += (target - u.uStrength.value) * 0.1;
-        (u.uCursor.value as InstanceType<typeof THREE.Vector3>).copy(cursorLocal);
+
+        // Age the trail, then stamp the current cursor into the ring buffer.
+        for (let i = 0; i < TRAIL_N; i++) trail[i].w *= TRAIL_DECAY;
+        if (hit) {
+          trail[writeIdx].set(cursorLocal.x, cursorLocal.y, cursorLocal.z, 1);
+          writeIdx = (writeIdx + 1) % TRAIL_N;
+        }
 
         renderer.render(scene, camera);
       };
@@ -318,6 +344,7 @@ export default function Globe({ className = "" }: { className?: string }) {
         geo.dispose();
         pointsMat.dispose();
         disc.dispose();
+        mapTex.dispose();
         sphereGeo.dispose();
         sphereMat.dispose();
         pick.geometry.dispose();
