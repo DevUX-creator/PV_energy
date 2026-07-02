@@ -163,9 +163,9 @@ export default function Globe({ className = "" }: { className?: string }) {
             vec3 L1 = normalize(vec3(-0.5 + 0.08 * sin(uTime * 0.11), 0.48 + 0.05 * sin(uTime * 0.09), 0.85));
             vec3 L2 = normalize(vec3(0.9, -0.15 + 0.06 * sin(uTime * 0.13 + 1.0), 0.5));
             vec3 L3 = normalize(vec3(0.15, -0.6, 0.55 + 0.06 * sin(uTime * 0.1 + 2.0)));
-            col += ellipseSpot(N, L1, 0.30 + 0.07 * sin(uTime * 0.20), 0.22 + 0.07 * sin(uTime * 0.17 + 1.0)) * 0.2;  // main
-            col += ellipseSpot(N, L2, 0.24 + 0.05 * sin(uTime * 0.15 + 2.0), 0.19) * 0.18;
-            col += ellipseSpot(N, L3, 0.17, 0.13 + 0.04 * sin(uTime * 0.19 + 3.0)) * 0.15;
+            col += ellipseSpot(N, L1, 0.62 + 0.12 * sin(uTime * 0.20), 0.48 + 0.12 * sin(uTime * 0.17 + 1.0)) * 0.12;  // main — broad, soft
+            col += ellipseSpot(N, L2, 0.52 + 0.10 * sin(uTime * 0.15 + 2.0), 0.42) * 0.1;
+            col += ellipseSpot(N, L3, 0.42, 0.34 + 0.08 * sin(uTime * 0.19 + 3.0)) * 0.08;
 
             float facing = clamp(dot(N, normalize(vV)), 0.0, 1.0);
             col = mix(col, uRim, pow(1.0 - facing, 2.4)); // bright soft rim
