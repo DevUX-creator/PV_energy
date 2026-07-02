@@ -18,7 +18,7 @@ const DOT_SIZE = 0.022; // base world size of a dot — small "lights"
 const HOVER_RADIUS = 0.34;
 const HOVER_LIFT = 0.12;
 const HOVER_SIZE_BOOST = 1.4;
-const HOVER_HIGHLIGHT: [number, number, number] = [0.03, 0.34, 0.84]; // brand blue (#0857d6)
+const HOVER_HIGHLIGHT: [number, number, number] = [1.0, 1.0, 1.0]; // brighter white glow on hover
 const TRAIL_N = 32;
 const TRAIL_DECAY = 0.965; // higher = the hover trail lingers longer (slower)
 
@@ -107,19 +107,47 @@ export default function Globe({ className = "" }: { className?: string }) {
       mapTex.wrapS = THREE.RepeatWrapping;
       mapTex.wrapT = THREE.ClampToEdgeWrapping;
 
-      // Organic "gobo" blob shapes for the light spots (from Figma).
-      const texLoader = new THREE.TextureLoader();
-      const [ltA, ltB] = await Promise.all([
-        texLoader.loadAsync("/GlobalReach/light-1.png"),
-        texLoader.loadAsync("/GlobalReach/light-2.png"),
+      // Organic "gobo" blob shapes for the light spots (from Figma), heavily
+      // blurred so the light has a soft feathered falloff (like it fell through
+      // a lens) rather than reading as a hard-edged white shape.
+      const loadImg = (src: string) =>
+        new Promise<HTMLImageElement | null>((res) => {
+          const im = new Image();
+          im.onload = () => res(im);
+          im.onerror = () => res(null);
+          im.src = src;
+        });
+      const [imgA, imgB] = await Promise.all([
+        loadImg("/GlobalReach/light-1.png"),
+        loadImg("/GlobalReach/light-2.png"),
       ]);
-      if (disposed) return;
-      [ltA, ltB].forEach((t) => {
+      if (disposed || !imgA || !imgB) return;
+      const blurTex = (im: HTMLImageElement) => {
+        const W = im.width;
+        const H = im.height;
+        const sw = Math.max(6, Math.round(W / 14));
+        const sh = Math.max(6, Math.round(H / 14));
+        const s = document.createElement("canvas");
+        s.width = sw;
+        s.height = sh;
+        const sc = s.getContext("2d")!;
+        sc.imageSmoothingEnabled = true;
+        sc.drawImage(im, 0, 0, sw, sh);
+        const c = document.createElement("canvas");
+        c.width = W;
+        c.height = H;
+        const ctx = c.getContext("2d")!;
+        ctx.imageSmoothingEnabled = true;
+        ctx.drawImage(s, 0, 0, W, H);
+        const t = new THREE.CanvasTexture(c);
         t.minFilter = THREE.LinearFilter;
         t.magFilter = THREE.LinearFilter;
         t.wrapS = THREE.ClampToEdgeWrapping;
         t.wrapT = THREE.ClampToEdgeWrapping;
-      });
+        return t;
+      };
+      const ltA = blurTex(imgA);
+      const ltB = blurTex(imgB);
 
       // ---- Frosted-glass body --------------------------------------------
       const sphereGeo = new THREE.SphereGeometry(R, 96, 96);
@@ -172,7 +200,7 @@ export default function Globe({ className = "" }: { className?: string }) {
             vec2 uv = vec2((x * cr - y * sr) / sx, (x * sr + y * cr) / sy) + 0.5;
             if (uv.x < 0.0 || uv.x > 1.0 || uv.y < 0.0 || uv.y > 1.0) return 0.0;
             float m = texture2D(tex, uv).r;
-            return smoothstep(0.28, 0.7, m) * ndl;
+            return smoothstep(0.12, 0.72, m) * ndl; // soft feathered falloff
           }
 
           void main() {
@@ -254,7 +282,7 @@ export default function Globe({ className = "" }: { className?: string }) {
       const pointsMat = new THREE.ShaderMaterial({
         transparent: true,
         depthWrite: false,
-        blending: THREE.NormalBlending, // so the hovered centre can read true blue
+        blending: THREE.AdditiveBlending, // white dots glow over the glass
         uniforms: {
           uTrail: { value: trail },
           uCursorNow: { value: new THREE.Vector4(999, 999, 999, 0) },
@@ -320,8 +348,7 @@ export default function Globe({ className = "" }: { className?: string }) {
             float halo = smoothstep(0.5, 0.0, d);
             float core = smoothstep(0.24, 0.0, d);
             // Hovered dots add more so the brand blue reads near the cursor.
-            float a = (halo * 0.55 + core * 0.75) * (1.0 + vGlow * 0.6) * smoothstep(-0.05, 0.45, vFacing);
-            a = clamp(a, 0.0, 1.0);
+            float a = (halo * 0.5 + core * 0.55) * (1.0 + vGlow * 1.8) * smoothstep(-0.05, 0.45, vFacing);
             if (a < 0.01) discard;
             gl_FragColor = vec4(vColor, a);
           }
