@@ -20,7 +20,7 @@ const HOVER_LIFT = 0.12;
 const HOVER_SIZE_BOOST = 1.4;
 const HOVER_HIGHLIGHT: [number, number, number] = [0.25, 0.85, 1.0]; // bright cyan
 const TRAIL_N = 32;
-const TRAIL_DECAY = 0.94;
+const TRAIL_DECAY = 0.965; // higher = the hover trail lingers longer (slower)
 
 // Dot colours — white "lights" with a slight cool-white variation.
 const DOT_MAIN: [number, number, number] = [1.0, 1.0, 1.0];
@@ -115,7 +115,6 @@ export default function Globe({ className = "" }: { className?: string }) {
           uOcean: { value: new THREE.Color(OCEAN) },
           uLand: { value: new THREE.Color(LAND) },
           uRim: { value: new THREE.Color(RIM) },
-          uTime: { value: 0 },
         },
         vertexShader: `
           varying vec3 vN;
@@ -134,7 +133,6 @@ export default function Globe({ className = "" }: { className?: string }) {
           uniform vec3 uOcean;
           uniform vec3 uLand;
           uniform vec3 uRim;
-          uniform float uTime;
           varying vec3 vN;
           varying vec3 vV;
           varying vec2 vUv;
@@ -143,14 +141,14 @@ export default function Globe({ className = "" }: { className?: string }) {
             float land = texture2D(uMap, vUv).r;
             vec3 col = mix(uOcean, uLand, land * 0.55); // faint diffuse continents
 
-            // Three soft light sources on the glass, drifting slowly:
-            // main (big, bright) + two smaller with different size/density.
-            vec3 L1 = normalize(vec3(sin(uTime * 0.10) * 0.7, 0.45, cos(uTime * 0.10) * 0.7 + 0.55));
-            vec3 L2 = normalize(vec3(sin(uTime * 0.16 + 2.1) * 0.95, -0.35, cos(uTime * 0.16 + 2.1) * 0.95));
-            vec3 L3 = normalize(vec3(sin(uTime * 0.13 + 4.2) * 0.6, 0.15, cos(uTime * 0.13 + 4.2) * 0.6 - 0.8));
-            col += pow(max(dot(N, L1), 0.0), 2.0) * 0.42; // main: broad, bright
-            col += pow(max(dot(N, L2), 0.0), 5.0) * 0.30; // 2nd: tighter, medium
-            col += pow(max(dot(N, L3), 0.0), 9.0) * 0.24; // 3rd: small, dense
+            // Three fixed soft light sources on the glass — the sphere rotates
+            // through them. Main + two smaller of different size/density.
+            vec3 L1 = normalize(vec3(-0.5, 0.5, 0.85));  // main
+            vec3 L2 = normalize(vec3(0.9, -0.15, 0.5));  // 2nd
+            vec3 L3 = normalize(vec3(0.15, -0.65, 0.55)); // 3rd
+            col += pow(max(dot(N, L1), 0.0), 3.5) * 0.28; // main: tighter, softer
+            col += pow(max(dot(N, L2), 0.0), 5.0) * 0.26; // 2nd: medium
+            col += pow(max(dot(N, L3), 0.0), 9.0) * 0.2;  // 3rd: small, dense
 
             float facing = clamp(dot(N, normalize(vV)), 0.0, 1.0);
             col = mix(col, uRim, pow(1.0 - facing, 2.4)); // bright soft rim
@@ -258,7 +256,7 @@ export default function Globe({ className = "" }: { className?: string }) {
             p += nrm * (w * (0.008 + f * 0.022));
             // Ripple flowing out from the cursor — air moving through the blanket.
             float dcn = distance(p, uCursorNow.xyz);
-            float ripple = sin(dcn * 14.0 - uTime * 6.5) * exp(-dcn * 3.2) * uCursorNow.w;
+            float ripple = sin(dcn * 12.0 - uTime * 2.8) * exp(-dcn * 3.2) * uCursorNow.w;
             p += nrm * (uLift * f + ripple * 0.07);
             vColor = mix(color, uHighlight, f);
             vec4 mv = modelViewMatrix * vec4(p, 1.0);
@@ -356,7 +354,6 @@ export default function Globe({ className = "" }: { className?: string }) {
         if (!visible) return;
 
         pointsMat.uniforms.uTime.value += 0.016;
-        sphereMat.uniforms.uTime.value += 0.016;
         if (!dragging) rotY += AUTO_SPIN;
         group.rotation.y = rotY;
         group.rotation.x += (rotX - group.rotation.x) * 0.1;
@@ -380,7 +377,7 @@ export default function Globe({ className = "" }: { className?: string }) {
           writeIdx = (writeIdx + 1) % TRAIL_N;
           now.set(cursorLocal.x, cursorLocal.y, cursorLocal.z, 1);
         } else {
-          now.w *= 0.9;
+          now.w *= 0.94; // ripple settles out a bit slower
         }
 
         renderer.render(scene, camera);
