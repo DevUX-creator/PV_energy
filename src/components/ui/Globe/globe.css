@@ -28,20 +28,25 @@
   border-radius: 5px;
   background: #35353a;
   color: #fff;
-  pointer-events: none;
+  cursor: pointer;
   opacity: 0;
   will-change: transform, opacity;
   box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18);
 }
 
+/* Icon spins 0 → 90° on hover, same as the header "Our Offices" control. */
 .globe-marker svg {
   width: 15px;
   height: 15px;
-  animation: globe-marker-spin 9s linear infinite;
+  transition: transform 0.6s cubic-bezier(0.25, 0.74, 0.22, 0.99);
 }
 
-@keyframes globe-marker-spin {
-  to {
-    transform: rotate(360deg);
+.globe-marker:hover svg {
+  transform: rotate(90deg);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .globe-marker svg {
+    transition: none;
   }
 }

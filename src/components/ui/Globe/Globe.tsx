@@ -320,9 +320,10 @@ export default function Globe({ className = "" }: { className?: string }) {
         [37.98, 23.72], // Athens
         [22.32, 114.17], // Hong Kong
       ];
-      const MARKER_R = R + 0.12;
+      const MARKER_R = R + 0.02; // sit right on the surface
+      // The exact "Our Offices" mark from the header (top-right control).
       const SHURIKEN =
-        '<svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M12 1 L14.2 9.8 L23 12 L14.2 14.2 L12 23 L9.8 14.2 L1 12 L9.8 9.8 Z"/></svg>';
+        '<svg viewBox="0 0 16 16" width="16" height="16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8 0v4c0 2.4 1.76 4 4 4h4M0 8h6m2 8v-6" stroke="currentColor" stroke-width="1.5"/></svg>';
       const markers = OFFICES.map(([lat, lng]) => {
         const u = (lng + 180) / 360;
         const v = (90 - lat) / 180;
@@ -417,8 +418,12 @@ export default function Globe({ className = "" }: { className?: string }) {
           markerTmp.project(camera);
           const sx = (markerTmp.x * 0.5 + 0.5) * width;
           const sy = (-markerTmp.y * 0.5 + 0.5) * height;
+          const op = Math.max(0, Math.min(1, (nz + 0.05) / 0.3));
           m.el.style.transform = `translate(-50%, -50%) translate(${sx}px, ${sy}px)`;
-          m.el.style.opacity = String(Math.max(0, Math.min(1, (nz + 0.05) / 0.3)));
+          m.el.style.opacity = String(op);
+          // Only front-facing chips are interactive (don't capture clicks while
+          // hidden on the back).
+          m.el.style.pointerEvents = op > 0.5 ? "auto" : "none";
         }
 
         let hit = false;
