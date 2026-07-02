@@ -5,6 +5,7 @@ import ServicesOverview from "@/components/sections/ServicesOverview";
 import ServicesBand from "@/components/sections/ServicesBand";
 import ServicesApproach from "@/components/sections/ServicesApproach";
 import ServicesCta from "@/components/sections/ServicesCta";
+import ServicesDrop from "@/components/sections/ServicesDrop";
 
 export const metadata: Metadata = {
   title: "Services",
@@ -30,6 +31,7 @@ export default function ServicesPage() {
           <ServicesBand />
           <ServicesApproach />
           <ServicesCta />
+          <ServicesDrop />
         </>
       ) : (
         <Preloader label="Services" />
