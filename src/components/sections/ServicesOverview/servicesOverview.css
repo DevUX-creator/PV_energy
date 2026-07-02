@@ -68,4 +68,8 @@
     grid-template-columns: 1fr;
     gap: var(--space-8);
   }
+  /* Let each point's copy use the full available width. */
+  .svc-overview__copy {
+    max-width: none;
+  }
 }
