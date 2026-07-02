@@ -11,7 +11,7 @@ const R = 1; // base sphere radius
 const GAP = 0.03; // "air" between the glass and the dot blanket
 const RADIUS_JITTER = 0.012; // per-dot radial variation
 const DENSITY = 3; // particles per land pixel
-const AUTO_SPIN = 0.0003; // idle rotation speed (rad/frame) — very slow
+const AUTO_SPIN = 0.0007; // idle rotation speed (rad/frame) — super slow
 const DOT_SIZE = 0.022; // base world size of a dot — small "lights"
 
 // Hover: lift + highlight + grow, with a fading trail behind the cursor.
@@ -20,15 +20,15 @@ const HOVER_LIFT = 0.12;
 const HOVER_SIZE_BOOST = 1.4;
 const HOVER_HIGHLIGHT: [number, number, number] = [0.25, 0.85, 1.0]; // bright cyan
 const TRAIL_N = 32;
-const TRAIL_DECAY = 0.965; // higher = the hover trail lingers longer (slower)
+const TRAIL_DECAY = 0.94;
 
-// Dot colours — white "lights" with a slight cool-white variation.
-const DOT_MAIN: [number, number, number] = [1.0, 1.0, 1.0];
-const DOT_ACCENT: [number, number, number] = [0.82, 0.9, 1.0];
+// Dot base colours — small bright "lights", blended per region.
+const DOT_MAIN: [number, number, number] = [0.5, 0.7, 1.0];
+const DOT_ACCENT: [number, number, number] = [0.28, 0.52, 0.95];
 
 // Frosted-glass body palette (sampled from the Figma reference).
 const OCEAN = 0xededf0; // near-white body
-const LAND = 0xb4c2e6; // blue continents seen through the glass
+const LAND = 0xd7d5ea; // faint blue-lavender continents through the glass
 const RIM = 0xfcfcfe; // bright soft rim
 
 /**
@@ -115,7 +115,6 @@ export default function Globe({ className = "" }: { className?: string }) {
           uOcean: { value: new THREE.Color(OCEAN) },
           uLand: { value: new THREE.Color(LAND) },
           uRim: { value: new THREE.Color(RIM) },
-          uTime: { value: 0 },
         },
         vertexShader: `
           varying vec3 vN;
@@ -134,41 +133,16 @@ export default function Globe({ className = "" }: { className?: string }) {
           uniform vec3 uOcean;
           uniform vec3 uLand;
           uniform vec3 uRim;
-          uniform float uTime;
           varying vec3 vN;
           varying vec3 vV;
           varying vec2 vUv;
-
-          // A small soft ELLIPTICAL light spot around direction L; ax/ay are the
-          // two radii — drift them over time and the ellipse morphs slightly.
-          float ellipseSpot(vec3 N, vec3 L, float ax, float ay) {
-            float ndl = dot(N, L);
-            if (ndl <= 0.0) return 0.0;
-            vec3 up = abs(L.y) < 0.99 ? vec3(0.0, 1.0, 0.0) : vec3(1.0, 0.0, 0.0);
-            vec3 T = normalize(cross(up, L));
-            vec3 B = cross(L, T);
-            float x = dot(N, T);
-            float y = dot(N, B);
-            float r2 = (x * x) / (ax * ax) + (y * y) / (ay * ay);
-            return smoothstep(1.0, 0.0, r2) * ndl;
-          }
-
           void main() {
             vec3 N = normalize(vN);
             float land = texture2D(uMap, vUv).r;
-            vec3 col = mix(uOcean, uLand, land * 0.72); // blue diffuse continents
-
-            // Three small light sources — main + two smaller — that drift very
-            // gently and whose elliptical shape morphs slightly over time.
-            vec3 L1 = normalize(vec3(-0.5 + 0.08 * sin(uTime * 0.11), 0.48 + 0.05 * sin(uTime * 0.09), 0.85));
-            vec3 L2 = normalize(vec3(0.9, -0.15 + 0.06 * sin(uTime * 0.13 + 1.0), 0.5));
-            vec3 L3 = normalize(vec3(0.15, -0.6, 0.55 + 0.06 * sin(uTime * 0.1 + 2.0)));
-            col += ellipseSpot(N, L1, 0.20 + 0.05 * sin(uTime * 0.20), 0.14 + 0.05 * sin(uTime * 0.17 + 1.0)) * 0.13;  // main
-            col += ellipseSpot(N, L2, 0.16 + 0.04 * sin(uTime * 0.15 + 2.0), 0.12) * 0.11;
-            col += ellipseSpot(N, L3, 0.11, 0.09 + 0.03 * sin(uTime * 0.19 + 3.0)) * 0.1;
-
+            vec3 col = mix(uOcean, uLand, land * 0.55); // faint diffuse continents
             float facing = clamp(dot(N, normalize(vV)), 0.0, 1.0);
             col = mix(col, uRim, pow(1.0 - facing, 2.4)); // bright soft rim
+            col += facing * 0.015; // whisper of centre light
             gl_FragColor = vec4(col, 1.0);
           }
         `,
@@ -177,44 +151,32 @@ export default function Globe({ className = "" }: { className?: string }) {
       group.add(sphere);
 
       // ---- Dot blanket ----------------------------------------------------
-      // Edge-aware: dots on the coastline (edge pixels) stay tight so the
-      // continent CONTOUR reads; interior dots scatter more and vary in size
-      // for an organic, less grid-like fill.
-      const isLand = (xx: number, yy: number) => {
-        if (yy < 0 || yy >= MH) return false;
-        const wx = ((xx % MW) + MW) % MW; // wrap longitude
-        return data[(yy * MW + wx) * 4] >= 128;
-      };
       const homes: number[] = [];
       const cols: number[] = [];
-      const sizes: number[] = [];
       for (let y = 0; y < MH; y++) {
         for (let x = 0; x < MW; x++) {
           if (data[(y * MW + x) * 4] < 128) continue; // land = white
-          const edge =
-            !isLand(x - 1, y) || !isLand(x + 1, y) || !isLand(x, y - 1) || !isLand(x, y + 1);
-          const jit = edge ? 0.55 : 1.7; // scatter interior more, keep edges tight
           for (let d = 0; d < DENSITY; d++) {
-            const u = (x + 0.5 + (Math.random() - 0.5) * jit) / MW;
-            const v = (y + 0.5 + (Math.random() - 0.5) * jit) / MH;
+            const u = (x + Math.random()) / MW;
+            const v = (y + Math.random()) / MH;
             const phi = u * Math.PI * 2;
             const theta = v * Math.PI;
             const sinT = Math.sin(theta);
             const rr = R + GAP + (Math.random() - 0.5) * RADIUS_JITTER;
-            homes.push(
-              -Math.cos(phi) * sinT * rr,
-              Math.cos(theta) * rr,
-              Math.sin(phi) * sinT * rr
-            );
+            const hx = -Math.cos(phi) * sinT * rr;
+            const hy = Math.cos(theta) * rr;
+            const hz = Math.sin(phi) * sinT * rr;
+            homes.push(hx, hy, hz);
 
-            const t = Math.random() * 0.65; // white → slight cool-white
+            const n = Math.sin(hx * 2.3 + hy * 1.7) * Math.cos(hz * 2.1 - hy * 1.3);
+            let t = 0.5 + 0.5 * n;
+            t = t * t;
+            t = Math.min(1, Math.max(0, t + (Math.random() - 0.5) * 0.2));
             cols.push(
               DOT_MAIN[0] + (DOT_ACCENT[0] - DOT_MAIN[0]) * t,
               DOT_MAIN[1] + (DOT_ACCENT[1] - DOT_MAIN[1]) * t,
               DOT_MAIN[2] + (DOT_ACCENT[2] - DOT_MAIN[2]) * t
             );
-            // Random size — edges stay fairly uniform, interior varies more.
-            sizes.push(edge ? 0.85 + Math.random() * 0.4 : 0.55 + Math.random() * 1.15);
           }
         }
       }
@@ -222,7 +184,6 @@ export default function Globe({ className = "" }: { className?: string }) {
       const geo = new THREE.BufferGeometry();
       geo.setAttribute("position", new THREE.BufferAttribute(new Float32Array(homes), 3));
       geo.setAttribute("color", new THREE.BufferAttribute(new Float32Array(cols), 3));
-      geo.setAttribute("aSize", new THREE.BufferAttribute(new Float32Array(sizes), 1));
 
       // Trail: a ring buffer of recent cursor samples (xyz + strength).
       const trail = Array.from({ length: TRAIL_N }, () => new THREE.Vector4(999, 999, 999, 0));
@@ -231,7 +192,6 @@ export default function Globe({ className = "" }: { className?: string }) {
       const pointsMat = new THREE.ShaderMaterial({
         transparent: true,
         depthWrite: false,
-        blending: THREE.AdditiveBlending, // white dots glow over the glass
         uniforms: {
           uTrail: { value: trail },
           uCursorNow: { value: new THREE.Vector4(999, 999, 999, 0) },
@@ -245,7 +205,6 @@ export default function Globe({ className = "" }: { className?: string }) {
         },
         vertexShader: `
           attribute vec3 color;
-          attribute float aSize;
           uniform vec4 uTrail[${TRAIL_N}];
           uniform vec4 uCursorNow;
           uniform float uTime;
@@ -273,14 +232,14 @@ export default function Globe({ className = "" }: { className?: string }) {
             p += nrm * (w * (0.008 + f * 0.022));
             // Ripple flowing out from the cursor — air moving through the blanket.
             float dcn = distance(p, uCursorNow.xyz);
-            float ripple = sin(dcn * 12.0 - uTime * 2.8) * exp(-dcn * 3.2) * uCursorNow.w;
+            float ripple = sin(dcn * 14.0 - uTime * 6.5) * exp(-dcn * 3.2) * uCursorNow.w;
             p += nrm * (uLift * f + ripple * 0.07);
             vColor = mix(color, uHighlight, f);
             vec4 mv = modelViewMatrix * vec4(p, 1.0);
             // Feather the silhouette so dots fade at the rim (no hard ring).
             vec3 viewNrm = normalize((modelViewMatrix * vec4(nrm, 0.0)).xyz);
             vFacing = dot(viewNrm, normalize(-mv.xyz));
-            float size = uSize * aSize * (1.0 + uSizeBoost * f);
+            float size = uSize * (1.0 + uSizeBoost * f);
             gl_PointSize = size * uSizeScale / -mv.z;
             gl_Position = projectionMatrix * mv;
           }
@@ -289,13 +248,12 @@ export default function Globe({ className = "" }: { className?: string }) {
           varying vec3 vColor;
           varying float vFacing;
           void main() {
-            // Small glowing light: tight bright core + soft halo (additive).
             float d = distance(gl_PointCoord, vec2(0.5));
-            float halo = smoothstep(0.5, 0.0, d);
-            float core = smoothstep(0.24, 0.0, d);
-            float a = (halo * 0.5 + core * 0.55) * smoothstep(-0.05, 0.45, vFacing);
-            if (a < 0.01) discard;
-            gl_FragColor = vec4(vColor, a);
+            float core = smoothstep(0.5, 0.0, d);
+            float alpha = core * smoothstep(-0.05, 0.45, vFacing);
+            if (alpha < 0.02) discard;
+            vec3 col = mix(vColor, vec3(1.0), pow(core, 3.0) * 0.65);
+            gl_FragColor = vec4(col, alpha);
           }
         `,
       });
@@ -371,7 +329,6 @@ export default function Globe({ className = "" }: { className?: string }) {
         if (!visible) return;
 
         pointsMat.uniforms.uTime.value += 0.016;
-        sphereMat.uniforms.uTime.value += 0.016;
         if (!dragging) rotY += AUTO_SPIN;
         group.rotation.y = rotY;
         group.rotation.x += (rotX - group.rotation.x) * 0.1;
@@ -395,7 +352,7 @@ export default function Globe({ className = "" }: { className?: string }) {
           writeIdx = (writeIdx + 1) % TRAIL_N;
           now.set(cursorLocal.x, cursorLocal.y, cursorLocal.z, 1);
         } else {
-          now.w *= 0.94; // ripple settles out a bit slower
+          now.w *= 0.9;
         }
 
         renderer.render(scene, camera);
