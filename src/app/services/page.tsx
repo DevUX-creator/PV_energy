@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Preloader from "@/components/ui/Preloader";
 import ServicesHero from "@/components/sections/ServicesHero";
+import ServicesOverview from "@/components/sections/ServicesOverview";
 
 export const metadata: Metadata = {
   title: "Services",
@@ -19,7 +20,14 @@ const SHOW_WIP = process.env.NODE_ENV !== "production";
 export default function ServicesPage() {
   return (
     <main id="main-content">
-      {SHOW_WIP ? <ServicesHero /> : <Preloader label="Services" />}
+      {SHOW_WIP ? (
+        <>
+          <ServicesHero />
+          <ServicesOverview />
+        </>
+      ) : (
+        <Preloader label="Services" />
+      )}
     </main>
   );
 }

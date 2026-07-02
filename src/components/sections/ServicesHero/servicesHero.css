@@ -1,7 +1,10 @@
 /* Services hero — frosted-glass globe centrepiece on a light-grey surface,
    with the title top-left and a supporting line bottom-right. */
 .services-hero {
-  position: relative;
+  /* Sticky so the next section scrolls up and overlaps it (home pattern). */
+  position: sticky;
+  top: 0;
+  z-index: 0;
   background: #dcdcdc; /* light grey (matches the Figma frosted-orb frame) */
   min-height: 100svh;
   overflow: hidden;

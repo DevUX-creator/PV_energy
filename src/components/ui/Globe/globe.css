@@ -51,6 +51,32 @@
   background: #0857d6;
 }
 
+/* Click pulse — an expanding blue ring (doesn't disturb the JS translate). */
+.globe-marker::before {
+  content: "";
+  position: absolute;
+  inset: -4px;
+  border-radius: 8px;
+  border: 1.5px solid #0857d6;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.globe-marker.is-pulse::before {
+  animation: globe-marker-pulse 0.5s ease;
+}
+
+@keyframes globe-marker-pulse {
+  from {
+    opacity: 0.7;
+    transform: scale(0.85);
+  }
+  to {
+    opacity: 0;
+    transform: scale(1.9);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .globe-marker svg {
     transition: none;

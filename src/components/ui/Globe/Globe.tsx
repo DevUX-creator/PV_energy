@@ -368,7 +368,11 @@ export default function Globe({
         const el = document.createElement("div");
         el.className = "globe-marker";
         el.innerHTML = SHURIKEN;
-        el.addEventListener("click", () => onSelectRef.current?.(i));
+        el.addEventListener("click", () => {
+          el.classList.add("is-pulse");
+          window.setTimeout(() => el.classList.remove("is-pulse"), 500);
+          onSelectRef.current?.(i);
+        });
         mount.appendChild(el);
         return { home, el };
       });
@@ -380,6 +384,7 @@ export default function Globe({
       const cursorLocal = new THREE.Vector3(999, 999, 999);
       let hovering = false;
       let dragging = false;
+      let moved = false; // distinguishes a click from a drag
       let lastX = 0;
       let lastY = 0;
       let rotY = -1.9; // start with Europe / Africa facing the viewer
@@ -391,6 +396,7 @@ export default function Globe({
         ndc.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
         hovering = true;
         if (dragging) {
+          moved = true;
           rotY += (e.clientX - lastX) * 0.005;
           rotX = Math.max(-0.6, Math.min(0.6, rotX + (e.clientY - lastY) * 0.005));
           lastX = e.clientX;
@@ -399,10 +405,16 @@ export default function Globe({
       };
       const onPointerDown = (e: PointerEvent) => {
         dragging = true;
+        moved = false;
         lastX = e.clientX;
         lastY = e.clientY;
         renderer.domElement.style.cursor = "grabbing";
       };
+      // Click on the empty globe (not a chip, not a drag) → deselect.
+      const onCanvasClick = () => {
+        if (!moved) onSelectRef.current?.(-1);
+      };
+      renderer.domElement.addEventListener("click", onCanvasClick);
       const onPointerUp = () => {
         dragging = false;
         renderer.domElement.style.cursor = "grab";
@@ -515,6 +527,7 @@ export default function Globe({
         window.removeEventListener("resize", onResize);
         renderer.domElement.removeEventListener("pointerdown", onPointerDown);
         renderer.domElement.removeEventListener("pointerleave", onPointerLeave);
+        renderer.domElement.removeEventListener("click", onCanvasClick);
         window.removeEventListener("pointermove", onPointerMove);
         window.removeEventListener("pointerup", onPointerUp);
         geo.dispose();

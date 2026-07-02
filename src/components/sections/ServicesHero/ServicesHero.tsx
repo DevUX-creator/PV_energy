@@ -102,7 +102,9 @@ export default function ServicesHero() {
             offices={OFFICES}
             selected={selected}
             locked={selected !== null}
-            onSelect={(i) => setSelected((prev) => (prev === i ? null : i))}
+            onSelect={(i) =>
+              setSelected((prev) => (i === -1 || prev === i ? null : i))
+            }
             onState={(s) => {
               setActive(s.active);
               setNear(s.near);
