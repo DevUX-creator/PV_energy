@@ -4,19 +4,20 @@
   background: #1c1c1e;
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
+  align-items: center;
+  text-align: center;
   gap: var(--space-6);
 }
 
 /* Light pill on the dark surface (same fix as the Leaders tag). */
 .svc-cta__tag {
-  margin-bottom: var(--space-2);
+  margin-bottom: var(--space-8); /* breathing room before the headline */
   color: #0a0a0a;
   background: var(--bg-muted);
 }
 
 .svc-cta__title {
-  max-width: 20ch;
+  max-width: 22ch;
   font-size: clamp(2rem, 5vw, 4.5rem);
   line-height: 1.02;
   letter-spacing: -0.01em;
@@ -24,8 +25,9 @@
 }
 
 .svc-cta__text {
-  max-width: 56ch;
-  font-size: var(--text-fluid-lead);
+  max-width: 60ch;
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
   line-height: var(--leading-relaxed);
   color: var(--fg-secondary);
 }
