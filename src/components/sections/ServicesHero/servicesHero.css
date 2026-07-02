@@ -49,6 +49,28 @@
   color: var(--fg-secondary);
 }
 
+/* Blur-out → blur-in text swap (title city word + subtext). */
+.services-hero__swap {
+  display: inline-block;
+  transition: opacity 0.24s ease, filter 0.24s ease, transform 0.24s ease;
+}
+
+.services-hero__swap.is-out {
+  opacity: 0;
+  filter: blur(8px);
+  transform: translateY(3px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .services-hero__swap {
+    transition: opacity 0.24s ease;
+  }
+  .services-hero__swap.is-out {
+    filter: none;
+    transform: none;
+  }
+}
+
 /* Supporting line — bottom-right. */
 .services-hero__sub {
   position: absolute;

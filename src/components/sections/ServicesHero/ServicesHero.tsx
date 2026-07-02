@@ -1,11 +1,31 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Container from "@/components/ui/Container";
 import Button from "@/components/ui/Button";
 import Globe from "@/components/ui/Globe";
 import HeroCursor from "./HeroCursor";
 import "./servicesHero.css";
+
+/** Swaps text with a blur-out → blur-in transition when `value` changes. */
+function BlurSwap({ value, className = "" }: { value: string; className?: string }) {
+  const [display, setDisplay] = useState(value);
+  const [out, setOut] = useState(false);
+  useEffect(() => {
+    if (value === display) return;
+    setOut(true);
+    const t = setTimeout(() => {
+      setDisplay(value);
+      setOut(false);
+    }, 240);
+    return () => clearTimeout(t);
+  }, [value, display]);
+  return (
+    <span className={`services-hero__swap${out ? " is-out" : ""} ${className}`.trim()}>
+      {display}
+    </span>
+  );
+}
 
 const OFFICES = [
   {
@@ -50,9 +70,10 @@ export default function ServicesHero() {
         <h1 className="services-hero__title">
           Services
           <br />
-          <span className="services-hero__title-grey">
-            {office ? office.city : "Borderless"}
-          </span>
+          <BlurSwap
+            className="services-hero__title-grey"
+            value={office ? office.city : "Borderless"}
+          />
         </h1>
         <div className="services-hero__cta">
           <Button href="/contact">Contact Us</Button>
@@ -71,7 +92,9 @@ export default function ServicesHero() {
         </div>
       </Container>
 
-      <p className="services-hero__sub">{office ? office.copy : DEFAULT_SUB}</p>
+      <p className="services-hero__sub">
+        <BlurSwap value={office ? office.copy : DEFAULT_SUB} />
+      </p>
 
       <HeroCursor />
     </section>
