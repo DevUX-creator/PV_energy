@@ -9,93 +9,29 @@
   padding-top: var(--header-height);
 }
 
-/* Blue glowing ring — brighter at the top, fading toward the bottom. */
-.prod-hero__glow {
-  position: absolute;
-  left: 50%;
-  top: 46%;
-  width: min(1150px, 132vmin);
-  aspect-ratio: 1;
-  transform: translate(-50%, -50%);
-  border-radius: 50%;
-  background: radial-gradient(
-    circle at 50% 50%,
-    transparent 0 55%,
-    rgba(45, 114, 249, 0.9) 61%,
-    rgba(45, 114, 249, 0) 71%
-  );
-  filter: blur(22px);
-  -webkit-mask-image: linear-gradient(
-    180deg,
-    #000 0%,
-    rgba(0, 0, 0, 0.45) 55%,
-    rgba(0, 0, 0, 0.1) 100%
-  );
-  mask-image: linear-gradient(
-    180deg,
-    #000 0%,
-    rgba(0, 0, 0, 0.45) 55%,
-    rgba(0, 0, 0, 0.1) 100%
-  );
-  z-index: 0;
-  pointer-events: none;
-}
-
-/* Faint concentric guide circles. */
-.prod-hero__rings {
-  position: absolute;
-  left: 50%;
-  top: 46%;
-  width: min(1150px, 132vmin);
-  height: min(1150px, 132vmin);
-  transform: translate(-50%, -50%);
-  z-index: 1;
-  color: rgba(255, 255, 255, 0.07);
-  pointer-events: none;
-}
-.prod-hero__rings circle {
-  fill: none;
-  stroke: currentColor;
-  stroke-width: 1;
-  vector-effect: non-scaling-stroke;
-}
-
-/* Dashed crosshair. */
-.prod-hero__grid {
+/* Soft blue gradient wash — diffuse glow from the top, no hard ring
+   (sui.io-style background). */
+.prod-hero__bg {
   position: absolute;
   inset: 0;
-  z-index: 1;
+  z-index: 0;
   pointer-events: none;
-}
-.prod-hero__grid::before,
-.prod-hero__grid::after {
-  content: "";
-  position: absolute;
-}
-.prod-hero__grid::before {
-  left: 50%;
-  top: 0;
-  width: 1px;
-  height: 100%;
-  background: repeating-linear-gradient(
-    180deg,
-    rgba(255, 255, 255, 0.08) 0 6px,
-    transparent 6px 14px
-  );
-}
-.prod-hero__grid::after {
-  top: 50%;
-  left: 0;
-  height: 1px;
-  width: 100%;
-  background: repeating-linear-gradient(
-    90deg,
-    rgba(255, 255, 255, 0.08) 0 6px,
-    transparent 6px 14px
-  );
+  background:
+    radial-gradient(
+      120% 78% at 50% 2%,
+      rgba(66, 128, 255, 0.5) 0%,
+      rgba(45, 114, 249, 0.16) 32%,
+      transparent 58%
+    ),
+    radial-gradient(
+      80% 55% at 50% 118%,
+      rgba(45, 114, 249, 0.14) 0%,
+      transparent 60%
+    ),
+    #1b1b1d;
 }
 
-/* Centered content — sits above the glow / guides. */
+/* Centered content — sits above the gradient. */
 .prod-hero__center {
   position: relative;
   z-index: 2;
@@ -106,16 +42,19 @@
 }
 
 .prod-hero__logo {
+  position: relative;
+  z-index: 3; /* above the blur stack */
   width: clamp(72px, 9vw, 118px);
   aspect-ratio: 1;
 }
 
-/* Progressive-blur word: a blurred base with the sharp centre revealed by a
-   horizontal mask (sides stay blurred). */
-.prod-hero__wordwrap {
+/* Word + its progressive-blur overlay. */
+.prod-hero__wordstage {
   position: relative;
 }
 .prod-hero__word {
+  position: relative;
+  z-index: 0; /* the backdrop the blur layers sample */
   margin: 0;
   font-family: var(--font-display);
   font-weight: var(--font-bold);
@@ -126,30 +65,99 @@
   color: #fff;
   white-space: nowrap;
 }
-.prod-hero__word--blur {
-  display: block;
-  filter: blur(11px);
+
+/* Progressive blur: four stacked layers, each blurring more, masked so blur
+   accumulates from a clear centre out to the (over-extended) edges. */
+.prod-hero__blur {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: -6%;
+  right: -6%;
+  z-index: 1;
+  pointer-events: none;
 }
-.prod-hero__word--sharp {
+.prod-hero__blur > span {
   position: absolute;
   inset: 0;
+  display: block;
+}
+.prod-hero__blur > span:nth-child(1) {
+  -webkit-backdrop-filter: blur(2px);
+  backdrop-filter: blur(2px);
   -webkit-mask-image: linear-gradient(
     90deg,
-    transparent 0%,
-    #000 32%,
-    #000 68%,
-    transparent 100%
+    #000 0 24%,
+    transparent 30%,
+    transparent 70%,
+    #000 76% 100%
   );
   mask-image: linear-gradient(
     90deg,
-    transparent 0%,
-    #000 32%,
-    #000 68%,
-    transparent 100%
+    #000 0 24%,
+    transparent 30%,
+    transparent 70%,
+    #000 76% 100%
+  );
+}
+.prod-hero__blur > span:nth-child(2) {
+  -webkit-backdrop-filter: blur(5px);
+  backdrop-filter: blur(5px);
+  -webkit-mask-image: linear-gradient(
+    90deg,
+    #000 0 15%,
+    transparent 21%,
+    transparent 79%,
+    #000 85% 100%
+  );
+  mask-image: linear-gradient(
+    90deg,
+    #000 0 15%,
+    transparent 21%,
+    transparent 79%,
+    #000 85% 100%
+  );
+}
+.prod-hero__blur > span:nth-child(3) {
+  -webkit-backdrop-filter: blur(11px);
+  backdrop-filter: blur(11px);
+  -webkit-mask-image: linear-gradient(
+    90deg,
+    #000 0 7%,
+    transparent 13%,
+    transparent 87%,
+    #000 93% 100%
+  );
+  mask-image: linear-gradient(
+    90deg,
+    #000 0 7%,
+    transparent 13%,
+    transparent 87%,
+    #000 93% 100%
+  );
+}
+.prod-hero__blur > span:nth-child(4) {
+  -webkit-backdrop-filter: blur(22px);
+  backdrop-filter: blur(22px);
+  -webkit-mask-image: linear-gradient(
+    90deg,
+    #000 0 1%,
+    transparent 6%,
+    transparent 94%,
+    #000 99% 100%
+  );
+  mask-image: linear-gradient(
+    90deg,
+    #000 0 1%,
+    transparent 6%,
+    transparent 94%,
+    #000 99% 100%
   );
 }
 
 .prod-hero__actions {
+  position: relative;
+  z-index: 3; /* above the blur stack */
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
