@@ -1,7 +1,12 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import Preloader from "@/components/ui/Preloader";
 import ProductDetail from "@/components/sections/ProductDetail";
 import { ALL_PRODUCTS, getProduct } from "@/lib/products";
+
+// Production keeps the "coming soon" placeholder; local dev renders the real
+// detail pages we're polishing. Remove this gate at launch.
+const SHOW_WIP = process.env.NODE_ENV !== "production";
 
 type Params = { slug: string };
 
@@ -42,7 +47,11 @@ export default async function ProductPage({
   if (!product) notFound();
   return (
     <main id="main-content">
-      <ProductDetail product={product} />
+      {SHOW_WIP ? (
+        <ProductDetail product={product} />
+      ) : (
+        <Preloader label="Products" />
+      )}
     </main>
   );
 }
