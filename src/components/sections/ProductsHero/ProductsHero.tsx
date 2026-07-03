@@ -76,11 +76,8 @@ export default function ProductsHero() {
           </div>
 
           <div className="prod-hero__actions">
-            <Button href="/products#petroleum" variant="outline" showArrow={false}>
-              Petroleum
-            </Button>
-            <Button href="/products#fertilizers" variant="outline" showArrow={false}>
-              Fertilizers
+            <Button href="/products#petroleum" variant="primary">
+              Explore products
             </Button>
           </div>
         </div>

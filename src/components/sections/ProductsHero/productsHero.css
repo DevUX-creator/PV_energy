@@ -52,7 +52,7 @@
 .prod-hero__logo {
   position: relative;
   z-index: 3; /* above the blur */
-  width: clamp(72px, 9vw, 118px);
+  width: clamp(120px, 15vw, 200px);
   aspect-ratio: 1;
 }
 
@@ -81,10 +81,13 @@
   inset: 0;
   z-index: 2; /* over the word (z1), under logo/buttons (z3) */
   pointer-events: none;
-  --r1: clamp(200px, 24vw, 560px); /* fully-clear radius — big centre */
-  --r2: clamp(460px, 52vw, 1000px); /* fully-blurred radius — soft, no ring */
+  --r1: clamp(160px, 19vw, 440px); /* fully-clear radius — big centre */
+  --r2: clamp(380px, 44vw, 860px); /* fully-blurred radius — soft, no ring */
   -webkit-backdrop-filter: blur(7px);
   backdrop-filter: blur(7px);
+  /* Tint the blurred area toward the hero's own dark-blue so it reads as haze,
+     not a white glow. */
+  background: rgba(16, 26, 48, 0.2);
   /* Intersect the radial reveal with a vertical fade so the blur dissolves to
      nothing well before the box top/bottom — no hard seam when scrolling. */
   -webkit-mask-image:
@@ -116,14 +119,11 @@
   gap: var(--space-3);
 }
 
-/* Outline buttons on the dark hero — ink fill flips to white on hover. */
-.prod-hero .btn--outline {
-  color: #fff;
-  background: transparent;
-  border-color: rgba(255, 255, 255, 0.32);
-  --btn-fill: #fff;
-}
-.prod-hero .btn--outline:hover,
-.prod-hero .btn--outline:focus-visible {
-  color: #1b1b1d;
+/* Premium brand-blue CTA on the dark hero — soft blue glow, lighter blue
+   fill slides up on hover. */
+.prod-hero .btn--primary {
+  background: var(--accent);
+  border: none;
+  --btn-fill: var(--accent-hover);
+  box-shadow: 0 12px 34px -10px rgba(8, 87, 214, 0.6);
 }
