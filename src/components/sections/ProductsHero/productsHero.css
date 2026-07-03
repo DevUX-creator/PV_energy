@@ -81,28 +81,30 @@
   inset: 0;
   z-index: 2; /* over the word (z1), under logo/buttons (z3) */
   pointer-events: none;
-  --r1: clamp(96px, 12vw, 280px); /* fully-clear radius — big centre */
-  --r2: clamp(200px, 22vw, 440px); /* fully-blurred radius — tighter feather */
-  -webkit-backdrop-filter: blur(8px);
-  backdrop-filter: blur(8px);
-  /* Faint frosted tint: white with a touch of brand blue. */
-  background: linear-gradient(
-    180deg,
-    rgba(120, 160, 255, 0.08) 0%,
-    rgba(255, 255, 255, 0.1) 100%
-  );
-  -webkit-mask-image: radial-gradient(
-    circle at var(--mx, 50%) var(--my, 50%),
-    transparent 0,
-    transparent var(--r1),
-    #000 var(--r2)
-  );
-  mask-image: radial-gradient(
-    circle at var(--mx, 50%) var(--my, 50%),
-    transparent 0,
-    transparent var(--r1),
-    #000 var(--r2)
-  );
+  --r1: clamp(200px, 24vw, 560px); /* fully-clear radius — big centre */
+  --r2: clamp(460px, 52vw, 1000px); /* fully-blurred radius — soft, no ring */
+  -webkit-backdrop-filter: blur(7px);
+  backdrop-filter: blur(7px);
+  /* Intersect the radial reveal with a vertical fade so the blur dissolves to
+     nothing well before the box top/bottom — no hard seam when scrolling. */
+  -webkit-mask-image:
+    radial-gradient(
+      circle at var(--mx, 50%) var(--my, 50%),
+      transparent 0,
+      transparent var(--r1),
+      #000 var(--r2)
+    ),
+    linear-gradient(180deg, transparent 0%, #000 20%, #000 68%, transparent 92%);
+  -webkit-mask-composite: source-in;
+  mask-image:
+    radial-gradient(
+      circle at var(--mx, 50%) var(--my, 50%),
+      transparent 0,
+      transparent var(--r1),
+      #000 var(--r2)
+    ),
+    linear-gradient(180deg, transparent 0%, #000 20%, #000 68%, transparent 92%);
+  mask-composite: intersect;
 }
 
 .prod-hero__actions {
