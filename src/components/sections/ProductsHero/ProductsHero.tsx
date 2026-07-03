@@ -88,6 +88,9 @@ export default function ProductsHero() {
           </Button>
         </div>
       </div>
+
+      {/* Blends the dark hero, through brand blue, into the white section below. */}
+      <div className="prod-hero__fade" aria-hidden="true" />
     </section>
   );
 }
