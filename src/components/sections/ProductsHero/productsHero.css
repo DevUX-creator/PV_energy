@@ -1,39 +1,46 @@
 .prod-hero {
   position: relative;
   isolation: isolate; /* confine the layer z-indexes to this hero */
-  min-height: 100svh;
+  /* Taller than the viewport so the white tail sits below the fold and only
+     reveals on scroll, blending into the white section below. */
+  min-height: 146svh;
   overflow: hidden;
-  background: #1b1b1d; /* dark grey */
+}
+
+/* Vertical gradient (from Figma) using our brand colors: dark grey at the top,
+   our brand blue through the middle, white at the very bottom. */
+.prod-hero__bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    180deg,
+    #1b1b1d 0%,
+    #1b1b1d 30%,
+    #182238 43%,
+    #123089 54%,
+    #0857d6 64%,
+    #1a68ee 72%,
+    #5f92f0 82%,
+    #a9c8f8 90%,
+    #dce9fc 96%,
+    #ffffff 100%
+  );
+}
+
+/* First screen — centers the hero content; the gradient tail continues below. */
+.prod-hero__viewport {
+  position: relative;
+  min-height: 100svh;
   display: flex;
   align-items: center;
   justify-content: center;
   padding-top: var(--header-height);
 }
 
-/* Soft blue gradient wash — diffuse glow from the top, no hard ring
-   (sui.io-style background). */
-.prod-hero__bg {
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  pointer-events: none;
-  background:
-    radial-gradient(
-      120% 78% at 50% 2%,
-      rgba(66, 128, 255, 0.5) 0%,
-      rgba(45, 114, 249, 0.16) 32%,
-      transparent 58%
-    ),
-    radial-gradient(
-      80% 55% at 50% 118%,
-      rgba(45, 114, 249, 0.14) 0%,
-      transparent 60%
-    ),
-    #1b1b1d;
-}
-
-/* Centered content — NO z-index so its children stack against the
-   section-level blur overlay directly (word below it, logo/buttons above). */
+/* Centered content — NO z-index so its children stack against the blur overlay
+   directly (word below it, logo/buttons above). */
 .prod-hero__center {
   position: relative;
   display: flex;
@@ -44,7 +51,7 @@
 
 .prod-hero__logo {
   position: relative;
-  z-index: 3; /* above the full-section blur */
+  z-index: 3; /* above the blur */
   width: clamp(72px, 9vw, 118px);
   aspect-ratio: 1;
 }
@@ -66,23 +73,23 @@
   white-space: nowrap;
 }
 
-/* One fully-blurred layer over the WHOLE section; a feathered radial hole at
-   --mx/--my (updated from JS, centered by default) reveals the sharp content
-   underneath and follows the cursor. */
+/* Soft blurred layer over the first screen; a wide, feathered radial hole at
+   --mx/--my (centered by default) reveals the sharp content and follows the
+   cursor. Low blur + big clear centre. */
 .prod-hero__blur {
   position: absolute;
   inset: 0;
   z-index: 2; /* over the word (z1), under logo/buttons (z3) */
   pointer-events: none;
-  --r1: clamp(40px, 5vw, 120px); /* fully-clear radius */
-  --r2: clamp(360px, 50vw, 900px); /* fully-blurred radius — big soft feather */
-  -webkit-backdrop-filter: blur(16px);
-  backdrop-filter: blur(16px);
-  /* Frosted tint: white with a touch of brand blue, whiter toward the bottom. */
+  --r1: clamp(96px, 12vw, 280px); /* fully-clear radius — big centre */
+  --r2: clamp(400px, 54vw, 940px); /* fully-blurred radius — big soft feather */
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  /* Faint frosted tint: white with a touch of brand blue. */
   background: linear-gradient(
     180deg,
-    rgba(140, 175, 255, 0.12) 0%,
-    rgba(255, 255, 255, 0.14) 100%
+    rgba(120, 160, 255, 0.08) 0%,
+    rgba(255, 255, 255, 0.1) 100%
   );
   -webkit-mask-image: radial-gradient(
     circle at var(--mx, 50%) var(--my, 50%),
@@ -98,27 +105,9 @@
   );
 }
 
-/* Bottom transition: dark hero → hint of brand blue → white section below. */
-.prod-hero__fade {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  height: 48vh;
-  z-index: 4; /* above the blur so the bottom blends to clean white */
-  pointer-events: none;
-  background: linear-gradient(
-    180deg,
-    rgba(27, 27, 29, 0) 0%,
-    rgba(8, 87, 214, 0.1) 42%,
-    rgba(255, 255, 255, 0.82) 82%,
-    #ffffff 100%
-  );
-}
-
 .prod-hero__actions {
   position: relative;
-  z-index: 3; /* above the full-section blur */
+  z-index: 3; /* above the blur */
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
