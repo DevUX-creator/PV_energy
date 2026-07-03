@@ -121,7 +121,7 @@
 .prod-hero__logo {
   position: relative;
   z-index: 3; /* above the blur */
-  width: clamp(150px, 18vw, 250px);
+  width: clamp(165px, 19vw, 270px);
   aspect-ratio: 1;
 }
 
@@ -204,6 +204,6 @@
   z-index: 5;
   pointer-events: none;
   opacity: var(--p, 0);
-  -webkit-backdrop-filter: blur(calc(var(--p, 0) * 14px));
-  backdrop-filter: blur(calc(var(--p, 0) * 14px));
+  -webkit-backdrop-filter: blur(calc(var(--p, 0) * 10px));
+  backdrop-filter: blur(calc(var(--p, 0) * 10px));
 }

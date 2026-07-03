@@ -3,20 +3,24 @@
 import { useEffect, useRef } from "react";
 import Button from "@/components/ui/Button";
 import Logo3D from "@/components/ui/Logo3D";
+import { gsap, SplitText, registerGsapPlugins } from "@/lib/gsap";
 import "./productsHero.css";
 
 /**
  * ProductsHero — dark-to-blue-to-white vertical gradient (from Figma) with a
- * blueprint guide overlay (concentric circles, crosshair, dashed grid). The
- * hero is taller than the viewport so the white tail reveals on scroll.
+ * blueprint guide overlay. The hero is taller than the viewport so the white
+ * tail reveals on scroll.
  *
  * The word "Products" sits under a soft blurred layer whose feathered radial
- * hole reveals the sharp content and follows the cursor. As you scroll down,
- * a blur-out layer ramps up (driven by --p) so the whole hero blurs away.
+ * hole reveals the sharp content and follows the cursor. As you scroll, the
+ * word's letters fly out one-by-one (SplitText) and the 3D logo rotates and
+ * throws itself away; a blur-out layer hazes the whole scene (--p).
  */
 export default function ProductsHero() {
   const sectionRef = useRef<HTMLElement>(null);
   const blurRef = useRef<HTMLDivElement>(null);
+  const wordRef = useRef<HTMLHeadingElement>(null);
+  const logoRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const section = sectionRef.current;
@@ -25,7 +29,7 @@ export default function ProductsHero() {
 
     const clamp = (v: number) => Math.min(1, Math.max(0, v));
 
-    // Reveal position (0..1 within the blur box), eased toward the cursor.
+    // --- Cursor-following reveal + scroll-out progress (--p) ---
     let tx = 0.5;
     let ty = 0.5;
     let cx = 0.5;
@@ -49,7 +53,6 @@ export default function ProductsHero() {
       blur.style.setProperty("--mx", `${(cx * b.width).toFixed(1)}px`);
       blur.style.setProperty("--my", `${(cy * b.height).toFixed(1)}px`);
 
-      // Scroll-out progress: 0 at the top, 1 after ~0.65 viewport of scroll.
       const r = section.getBoundingClientRect();
       const p = clamp(-r.top / (window.innerHeight * 0.65));
       section.style.setProperty("--p", p.toFixed(3));
@@ -64,10 +67,56 @@ export default function ProductsHero() {
     }
     raf = requestAnimationFrame(tick);
 
+    // --- Scroll-scrubbed exit: letters out one-by-one, logo rotates away ---
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    let split: InstanceType<typeof SplitText> | null = null;
+    let ctx: gsap.Context | null = null;
+
+    if (!reduced && wordRef.current) {
+      registerGsapPlugins();
+      split = new SplitText(wordRef.current, { type: "chars" });
+      const chars = split.chars;
+      ctx = gsap.context(() => {
+        gsap.to(chars, {
+          yPercent: -170,
+          opacity: 0,
+          rotationX: -90,
+          transformPerspective: 600,
+          transformOrigin: "50% 100%",
+          ease: "power2.in",
+          stagger: 0.5,
+          duration: 0.5,
+          scrollTrigger: {
+            trigger: section,
+            start: "top top",
+            end: "+=72%",
+            scrub: true,
+          },
+        });
+        if (logoRef.current) {
+          gsap.to(logoRef.current, {
+            yPercent: -160,
+            rotateY: 320,
+            opacity: 0,
+            transformPerspective: 1000,
+            ease: "power1.in",
+            scrollTrigger: {
+              trigger: section,
+              start: "top top",
+              end: "+=55%",
+              scrub: true,
+            },
+          });
+        }
+      }, section);
+    }
+
     return () => {
       cancelAnimationFrame(raf);
       window.removeEventListener("pointermove", onMove);
       window.removeEventListener("pointerleave", onLeave);
+      ctx?.revert();
+      split?.revert();
     };
   }, []);
 
@@ -92,12 +141,14 @@ export default function ProductsHero() {
         </div>
 
         <div className="prod-hero__center">
-          <div className="prod-hero__logo">
+          <div className="prod-hero__logo" ref={logoRef}>
             <Logo3D />
           </div>
 
           <div className="prod-hero__wordstage">
-            <h1 className="prod-hero__word">Products</h1>
+            <h1 className="prod-hero__word" ref={wordRef}>
+              Products
+            </h1>
           </div>
 
           <div className="prod-hero__actions">
@@ -111,7 +162,7 @@ export default function ProductsHero() {
             reveals the sharp content and follows the cursor. */}
         <div className="prod-hero__blur" aria-hidden="true" ref={blurRef} />
 
-        {/* Scroll-out: blurs the whole hero away as --p rises. */}
+        {/* Scroll-out: hazes the whole hero as --p rises. */}
         <div className="prod-hero__blurout" aria-hidden="true" />
       </div>
     </section>
