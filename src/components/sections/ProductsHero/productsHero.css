@@ -1,0 +1,169 @@
+.prod-hero {
+  position: relative;
+  min-height: 100svh;
+  overflow: hidden;
+  background: #1b1b1d; /* dark grey */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-top: var(--header-height);
+}
+
+/* Blue glowing ring — brighter at the top, fading toward the bottom. */
+.prod-hero__glow {
+  position: absolute;
+  left: 50%;
+  top: 46%;
+  width: min(1150px, 132vmin);
+  aspect-ratio: 1;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: radial-gradient(
+    circle at 50% 50%,
+    transparent 0 55%,
+    rgba(45, 114, 249, 0.9) 61%,
+    rgba(45, 114, 249, 0) 71%
+  );
+  filter: blur(22px);
+  -webkit-mask-image: linear-gradient(
+    180deg,
+    #000 0%,
+    rgba(0, 0, 0, 0.45) 55%,
+    rgba(0, 0, 0, 0.1) 100%
+  );
+  mask-image: linear-gradient(
+    180deg,
+    #000 0%,
+    rgba(0, 0, 0, 0.45) 55%,
+    rgba(0, 0, 0, 0.1) 100%
+  );
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* Faint concentric guide circles. */
+.prod-hero__rings {
+  position: absolute;
+  left: 50%;
+  top: 46%;
+  width: min(1150px, 132vmin);
+  height: min(1150px, 132vmin);
+  transform: translate(-50%, -50%);
+  z-index: 1;
+  color: rgba(255, 255, 255, 0.07);
+  pointer-events: none;
+}
+.prod-hero__rings circle {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+
+/* Dashed crosshair. */
+.prod-hero__grid {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+}
+.prod-hero__grid::before,
+.prod-hero__grid::after {
+  content: "";
+  position: absolute;
+}
+.prod-hero__grid::before {
+  left: 50%;
+  top: 0;
+  width: 1px;
+  height: 100%;
+  background: repeating-linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.08) 0 6px,
+    transparent 6px 14px
+  );
+}
+.prod-hero__grid::after {
+  top: 50%;
+  left: 0;
+  height: 1px;
+  width: 100%;
+  background: repeating-linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.08) 0 6px,
+    transparent 6px 14px
+  );
+}
+
+/* Centered content — sits above the glow / guides. */
+.prod-hero__center {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-6);
+}
+
+.prod-hero__logo {
+  width: clamp(72px, 9vw, 118px);
+  aspect-ratio: 1;
+}
+
+/* Progressive-blur word: a blurred base with the sharp centre revealed by a
+   horizontal mask (sides stay blurred). */
+.prod-hero__wordwrap {
+  position: relative;
+}
+.prod-hero__word {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: var(--font-bold);
+  font-size: clamp(3rem, 13vw, 11rem);
+  line-height: 0.95;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  color: #fff;
+  white-space: nowrap;
+}
+.prod-hero__word--blur {
+  display: block;
+  filter: blur(11px);
+}
+.prod-hero__word--sharp {
+  position: absolute;
+  inset: 0;
+  -webkit-mask-image: linear-gradient(
+    90deg,
+    transparent 0%,
+    #000 32%,
+    #000 68%,
+    transparent 100%
+  );
+  mask-image: linear-gradient(
+    90deg,
+    transparent 0%,
+    #000 32%,
+    #000 68%,
+    transparent 100%
+  );
+}
+
+.prod-hero__actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--space-3);
+}
+
+/* Outline buttons on the dark hero — ink fill flips to white on hover. */
+.prod-hero .btn--outline {
+  color: #fff;
+  background: transparent;
+  border-color: rgba(255, 255, 255, 0.32);
+  --btn-fill: #fff;
+}
+.prod-hero .btn--outline:hover,
+.prod-hero .btn--outline:focus-visible {
+  color: #1b1b1d;
+}
