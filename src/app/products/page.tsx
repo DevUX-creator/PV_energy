@@ -1,19 +1,19 @@
 import type { Metadata } from "next";
-import Preloader from "@/components/ui/Preloader";
+import ProductsOverview from "@/components/sections/ProductsOverview";
 
 export const metadata: Metadata = {
   title: "Products",
-  description: "PV Link Energy products — coming soon.",
+  description:
+    "PV Link Energy's product portfolio — refined petroleum products (LPG, distillates, fuel oil, bitumen, base oil) and fertilizers (urea, ammonia, NPK, DAP, ammonium sulfate) — sourced and delivered on-spec worldwide.",
   alternates: { canonical: "/products" },
-  // Thin placeholder — keep it out of the index until the real page ships.
+  // WIP — keep out of the index until the responsive pass is done.
   robots: { index: false, follow: true },
 };
 
-// TEMPORARY — the Products subpages aren't built yet.
 export default function ProductsPage() {
   return (
     <main id="main-content">
-      <Preloader label="Products" />
+      <ProductsOverview />
     </main>
   );
 }

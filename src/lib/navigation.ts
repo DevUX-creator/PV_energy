@@ -37,7 +37,7 @@ export const MAIN_NAV: NavItem[] = [
       { label: "Fuel Oil", href: "/products/fuel-oil" },
       { label: "Bitumen", href: "/products/bitumen" },
       { label: "Base Oil", href: "/products/base-oil" },
-      { label: "Fertilizers", href: "/products/fertilizers" },
+      { label: "Fertilizers", href: "/products#fertilizers" },
     ],
   },
   { label: "Contact", href: "/contact" },
