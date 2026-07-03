@@ -39,6 +39,75 @@
   padding-top: var(--header-height);
 }
 
+/* Blueprint guides (from Figma) — crosshair, dashed grid, concentric circles. */
+.prod-hero__guides {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+}
+.prod-hero__cross,
+.prod-hero__dash {
+  position: absolute;
+  inset: 0;
+}
+/* Solid centre crosshair. */
+.prod-hero__cross {
+  background:
+    linear-gradient(rgba(255, 255, 255, 0.14), rgba(255, 255, 255, 0.14)) 50% 0 /
+      1px 100% no-repeat,
+    linear-gradient(rgba(255, 255, 255, 0.14), rgba(255, 255, 255, 0.14)) 0 50% /
+      100% 1px no-repeat;
+}
+/* Dashed vertical grid lines. */
+.prod-hero__dash--v {
+  background:
+    repeating-linear-gradient(
+        180deg,
+        rgba(255, 255, 255, 0.16) 0 5px,
+        transparent 5px 11px
+      )
+      30% 0 / 1px 100% no-repeat,
+    repeating-linear-gradient(
+        180deg,
+        rgba(255, 255, 255, 0.16) 0 5px,
+        transparent 5px 11px
+      )
+      70% 0 / 1px 100% no-repeat;
+}
+/* Dashed horizontal grid lines. */
+.prod-hero__dash--h {
+  background:
+    repeating-linear-gradient(
+        90deg,
+        rgba(255, 255, 255, 0.16) 0 5px,
+        transparent 5px 11px
+      )
+      0 24% / 100% 1px no-repeat,
+    repeating-linear-gradient(
+        90deg,
+        rgba(255, 255, 255, 0.16) 0 5px,
+        transparent 5px 11px
+      )
+      0 76% / 100% 1px no-repeat;
+}
+/* Concentric circles, centred. */
+.prod-hero__rings {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: min(80vmin, 640px);
+  height: min(80vmin, 640px);
+  color: rgba(255, 255, 255, 0.22);
+}
+.prod-hero__rings circle {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+
 /* Centered content — NO z-index so its children stack against the blur overlay
    directly (word below it, logo/buttons above). */
 .prod-hero__center {
@@ -52,7 +121,7 @@
 .prod-hero__logo {
   position: relative;
   z-index: 3; /* above the blur */
-  width: clamp(120px, 15vw, 200px);
+  width: clamp(150px, 18vw, 250px);
   aspect-ratio: 1;
 }
 
@@ -119,11 +188,22 @@
   gap: var(--space-3);
 }
 
-/* Premium brand-blue CTA on the dark hero — soft blue glow, lighter blue
-   fill slides up on hover. */
+/* Premium brand-blue CTA on the dark hero — soft blue glow; fills to black
+   on hover. */
 .prod-hero .btn--primary {
   background: var(--accent);
   border: none;
-  --btn-fill: var(--accent-hover);
+  --btn-fill: var(--primary); /* black fill on hover */
   box-shadow: 0 12px 34px -10px rgba(8, 87, 214, 0.6);
+}
+
+/* Scroll-out: blurs the whole hero away as --p rises (set from JS). */
+.prod-hero__blurout {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  pointer-events: none;
+  opacity: var(--p, 0);
+  -webkit-backdrop-filter: blur(calc(var(--p, 0) * 14px));
+  backdrop-filter: blur(calc(var(--p, 0) * 14px));
 }
