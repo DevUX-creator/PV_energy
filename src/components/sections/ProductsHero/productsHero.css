@@ -82,7 +82,7 @@
   z-index: 2; /* over the word (z1), under logo/buttons (z3) */
   pointer-events: none;
   --r1: clamp(96px, 12vw, 280px); /* fully-clear radius — big centre */
-  --r2: clamp(400px, 54vw, 940px); /* fully-blurred radius — big soft feather */
+  --r2: clamp(200px, 22vw, 440px); /* fully-blurred radius — tighter feather */
   -webkit-backdrop-filter: blur(8px);
   backdrop-filter: blur(8px);
   /* Faint frosted tint: white with a touch of brand blue. */
