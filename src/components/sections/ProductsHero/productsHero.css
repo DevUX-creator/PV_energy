@@ -1,5 +1,6 @@
 .prod-hero {
   position: relative;
+  isolation: isolate; /* confine the layer z-indexes to this hero */
   min-height: 100svh;
   overflow: hidden;
   background: #1b1b1d; /* dark grey */
@@ -31,10 +32,10 @@
     #1b1b1d;
 }
 
-/* Centered content — sits above the gradient. */
+/* Centered content — NO z-index so its children stack against the
+   section-level blur overlay directly (word below it, logo/buttons above). */
 .prod-hero__center {
   position: relative;
-  z-index: 2;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -43,18 +44,17 @@
 
 .prod-hero__logo {
   position: relative;
-  z-index: 3; /* above the blur stack */
+  z-index: 3; /* above the full-section blur */
   width: clamp(72px, 9vw, 118px);
   aspect-ratio: 1;
 }
 
-/* Word + its progressive-blur overlay. */
+/* The word sits at z-index 1 — under the blur (z-index 2), above the bg. */
 .prod-hero__wordstage {
   position: relative;
+  z-index: 1;
 }
 .prod-hero__word {
-  position: relative;
-  z-index: 0; /* the backdrop the blur layers sample */
   margin: 0;
   font-family: var(--font-display);
   font-weight: var(--font-bold);
@@ -66,19 +66,16 @@
   white-space: nowrap;
 }
 
-/* One fully-blurred layer over the word; a feathered radial hole at
-   --mx/--my (updated from JS, centered by default) reveals the sharp word
+/* One fully-blurred layer over the WHOLE section; a feathered radial hole at
+   --mx/--my (updated from JS, centered by default) reveals the sharp content
    underneath and follows the cursor. */
 .prod-hero__blur {
   position: absolute;
-  top: -18%;
-  bottom: -18%;
-  left: -14%;
-  right: -14%;
-  z-index: 1;
+  inset: 0;
+  z-index: 2; /* over the word (z1), under logo/buttons (z3) */
   pointer-events: none;
-  --r1: clamp(24px, 3.5vw, 80px); /* fully-clear radius */
-  --r2: clamp(320px, 46vw, 820px); /* fully-blurred radius — big soft feather */
+  --r1: clamp(40px, 5vw, 120px); /* fully-clear radius */
+  --r2: clamp(360px, 50vw, 900px); /* fully-blurred radius — big soft feather */
   -webkit-backdrop-filter: blur(16px);
   backdrop-filter: blur(16px);
   /* Frosted tint: white with a touch of brand blue, whiter toward the bottom. */
@@ -108,7 +105,7 @@
   right: 0;
   bottom: 0;
   height: 48vh;
-  z-index: 1;
+  z-index: 4; /* above the blur so the bottom blends to clean white */
   pointer-events: none;
   background: linear-gradient(
     180deg,
@@ -121,7 +118,7 @@
 
 .prod-hero__actions {
   position: relative;
-  z-index: 3; /* above the blur stack */
+  z-index: 3; /* above the full-section blur */
   display: flex;
   flex-wrap: wrap;
   justify-content: center;

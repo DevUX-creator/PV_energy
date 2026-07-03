@@ -74,9 +74,6 @@ export default function ProductsHero() {
 
         <div className="prod-hero__wordstage">
           <h1 className="prod-hero__word">Products</h1>
-          {/* Full blur over the word; the feathered radial hole (at --mx/--my)
-              reveals the sharp centre and follows the cursor. */}
-          <div className="prod-hero__blur" aria-hidden="true" ref={blurRef} />
         </div>
 
         <div className="prod-hero__actions">
@@ -88,6 +85,11 @@ export default function ProductsHero() {
           </Button>
         </div>
       </div>
+
+      {/* Full-section blur; the feathered radial hole (at --mx/--my) reveals the
+          sharp content underneath and follows the cursor. Sits below the logo
+          and buttons (higher z-index) so those stay crisp. */}
+      <div className="prod-hero__blur" aria-hidden="true" ref={blurRef} />
 
       {/* Blends the dark hero, through brand blue, into the white section below. */}
       <div className="prod-hero__fade" aria-hidden="true" />
