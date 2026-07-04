@@ -133,17 +133,63 @@
   gap: var(--space-6);
 }
 
+/* Logo flanked by the two department labels. */
+.prod-hero__logo-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(1.5rem, 4vw, 3.75rem);
+}
+
 .prod-hero__logo {
   position: relative;
   z-index: 3; /* above the blur */
   width: clamp(210px, 24vw, 360px);
   aspect-ratio: 1;
+  flex: none;
 }
 
-/* The word sits at z-index 1 — under the blur (z-index 2), above the bg. */
+/* Small mono department labels beside the logo. */
+.prod-hero__aside {
+  position: relative;
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  max-width: 15ch;
+  font-family: var(--font-mono);
+}
+.prod-hero__aside--left {
+  text-align: right;
+  align-items: flex-end;
+}
+.prod-hero__aside--right {
+  text-align: left;
+  align-items: flex-start;
+}
+.prod-hero__aside-idx {
+  font-size: var(--text-xs);
+  letter-spacing: 0.14em;
+  color: rgba(255, 255, 255, 0.4);
+}
+.prod-hero__aside-name {
+  font-size: var(--text-sm);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #fff;
+}
+.prod-hero__aside-desc {
+  font-size: var(--text-xs);
+  line-height: 1.55;
+  color: rgba(255, 255, 255, 0.55);
+}
+
+/* The word sits at z-index 1 — under the blur (z-index 2), above the bg.
+   Nudged up (with the button below it) for a tighter stack under the logo. */
 .prod-hero__wordstage {
   position: relative;
   z-index: 1;
+  margin-top: calc(-1 * var(--space-4));
 }
 .prod-hero__word {
   margin: 0;
@@ -210,5 +256,22 @@
   border: none;
   --btn-fill: var(--primary); /* black fill on hover */
   box-shadow: 0 12px 34px -10px rgba(8, 87, 214, 0.6);
+}
+
+/* Tablet: drop the descriptor list, keep the index + name beside the logo. */
+@media (max-width: 900px) {
+  .prod-hero__aside {
+    max-width: 12ch;
+  }
+  .prod-hero__aside-desc {
+    display: none;
+  }
+}
+
+/* Small screens: hide the flanking labels (the CTA + overview cover them). */
+@media (max-width: 640px) {
+  .prod-hero__aside {
+    display: none;
+  }
 }
 
