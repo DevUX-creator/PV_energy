@@ -1,14 +1,22 @@
 import Link from "next/link";
 import Section from "@/components/ui/Section";
 import Button from "@/components/ui/Button";
+import Markdown from "@/components/ui/Markdown";
 import { ALL_PRODUCTS, type ProductWithDept } from "@/lib/products";
 import "./productDetail.css";
 
 /**
- * ProductDetail — a single product page: hero (department, name, tagline),
- * image + description, applications/grades, and links to the other products.
+ * ProductDetail — a single product page: hero (department, name, tagline), a
+ * lead image, the long-form markdown content, and links to the other products.
+ * Falls back to the config description/points when no markdown exists.
  */
-export default function ProductDetail({ product }: { product: ProductWithDept }) {
+export default function ProductDetail({
+  product,
+  content,
+}: {
+  product: ProductWithDept;
+  content?: string | null;
+}) {
   const others = ALL_PRODUCTS.filter((p) => p.id !== product.id);
 
   return (
@@ -22,40 +30,41 @@ export default function ProductDetail({ product }: { product: ProductWithDept })
           <span className="section-tag">{product.department.name}</span>
           <h1 className="prod-detail__title">{product.name}</h1>
           <p className="prod-detail__tagline">{product.tagline}</p>
+          {product.origin ? (
+            <p className="prod-detail__origin">Sourcing · {product.origin}</p>
+          ) : null}
         </header>
 
-        <div className="prod-detail__body">
+        {product.image ? (
           <figure className="prod-detail__media">
-            {product.image ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img src={product.image} alt={product.name} />
-            ) : null}
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={product.image} alt={product.name} />
           </figure>
+        ) : null}
 
-          <div className="prod-detail__info">
-            {product.origin ? (
-              <p className="prod-detail__origin">Sourcing · {product.origin}</p>
-            ) : null}
-            <p className="prod-detail__desc">{product.description}</p>
-            <div className="prod-detail__cta">
-              <Button href="/contact">Enquire about {product.name}</Button>
-            </div>
+        <div className="prod-detail__content">
+          {content ? (
+            <Markdown source={content} className="prod-detail__prose" />
+          ) : (
+            <>
+              <p className="prod-detail__desc">{product.description}</p>
+              {product.points?.length ? (
+                <ul className="prod-detail__apps-grid">
+                  {product.points.map((pt) => (
+                    <li key={pt.id} className="prod-detail__app">
+                      <h3 className="prod-detail__app-title">{pt.title}</h3>
+                      <p className="prod-detail__app-body">{pt.body}</p>
+                    </li>
+                  ))}
+                </ul>
+              ) : null}
+            </>
+          )}
+
+          <div className="prod-detail__cta">
+            <Button href="/contact">Enquire about {product.name}</Button>
           </div>
         </div>
-
-        {product.points?.length ? (
-          <div className="prod-detail__apps">
-            <h2 className="prod-detail__apps-title">Applications &amp; grades</h2>
-            <ul className="prod-detail__apps-grid">
-              {product.points.map((pt) => (
-                <li key={pt.id} className="prod-detail__app">
-                  <h3 className="prod-detail__app-title">{pt.title}</h3>
-                  <p className="prod-detail__app-body">{pt.body}</p>
-                </li>
-              ))}
-            </ul>
-          </div>
-        ) : null}
       </Section>
 
       <Section

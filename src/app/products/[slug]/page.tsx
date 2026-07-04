@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import ProductDetail from "@/components/sections/ProductDetail";
 import { ALL_PRODUCTS, getProduct } from "@/lib/products";
+import { getProductContent } from "@/lib/productContent";
 
 type Params = { slug: string };
 
@@ -38,9 +39,10 @@ export default async function ProductPage({
   const { slug } = await params;
   const product = getProduct(slug);
   if (!product) notFound();
+  const content = getProductContent(slug);
   return (
     <main id="main-content">
-      <ProductDetail product={product} />
+      <ProductDetail product={product} content={content} />
     </main>
   );
 }
