@@ -3,7 +3,6 @@
 import { useEffect, useRef, useState } from "react";
 import Container from "@/components/ui/Container";
 import RevealText from "@/animations/RevealText";
-import GridDeformImage from "@/components/ui/GridDeformImage";
 import { gsap, registerGsapPlugins } from "@/lib/gsap";
 import "./aboutHero.css";
 
@@ -138,10 +137,14 @@ export default function AboutHero() {
         className={`about-hero__media ${shown ? "is-shown" : ""}`.trim()}
       >
         <div ref={parallaxRef} className="about-hero__parallax">
-          <GridDeformImage
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            className="about-hero__img"
             src="/About/about-hero.webp"
             alt="A bulk carrier anchored on the open sea at dusk"
-            priority
+            loading="eager"
+            fetchPriority="high"
+            decoding="async"
           />
         </div>
 
