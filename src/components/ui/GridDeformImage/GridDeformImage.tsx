@@ -7,6 +7,8 @@ type GridDeformImageProps = {
   src: string;
   alt: string;
   className?: string;
+  /** Above-the-fold image: load eagerly at high priority (better LCP). */
+  priority?: boolean;
 };
 
 // Grid-deformation hover effect (CodeGrid) adapted from video → image: a WebGL
@@ -20,7 +22,12 @@ const RELAXATION = 0.925;
 const DISPLACEMENT = 0.008; // smaller max distortion shift
 const ABERRATION = 0.15;
 
-export default function GridDeformImage({ src, alt, className = "" }: GridDeformImageProps) {
+export default function GridDeformImage({
+  src,
+  alt,
+  className = "",
+  priority = false,
+}: GridDeformImageProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const imgRef = useRef<HTMLImageElement>(null);
 
@@ -221,7 +228,15 @@ export default function GridDeformImage({ src, alt, className = "" }: GridDeform
   return (
     <div ref={containerRef} className={`grid-deform ${className}`.trim()}>
       {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img ref={imgRef} src={src} alt={alt} className="grid-deform__img" loading="lazy" />
+      <img
+        ref={imgRef}
+        src={src}
+        alt={alt}
+        className="grid-deform__img"
+        loading={priority ? "eager" : "lazy"}
+        fetchPriority={priority ? "high" : undefined}
+        decoding="async"
+      />
     </div>
   );
 }

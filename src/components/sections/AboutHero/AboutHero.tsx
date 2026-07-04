@@ -141,6 +141,7 @@ export default function AboutHero() {
           <GridDeformImage
             src="/About/about-hero.webp"
             alt="A bulk carrier anchored on the open sea at dusk"
+            priority
           />
         </div>
 
