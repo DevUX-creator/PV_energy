@@ -1,4 +1,5 @@
-import { Fragment, type ReactNode } from "react";
+import { type ReactNode } from "react";
+import { inline } from "./inline";
 
 /**
  * Markdown — a tiny, dependency-free renderer for the subset of markdown our
@@ -6,17 +7,6 @@ import { Fragment, type ReactNode } from "react";
  * **bold** inline, and paragraphs. The top-level # H1 is skipped (the page
  * hero already shows the title).
  */
-
-// Split a line into text + <strong> runs on **bold** markers.
-function inline(text: string, base: string): ReactNode[] {
-  return text.split(/\*\*/).map((part, i) =>
-    i % 2 === 1 ? (
-      <strong key={`${base}-b${i}`}>{part}</strong>
-    ) : (
-      <Fragment key={`${base}-t${i}`}>{part}</Fragment>
-    )
-  );
-}
 
 export default function Markdown({
   source,
