@@ -1,6 +1,15 @@
-.section.prod-ov {
+.section.prod-ov--intro {
   /* Same tight top rhythm as the other overlap/landing sections. */
   padding-top: calc(var(--header-height) + var(--space-12));
+  padding-bottom: var(--space-16);
+}
+
+/* Departments block follows the full-bleed band — keep its top tight. */
+.section.prod-ov--depts {
+  padding-top: var(--space-16);
+}
+.prod-ov--depts .prod-ov__dept:first-child {
+  margin-top: 0;
 }
 
 /* Centered intro block. */
