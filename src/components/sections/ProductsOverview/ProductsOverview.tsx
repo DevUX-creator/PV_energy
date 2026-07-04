@@ -25,9 +25,9 @@ export default function ProductsOverview() {
             <span className="section-tag">Our products</span>
           </RevealText>
           <RevealText delay={0.06}>
-            <h1 className="prod-ov__title">
+            <h2 className="prod-ov__title">
               The commodities that keep industry moving
-            </h1>
+            </h2>
           </RevealText>
           <RevealText split="none" delay={0.35}>
             <p className="prod-ov__lead">

@@ -1,17 +1,21 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { ALL_PRODUCTS } from "@/lib/products";
 
-// Short product labels (fall back to the full name) — kept in sync with config.
-const PRODUCTS = ALL_PRODUCTS.map((p) => p.tab ?? p.name);
+type FallingChipsProps = {
+  /** Labels to render as chips. */
+  items: string[];
+  /** Delay between each chip dropping, in ms. */
+  stagger?: number;
+};
 
 /**
- * ProductsTags — every product as a small physics chip that falls from the top
- * of the section, piles up and can be dragged (Matter.js). Same behaviour as
- * the services chips.
+ * FallingChips — renders each label as a small physics chip that falls from
+ * the top of its container, piles up and can be dragged (Matter.js). The
+ * container fills its positioned parent; drop begins when it scrolls into
+ * view. Shared by the Services and Products closing CTAs.
  */
-export default function ProductsTags() {
+export default function FallingChips({ items, stagger = 550 }: FallingChipsProps) {
   const stageRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -31,7 +35,7 @@ export default function ProductsTags() {
       const { Engine, Runner, World, Bodies, Mouse, MouseConstraint } = Matter;
 
       const blocks = Array.from(
-        stage.querySelectorAll<HTMLElement>(".prod-cta__chip")
+        stage.querySelectorAll<HTMLElement>(".falling-chips__chip")
       );
       let W = stage.clientWidth;
       let H = stage.clientHeight;
@@ -52,7 +56,7 @@ export default function ProductsTags() {
         const w = el.offsetWidth;
         const h = el.offsetHeight;
         const x = w / 2 + 30 + Math.random() * Math.max(1, W - w - 60);
-        const y = -40 - i * 55;
+        const y = -40 - i * 55; // just above the top edge, lightly staggered
         const body = Bodies.rectangle(x, y, w, h, {
           restitution: 0.35,
           friction: 0.5,
@@ -63,6 +67,8 @@ export default function ProductsTags() {
         return { el, body, w, h };
       });
 
+      // Drag only on hover/fine-pointer devices — on touch, Matter's own touch
+      // listeners would swallow the swipe and make the section hard to scroll.
       const canDrag = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
       if (canDrag) {
         const mouse = Mouse.create(stage);
@@ -107,7 +113,7 @@ export default function ProductsTags() {
                 window.setTimeout(() => {
                   World.add(engine.world, body);
                   el.style.opacity = "1";
-                }, i * 450)
+                }, i * stagger) // staggered — one falls, then the next
               );
             });
             io.disconnect();
@@ -140,12 +146,12 @@ export default function ProductsTags() {
       disposed = true;
       cleanup();
     };
-  }, []);
+  }, [stagger]);
 
   return (
-    <div ref={stageRef} className="prod-cta__stage" aria-hidden="true">
-      {PRODUCTS.map((s) => (
-        <div key={s} className="prod-cta__chip">
+    <div ref={stageRef} className="falling-chips" aria-hidden="true">
+      {items.map((s) => (
+        <div key={s} className="falling-chips__chip">
           {s}
         </div>
       ))}
