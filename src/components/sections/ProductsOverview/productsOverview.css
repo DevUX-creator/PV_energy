@@ -44,12 +44,28 @@
   margin-top: var(--gap-section);
 }
 
+/* Department header — index + name on the left, intro on the right. */
 .prod-ov__dept-head {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-6) var(--col-gap);
+  align-items: end;
+  padding-bottom: var(--space-6);
+  border-bottom: 1px solid var(--border);
+}
+
+.prod-ov__dept-heading {
   display: flex;
   flex-direction: column;
   gap: var(--space-3);
-  padding-bottom: var(--space-6);
-  border-bottom: 1px solid var(--border);
+}
+
+.prod-ov__dept-idx {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  letter-spacing: var(--tracking-eyebrow);
+  text-transform: uppercase;
+  color: var(--accent);
 }
 
 .prod-ov__dept-name {
@@ -61,10 +77,17 @@
 }
 
 .prod-ov__dept-intro {
-  max-width: 56ch;
+  max-width: 52ch;
   font-size: var(--text-base);
   line-height: var(--leading-relaxed);
   color: var(--fg-secondary);
+}
+
+@media (max-width: 768px) {
+  .prod-ov__dept-head {
+    grid-template-columns: 1fr;
+    align-items: start;
+  }
 }
 
 .prod-ov__grid {
@@ -110,6 +133,7 @@
 }
 
 .prod-ov__card-body {
+  flex: 1;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -123,6 +147,10 @@
   font-weight: var(--font-semibold);
   text-transform: uppercase;
   color: var(--fg-primary);
+  transition: color var(--transition-fast);
+}
+.prod-ov__card:hover .prod-ov__card-name {
+  color: var(--accent);
 }
 
 .prod-ov__card-tagline {
@@ -131,13 +159,40 @@
   color: var(--fg-secondary);
 }
 
+/* Footer meta — sourcing on the left, CTA on the right, pinned to the bottom. */
+.prod-ov__card-foot {
+  margin-top: auto;
+  padding-top: var(--space-4);
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.prod-ov__card-origin {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  letter-spacing: 0.02em;
+  color: var(--fg-tertiary);
+}
+
 .prod-ov__card-cta {
-  margin-top: var(--space-3);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4em;
   font-family: var(--font-mono);
   font-size: var(--text-xs);
   letter-spacing: var(--tracking-eyebrow);
   text-transform: uppercase;
+  white-space: nowrap;
   color: var(--accent);
+}
+.prod-ov__card-arrow {
+  transition: transform var(--transition-fast);
+}
+.prod-ov__card:hover .prod-ov__card-arrow {
+  transform: translateX(4px);
 }
 
 @media (max-width: 1024px) {

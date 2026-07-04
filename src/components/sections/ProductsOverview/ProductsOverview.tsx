@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Section from "@/components/ui/Section";
 import RevealText from "@/animations/RevealText";
+import RevealSection from "@/animations/RevealSection";
 import ProductsBand from "@/components/sections/ProductsBand";
 import { PRODUCT_DEPARTMENTS } from "@/lib/products";
 import "./productsOverview.css";
@@ -42,41 +43,62 @@ export default function ProductsOverview() {
       <ProductsBand />
 
       <Section width="wide" className="prod-ov prod-ov--depts" ariaLabel="Product departments">
-        {PRODUCT_DEPARTMENTS.map((dept) => (
-        <section
-          key={dept.id}
-          id={dept.id}
-          className="prod-ov__dept"
-          aria-label={dept.name}
-        >
-          <div className="prod-ov__dept-head">
-            <h2 className="prod-ov__dept-name">{dept.name}</h2>
-            <p className="prod-ov__dept-intro">{dept.intro}</p>
-          </div>
-
-          <ul className="prod-ov__grid">
-            {dept.products.map((p) => (
-              <li key={p.id}>
-                <Link href={`/products/${p.id}`} className="prod-ov__card">
-                  <span className="prod-ov__card-media">
-                    {p.image ? (
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img src={p.image} alt={p.name} loading="lazy" />
-                    ) : null}
-                  </span>
-                  <span className="prod-ov__card-body">
-                    <span className="prod-ov__card-name">{p.name}</span>
-                    <span className="prod-ov__card-tagline">{p.tagline}</span>
-                    <span className="prod-ov__card-cta" aria-hidden="true">
-                      View product →
+        {PRODUCT_DEPARTMENTS.map((dept, i) => (
+          <section
+            key={dept.id}
+            id={dept.id}
+            className="prod-ov__dept"
+            aria-label={dept.name}
+          >
+            <RevealSection>
+              <>
+                <div className="prod-ov__dept-head">
+                  <div className="prod-ov__dept-heading">
+                    <span className="prod-ov__dept-idx">
+                      {String(i + 1).padStart(2, "0")} · {dept.products.length}{" "}
+                      products
                     </span>
-                  </span>
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </section>
-      ))}
+                    <h2 className="prod-ov__dept-name">{dept.name}</h2>
+                  </div>
+                  <p className="prod-ov__dept-intro">{dept.intro}</p>
+                </div>
+
+                <ul className="prod-ov__grid">
+                  {dept.products.map((p) => (
+                    <li key={p.id}>
+                      <Link href={`/products/${p.id}`} className="prod-ov__card">
+                        <span className="prod-ov__card-media">
+                          {p.image ? (
+                            // eslint-disable-next-line @next/next/no-img-element
+                            <img src={p.image} alt={p.name} loading="lazy" />
+                          ) : null}
+                        </span>
+                        <span className="prod-ov__card-body">
+                          <span className="prod-ov__card-name">{p.name}</span>
+                          <span className="prod-ov__card-tagline">
+                            {p.tagline}
+                          </span>
+                          <span className="prod-ov__card-foot">
+                            <span className="prod-ov__card-origin">
+                              {p.origin ?? "Global sourcing"}
+                            </span>
+                            <span
+                              className="prod-ov__card-cta"
+                              aria-hidden="true"
+                            >
+                              View
+                              <span className="prod-ov__card-arrow">→</span>
+                            </span>
+                          </span>
+                        </span>
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </>
+            </RevealSection>
+          </section>
+        ))}
       </Section>
     </>
   );
