@@ -10,6 +10,10 @@
   align-items: center;
   text-align: center;
 }
+/* .section-tag defaults to align-self:start — centre it here. */
+.prod-ov__intro .section-tag {
+  align-self: center;
+}
 
 .prod-ov__title {
   margin-top: var(--space-4);
