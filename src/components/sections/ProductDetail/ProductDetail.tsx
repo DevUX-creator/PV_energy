@@ -5,6 +5,7 @@ import Button from "@/components/ui/Button";
 import Markdown from "@/components/ui/Markdown";
 import { inline } from "@/components/ui/Markdown/inline";
 import { parseProductDoc, type PSection } from "@/lib/productContent";
+import { PRODUCT_HIGHLIGHTS } from "@/lib/productHighlights";
 import { type ProductWithDept } from "@/lib/products";
 import "./productDetail.css";
 
@@ -61,6 +62,7 @@ export default function ProductDetail({
   const grades = byKind("grades");
   const logistics = byKind("logistics");
   const buyers = byKind("buyers");
+  const highlights = PRODUCT_HIGHLIGHTS[product.id] ?? [];
 
   // If there's no parsed content, fall back to a simple prose render.
   if (!doc) {
@@ -123,6 +125,23 @@ export default function ProductDetail({
           </div>
         ) : null}
       </Section>
+
+      {/* At a glance — big stat boxes */}
+      {highlights.length ? (
+        <Section width="wide" className="prod-detail__stats" ariaLabel="At a glance">
+          <ul className="prod-detail__stat-grid">
+            {highlights.map((h, i) => (
+              <li
+                key={i}
+                className={`prod-detail__stat${i === 0 ? " prod-detail__stat--wide" : ""}`}
+              >
+                <span className="prod-detail__stat-value">{h.value}</span>
+                <span className="prod-detail__stat-label">{h.label}</span>
+              </li>
+            ))}
+          </ul>
+        </Section>
+      ) : null}
 
       {/* Intro + image */}
       {intro || product.image ? (

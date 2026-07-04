@@ -3,6 +3,7 @@
   padding-top: calc(var(--header-height) + var(--space-10));
   padding-bottom: var(--space-10);
 }
+.section.prod-detail__stats,
 .section.prod-detail__intro,
 .section.prod-detail__apps,
 .section.prod-detail__specs,
@@ -102,6 +103,45 @@
   font-weight: var(--font-semibold);
   text-transform: uppercase;
   letter-spacing: -0.01em;
+}
+
+/* ---- At a glance — stat boxes --------------------------------------- */
+.prod-detail__stat-grid {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: clamp(0.5rem, 1vw, 1rem);
+}
+.prod-detail__stat {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-10);
+  min-height: clamp(180px, 22vw, 300px);
+  padding: clamp(1.25rem, 2.5vw, 2.5rem);
+  border: 1px solid var(--border);
+  border-radius: clamp(10px, 1vw, 16px);
+  background: linear-gradient(155deg, #f1f1f2 0%, #e4e4e6 100%);
+}
+.prod-detail__stat--wide {
+  grid-column: 1 / -1;
+}
+.prod-detail__stat-value {
+  font-family: var(--font-mono);
+  font-weight: var(--font-medium);
+  font-size: clamp(3rem, 8vw, 6.5rem);
+  line-height: 0.85;
+  letter-spacing: -0.03em;
+  color: var(--fg-primary);
+  overflow-wrap: anywhere;
+}
+.prod-detail__stat-label {
+  font-size: var(--text-base);
+  line-height: var(--leading-normal);
+  color: var(--fg-tertiary);
 }
 
 /* ---- Intro + image -------------------------------------------------- */
