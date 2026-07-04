@@ -114,10 +114,10 @@
   grid-template-columns: repeat(2, 1fr);
   gap: clamp(0.5rem, 1vw, 1rem);
 }
-/* Desktop: keep the block compact and shifted to the right (per the example). */
+/* Desktop: align the block to the definition above — same width, right side. */
 @media (min-width: 900px) {
   .prod-detail__stat-grid {
-    max-width: min(42%, 520px);
+    max-width: 52ch;
     margin-left: auto;
   }
 }
@@ -144,9 +144,9 @@
   line-height: 0.85;
   letter-spacing: -0.03em;
   overflow-wrap: anywhere;
-  /* Soft light-grey gradient, clipped to the text. */
-  color: #bcbcc2; /* fallback if background-clip:text is unsupported */
-  background: linear-gradient(175deg, #d6d6dc 0%, #adadb5 100%);
+  /* Soft grey gradient, clipped to the text. */
+  color: #a6a6ae; /* fallback if background-clip:text is unsupported */
+  background: linear-gradient(175deg, #c6c6ce 0%, #96969f 100%);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
