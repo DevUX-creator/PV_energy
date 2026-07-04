@@ -29,9 +29,6 @@ export default function Logo3D({ className = "" }: { className?: string }) {
     const container = ref.current;
     if (!container) return;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    // Skip the heavy three.js/WebGL on touch / mobile — the flat SVG fallback
-    // stays, and we avoid shipping/parsing three.js on phones (better perf).
-    if (!window.matchMedia("(hover: hover) and (pointer: fine)").matches) return;
 
     let disposed = false;
     let cleanup = () => {};
