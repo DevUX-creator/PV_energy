@@ -33,7 +33,7 @@ export default function Logo3D({ className = "" }: { className?: string }) {
     let disposed = false;
     let cleanup = () => {};
 
-    (async () => {
+    const init = async () => {
       const THREE = await import("three");
       const { SVGLoader } = await import("three/examples/jsm/loaders/SVGLoader.js");
       const { RoomEnvironment } = await import(
@@ -160,10 +160,24 @@ export default function Logo3D({ className = "" }: { className?: string }) {
         renderer.dispose();
         renderer.domElement.remove();
       };
-    })();
+    };
+
+    // Defer three.js until the logo nears the viewport — same 3D, but three.js
+    // isn't loaded/parsed until it's actually needed (better initial perf).
+    const io = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) {
+          io.disconnect();
+          init();
+        }
+      },
+      { rootMargin: "300px" }
+    );
+    io.observe(container);
 
     return () => {
       disposed = true;
+      io.disconnect();
       cleanup();
     };
   }, []);

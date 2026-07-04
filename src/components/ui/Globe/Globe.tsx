@@ -75,7 +75,7 @@ export default function Globe({
     let disposed = false;
     let cleanup = () => {};
 
-    (async () => {
+    const init = async () => {
       const THREE = await import("three");
       if (disposed || !mountRef.current) return;
       const dpr = Math.min(window.devicePixelRatio, 2);
@@ -557,10 +557,24 @@ export default function Globe({
         renderer.domElement.remove();
         markers.forEach((m) => m.el.remove());
       };
-    })();
+    };
+
+    // Defer three.js until the globe nears the viewport — same globe, but
+    // three.js isn't loaded/parsed until it's actually needed.
+    const io = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) {
+          io.disconnect();
+          init();
+        }
+      },
+      { rootMargin: "300px" }
+    );
+    io.observe(mount);
 
     return () => {
       disposed = true;
+      io.disconnect();
       cleanup();
     };
   }, []);
