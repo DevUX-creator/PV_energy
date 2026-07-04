@@ -72,22 +72,22 @@ export default function ProductsHero() {
           scrub: true,
         };
         // Each element drifts a different amount / direction as you scroll.
-        gsap.to(".prod-hero__guides", { y: -70, ease: "none", scrollTrigger: st });
-        gsap.to(".prod-hero__logo", { y: -60, ease: "none", scrollTrigger: st });
+        gsap.to(".prod-hero__guides", { y: -150, ease: "none", scrollTrigger: st });
+        gsap.to(".prod-hero__logo", { y: -130, ease: "none", scrollTrigger: st });
         gsap.to(".prod-hero__aside--left", {
-          y: -130,
-          x: -22,
+          y: -280,
+          x: -60,
           ease: "none",
           scrollTrigger: st,
         });
         gsap.to(".prod-hero__aside--right", {
-          y: -50,
-          x: 22,
+          y: -120,
+          x: 60,
           ease: "none",
           scrollTrigger: st,
         });
-        gsap.to(".prod-hero__wordstage", { y: -22, ease: "none", scrollTrigger: st });
-        gsap.to(".prod-hero__actions", { y: 70, ease: "none", scrollTrigger: st });
+        gsap.to(".prod-hero__wordstage", { y: -55, ease: "none", scrollTrigger: st });
+        gsap.to(".prod-hero__actions", { y: 170, ease: "none", scrollTrigger: st });
       }, section);
     }
 
