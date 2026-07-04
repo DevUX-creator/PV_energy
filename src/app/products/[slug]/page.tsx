@@ -1,12 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import Preloader from "@/components/ui/Preloader";
 import ProductDetail from "@/components/sections/ProductDetail";
 import { ALL_PRODUCTS, getProduct } from "@/lib/products";
-
-// Production keeps the "coming soon" placeholder; local dev renders the real
-// detail pages we're polishing. Remove this gate at launch.
-const SHOW_WIP = process.env.NODE_ENV !== "production";
 
 type Params = { slug: string };
 
@@ -26,8 +21,6 @@ export async function generateMetadata({
     title: product.name,
     description: product.description,
     alternates: { canonical: `/products/${product.id}` },
-    // WIP — keep out of the index until the responsive pass is done.
-    robots: { index: false, follow: true },
     openGraph: {
       title: `${product.name} | PV Link Energy`,
       description: product.description,
@@ -47,11 +40,7 @@ export default async function ProductPage({
   if (!product) notFound();
   return (
     <main id="main-content">
-      {SHOW_WIP ? (
-        <ProductDetail product={product} />
-      ) : (
-        <Preloader label="Products" />
-      )}
+      <ProductDetail product={product} />
     </main>
   );
 }
