@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Section from "@/components/ui/Section";
-import RevealSection from "@/animations/RevealSection";
+import RevealText from "@/animations/RevealText";
 import { PRODUCT_DEPARTMENTS } from "@/lib/products";
 import "./productsOverview.css";
 
@@ -16,17 +16,23 @@ export default function ProductsOverview() {
       className="prod-ov"
       ariaLabel="Our products"
     >
-      <RevealSection>
+      {/* Step-by-step reveal: tag, then the headline word-by-word, then the
+          subtext — each staggered so it builds as you scroll in. */}
+      <RevealText split="none">
         <span className="section-tag">Our products</span>
+      </RevealText>
+      <RevealText delay={0.06}>
         <h1 className="prod-ov__title">
           The commodities that keep industry moving
         </h1>
+      </RevealText>
+      <RevealText split="none" delay={0.35}>
         <p className="prod-ov__lead">
           A focused portfolio across two departments — refined petroleum products
           and crop-nutrition fertilizers — sourced, moved and delivered on-spec
           across global markets.
         </p>
-      </RevealSection>
+      </RevealText>
 
       {PRODUCT_DEPARTMENTS.map((dept) => (
         <section
