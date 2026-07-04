@@ -106,15 +106,22 @@ export default function ProductDetail({
           </ol>
         </nav>
 
-        <span className="section-tag">{product.department.name}</span>
-        <h1 className="prod-detail__title">{product.name}</h1>
-        <p className="prod-detail__tagline">{product.tagline}</p>
-        {doc.lead ? (
-          <p className="prod-detail__lead">{inline(doc.lead, "lead")}</p>
-        ) : null}
-        {product.origin ? (
-          <p className="prod-detail__origin">Sourcing · {product.origin}</p>
-        ) : null}
+        <div className="prod-detail__hero-grid">
+          <div className="prod-detail__hero-main">
+            <span className="section-tag">{product.department.name}</span>
+            <h1 className="prod-detail__title">{product.name}</h1>
+            <p className="prod-detail__tagline">{product.tagline}</p>
+          </div>
+
+          <div className="prod-detail__hero-aside">
+            {doc.lead ? (
+              <p className="prod-detail__lead">{inline(doc.lead, "lead")}</p>
+            ) : null}
+            {product.origin ? (
+              <p className="prod-detail__origin">Sourcing · {product.origin}</p>
+            ) : null}
+          </div>
+        </div>
       </Section>
 
       {/* Intro + image */}

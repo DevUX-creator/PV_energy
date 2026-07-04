@@ -68,9 +68,14 @@
   font-weight: var(--font-medium);
   color: var(--fg-secondary);
 }
+/* Two-column hero: title block left, definition + sourcing right. */
+.prod-detail__hero-grid {
+  display: grid;
+  grid-template-columns: 1.35fr 1fr;
+  gap: var(--space-8) var(--col-gap);
+  align-items: end;
+}
 .prod-detail__lead {
-  margin-top: var(--space-6);
-  max-width: var(--max-width-text);
   font-size: var(--text-fluid-lead);
   line-height: var(--leading-relaxed);
   color: var(--fg-primary);
@@ -82,6 +87,13 @@
   letter-spacing: var(--tracking-eyebrow);
   text-transform: uppercase;
   color: var(--fg-tertiary);
+}
+
+@media (max-width: 900px) {
+  .prod-detail__hero-grid {
+    grid-template-columns: 1fr;
+    align-items: start;
+  }
 }
 
 /* Shared section heading. */
