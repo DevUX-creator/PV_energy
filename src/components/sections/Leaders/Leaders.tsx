@@ -156,10 +156,10 @@ export default function Leaders() {
         <img
           ref={bgRef}
           className="leaders__bg"
-          src="/Trusted/KeyPoints.jpg"
+          src="/Trusted/KeyPoints.webp"
           alt="A PV Link Energy tanker at sea at sunset"
-          width={4032}
-          height={3024}
+          width={1600}
+          height={1200}
           loading="lazy"
         />
 
