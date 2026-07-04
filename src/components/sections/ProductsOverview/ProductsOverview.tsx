@@ -16,23 +16,25 @@ export default function ProductsOverview() {
       className="prod-ov"
       ariaLabel="Our products"
     >
-      {/* Step-by-step reveal: tag, then the headline word-by-word, then the
-          subtext — each staggered so it builds as you scroll in. */}
-      <RevealText split="none">
-        <span className="section-tag">Our products</span>
-      </RevealText>
-      <RevealText delay={0.06}>
-        <h1 className="prod-ov__title">
-          The commodities that keep industry moving
-        </h1>
-      </RevealText>
-      <RevealText split="none" delay={0.35}>
-        <p className="prod-ov__lead">
-          A focused portfolio across two departments — refined petroleum products
-          and crop-nutrition fertilizers — sourced, moved and delivered on-spec
-          across global markets.
-        </p>
-      </RevealText>
+      {/* Centered intro. Step-by-step reveal: tag, then the headline
+          word-by-word, then the subtext — each staggered as you scroll in. */}
+      <div className="prod-ov__intro">
+        <RevealText split="none">
+          <span className="section-tag">Our products</span>
+        </RevealText>
+        <RevealText delay={0.06}>
+          <h1 className="prod-ov__title">
+            The commodities that keep industry moving
+          </h1>
+        </RevealText>
+        <RevealText split="none" delay={0.35}>
+          <p className="prod-ov__lead">
+            A focused portfolio across two departments — refined petroleum
+            products and crop-nutrition fertilizers — sourced, moved and
+            delivered on-spec across global markets.
+          </p>
+        </RevealText>
+      </div>
 
       {PRODUCT_DEPARTMENTS.map((dept) => (
         <section
