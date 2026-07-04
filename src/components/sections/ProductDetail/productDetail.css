@@ -68,12 +68,11 @@
   font-weight: var(--font-medium);
   color: var(--fg-secondary);
 }
-/* Two-column hero: title block left, definition + sourcing right. */
-.prod-detail__hero-grid {
-  display: grid;
-  grid-template-columns: 1.35fr 1fr;
-  gap: var(--space-8) var(--col-gap);
-  align-items: end;
+/* Definition + sourcing sit on their own row, pushed to the right. */
+.prod-detail__hero-aside {
+  margin-top: var(--space-10);
+  margin-left: auto;
+  max-width: 52ch;
 }
 .prod-detail__lead {
   font-size: var(--text-fluid-lead);
@@ -90,9 +89,9 @@
 }
 
 @media (max-width: 900px) {
-  .prod-detail__hero-grid {
-    grid-template-columns: 1fr;
-    align-items: start;
+  .prod-detail__hero-aside {
+    margin-left: 0;
+    max-width: none;
   }
 }
 
