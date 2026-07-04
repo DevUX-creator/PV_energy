@@ -121,7 +121,7 @@
 .prod-hero__logo {
   position: relative;
   z-index: 3; /* above the blur */
-  width: clamp(165px, 19vw, 270px);
+  width: clamp(210px, 24vw, 360px);
   aspect-ratio: 1;
 }
 
