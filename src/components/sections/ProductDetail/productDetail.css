@@ -114,14 +114,22 @@
   grid-template-columns: repeat(2, 1fr);
   gap: clamp(0.5rem, 1vw, 1rem);
 }
+/* Desktop: keep the block compact and shifted to the right (per the example). */
+@media (min-width: 900px) {
+  .prod-detail__stat-grid {
+    max-width: min(42%, 520px);
+    margin-left: auto;
+  }
+}
 .prod-detail__stat {
+  container-type: inline-size;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   justify-content: space-between;
-  gap: var(--space-10);
-  min-height: clamp(180px, 22vw, 300px);
-  padding: clamp(1.25rem, 2.5vw, 2.5rem);
+  gap: var(--space-8);
+  min-height: clamp(170px, 20vw, 260px);
+  padding: clamp(1.25rem, 2.2cqi, 2.25rem);
   border: 1px solid var(--border);
   border-radius: clamp(10px, 1vw, 16px);
   background: linear-gradient(155deg, #f1f1f2 0%, #e4e4e6 100%);
@@ -132,11 +140,16 @@
 .prod-detail__stat-value {
   font-family: var(--font-mono);
   font-weight: var(--font-medium);
-  font-size: clamp(3rem, 8vw, 6.5rem);
+  font-size: clamp(2.25rem, 30cqi, 5.5rem);
   line-height: 0.85;
   letter-spacing: -0.03em;
-  color: var(--fg-primary);
   overflow-wrap: anywhere;
+  /* Soft light-grey gradient, clipped to the text. */
+  color: #bcbcc2; /* fallback if background-clip:text is unsupported */
+  background: linear-gradient(175deg, #d6d6dc 0%, #adadb5 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 .prod-detail__stat-label {
   font-size: var(--text-base);
