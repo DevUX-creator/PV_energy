@@ -15,16 +15,41 @@
 }
 
 /* ---- Hero ----------------------------------------------------------- */
-.prod-detail__back {
-  display: inline-block;
+.prod-detail__crumbs {
   margin-bottom: var(--space-8);
+}
+.prod-detail__crumbs ol {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+  list-style: none;
+  padding: 0;
+  margin: 0;
   font-family: var(--font-mono);
-  font-size: var(--text-sm);
+  font-size: var(--text-xs);
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+.prod-detail__crumbs li {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--fg-tertiary);
+}
+.prod-detail__crumbs li:not(:first-child)::before {
+  content: "/";
+  color: var(--border-strong);
+}
+.prod-detail__crumbs a {
   color: var(--fg-secondary);
   transition: color var(--transition-fast);
 }
-.prod-detail__back:hover {
+.prod-detail__crumbs a:hover {
   color: var(--accent);
+}
+.prod-detail__crumbs [aria-current="page"] {
+  color: var(--fg-primary);
 }
 
 .prod-detail__title {

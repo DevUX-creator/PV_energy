@@ -67,9 +67,17 @@ export default function ProductDetail({
     return (
       <article className="prod-detail">
         <Section width="wide" className="prod-detail__hero" ariaLabel={product.name}>
-          <Link href="/products" className="prod-detail__back">
-            ← All products
-          </Link>
+          <nav className="prod-detail__crumbs" aria-label="Breadcrumb">
+            <ol>
+              <li>
+                <Link href="/">Home</Link>
+              </li>
+              <li>
+                <Link href="/products">Products</Link>
+              </li>
+              <li aria-current="page">{product.name}</li>
+            </ol>
+          </nav>
           <span className="section-tag">{product.department.name}</span>
           <h1 className="prod-detail__title">{product.name}</h1>
           <p className="prod-detail__tagline">{product.tagline}</p>
@@ -86,9 +94,18 @@ export default function ProductDetail({
     <article className="prod-detail">
       {/* Hero */}
       <Section width="wide" className="prod-detail__hero" ariaLabel={product.name}>
-        <Link href="/products" className="prod-detail__back">
-          ← All products
-        </Link>
+        <nav className="prod-detail__crumbs" aria-label="Breadcrumb">
+          <ol>
+            <li>
+              <Link href="/">Home</Link>
+            </li>
+            <li>
+              <Link href="/products">Products</Link>
+            </li>
+            <li aria-current="page">{product.name}</li>
+          </ol>
+        </nav>
+
         <span className="section-tag">{product.department.name}</span>
         <h1 className="prod-detail__title">{product.name}</h1>
         <p className="prod-detail__tagline">{product.tagline}</p>
