@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Preloader from "@/components/ui/Preloader";
 import ProductsHero from "@/components/sections/ProductsHero";
 import ProductsOverview from "@/components/sections/ProductsOverview";
+import ProductsCta from "@/components/sections/ProductsCta";
 
 export const metadata: Metadata = {
   title: "Products",
@@ -23,6 +24,7 @@ export default function ProductsPage() {
         <>
           <ProductsHero />
           <ProductsOverview />
+          <ProductsCta />
         </>
       ) : (
         <Preloader label="Products" />

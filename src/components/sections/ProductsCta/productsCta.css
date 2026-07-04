@@ -1,0 +1,122 @@
+.section.prod-cta {
+  position: relative;
+  z-index: 1;
+  min-height: 100svh;
+  overflow: hidden;
+  background: #1c1c1e;
+}
+
+.prod-cta__inner {
+  position: relative;
+  z-index: 2; /* content over the falling chips */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: var(--space-6);
+  /* Let drags fall through to the chips behind; keep the button clickable. */
+  pointer-events: none;
+}
+.prod-cta__inner .btn {
+  pointer-events: auto;
+}
+
+/* Light pill on the dark surface (same fix as the Leaders tag). */
+.prod-cta__tag {
+  /* .section-tag defaults to align-self:start — centre it here. */
+  align-self: center;
+  margin-bottom: var(--space-8); /* breathing room before the headline */
+  color: #0a0a0a;
+  background: var(--bg-muted);
+}
+
+.prod-cta__title {
+  max-width: 22ch;
+  font-size: clamp(2rem, 5vw, 4.5rem);
+  line-height: 1.02;
+  letter-spacing: -0.01em;
+  text-transform: uppercase;
+}
+
+.prod-cta__text {
+  max-width: 60ch;
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  line-height: var(--leading-relaxed);
+  color: var(--fg-secondary);
+}
+
+.prod-cta__actions {
+  margin-top: var(--space-4);
+}
+
+/* ---- Falling service chips (physics) — fill the whole section ---- */
+.prod-cta__stage {
+  position: absolute;
+  inset: 0;
+  z-index: 1; /* behind the CTA content */
+  overflow: hidden;
+  touch-action: pan-y; /* page still scrolls; drag grabs chips (desktop) */
+}
+
+/* On touch the chips aren't draggable — let all touches scroll the page. */
+@media (hover: none), (pointer: coarse) {
+  .prod-cta__stage {
+    pointer-events: none;
+  }
+}
+
+/* Small white mono chip; positioned by physics (JS sets transform). */
+.prod-cta__chip {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: inline-flex;
+  align-items: center;
+  padding: 0.38rem 0.75rem;
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  font-weight: var(--font-medium);
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  cursor: grab;
+  user-select: none;
+  opacity: 0;
+  background: #cfd0d4; /* soft grey */
+  color: #1c1c1e;
+  --chamfer-cut: 0.65rem;
+  border-radius: var(--radius-sm);
+  clip-path: var(--chamfer);
+}
+
+.prod-cta__chip:active {
+  cursor: grabbing;
+}
+
+/* Reduced-motion / no-JS: static wrap near the bottom. */
+.prod-cta__stage.is-static {
+  position: relative;
+  inset: auto;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--space-3);
+  margin-top: var(--gap-section-header);
+}
+.prod-cta__stage.is-static .prod-cta__chip {
+  position: static;
+  opacity: 1;
+  cursor: default;
+}
+
+/* Blue primary with black ink hover, matching the rest of the section. */
+.prod-cta .btn--primary {
+  background: var(--accent);
+  color: var(--accent-contrast);
+  --btn-fill: var(--primary);
+}
+.prod-cta .btn--primary:hover,
+.prod-cta .btn--primary:focus-visible {
+  color: #fff;
+}
