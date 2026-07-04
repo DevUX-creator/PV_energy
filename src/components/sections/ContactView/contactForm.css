@@ -32,8 +32,7 @@
 }
 
 .contact-form__field input,
-.contact-form__field textarea,
-.contact-form__select {
+.contact-form__field textarea {
   width: 100%;
   padding: 0.55rem 0;
   font: inherit;
@@ -59,49 +58,19 @@
 }
 
 .contact-form__field input:hover,
-.contact-form__field textarea:hover,
-.contact-form__select:hover {
+.contact-form__field textarea:hover {
   border-bottom-color: rgba(255, 255, 255, 0.45);
 }
 
 .contact-form__field input:focus-visible,
-.contact-form__field textarea:focus-visible,
-.contact-form__select:focus-visible {
+.contact-form__field textarea:focus-visible {
   outline: none;
   border-bottom-color: var(--accent);
 }
 
 .contact-form__field input[aria-invalid="true"],
-.contact-form__field textarea[aria-invalid="true"],
-.contact-form__select[aria-invalid="true"] {
+.contact-form__field textarea[aria-invalid="true"] {
   border-bottom-color: var(--color-negative, #e5484d);
-}
-
-/* ---- Select (custom chevron, native menu) -------------------------- */
-.contact-form__select-wrap {
-  position: relative;
-}
-
-.contact-form__select {
-  appearance: none;
-  -webkit-appearance: none;
-  padding-right: 1.75rem;
-  cursor: pointer;
-}
-
-.contact-form__select option {
-  color: #111;
-}
-
-.contact-form__select-icon {
-  position: absolute;
-  top: 50%;
-  right: 0;
-  width: 1.1rem;
-  height: 1.1rem;
-  transform: translateY(-50%);
-  color: rgba(255, 255, 255, 0.55);
-  pointer-events: none;
 }
 
 .contact-form__error {
@@ -118,13 +87,23 @@
   margin-top: var(--space-2);
 }
 
-.contact-form__hint {
+.contact-form__hint,
+.contact-form__policy {
   margin: 0;
   flex: 1;
   min-width: 14ch;
   font-family: var(--font-mono);
   font-size: var(--text-xs);
   color: rgba(255, 255, 255, 0.45);
+}
+.contact-form__policy a {
+  color: rgba(255, 255, 255, 0.7);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  transition: color var(--transition-fast);
+}
+.contact-form__policy a:hover {
+  color: #fff;
 }
 
 /* ---- Success state ------------------------------------------------- */
