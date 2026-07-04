@@ -64,6 +64,13 @@ export default function ProductDetail({
   const buyers = byKind("buyers");
   const highlights = PRODUCT_HIGHLIGHTS[product.id] ?? [];
 
+  // Text for the frosted-glass box on the right of the intro.
+  const buyersP = buyers?.blocks.find((b) => b.type === "p");
+  const asideText =
+    (buyersP && buyersP.type === "p" ? buyersP.text : null) ??
+    doc.lead ??
+    product.tagline;
+
   // If there's no parsed content, fall back to a simple prose render.
   if (!doc) {
     return (
@@ -143,22 +150,47 @@ export default function ProductDetail({
         </Section>
       ) : null}
 
-      {/* Intro + image */}
+      {/* Intro — dotted backdrop, centred product image, tag + subtext left,
+          frosted-glass note right */}
       {intro || product.image ? (
-        <Section width="wide" className="prod-detail__intro">
+        <Section
+          width="wide"
+          className="prod-detail__intro"
+          ariaLabel={intro?.title ?? "Overview"}
+        >
+          <div className="prod-detail__intro-dots" aria-hidden="true" />
+
           <div className="prod-detail__intro-grid">
-            {intro ? (
-              <div className="prod-detail__intro-text">
-                <h2 className="prod-detail__h">{intro.title}</h2>
-                {paragraphs(intro, "intro")}
-              </div>
-            ) : null}
-            {product.image ? (
-              <figure className="prod-detail__intro-media">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={product.image} alt={product.name} />
+            <div className="prod-detail__intro-left">
+              <span className="prod-detail__eyebrow">
+                {intro?.title ?? "Overview"}
+              </span>
+              {intro ? paragraphs(intro, "intro") : null}
+            </div>
+
+            <div className="prod-detail__intro-center">
+              <figure className="prod-detail__shape">
+                {product.image ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={product.image} alt={product.name} />
+                ) : (
+                  <span className="prod-detail__shape-ph" aria-hidden="true" />
+                )}
               </figure>
-            ) : null}
+            </div>
+
+            <div className="prod-detail__intro-right">
+              {asideText ? (
+                <div className="prod-detail__glass">
+                  {buyers ? (
+                    <span className="prod-detail__glass-tag">{buyers.title}</span>
+                  ) : null}
+                  <p className="prod-detail__glass-text">
+                    {inline(asideText, "aside")}
+                  </p>
+                </div>
+              ) : null}
+            </div>
           </div>
         </Section>
       ) : null}
@@ -232,14 +264,8 @@ export default function ProductDetail({
         </Section>
       ) : null}
 
-      {/* Closing + CTA */}
+      {/* Closing + CTA (the "buyers" note now lives in the intro glass box) */}
       <Section width="wide" className="prod-detail__close">
-        {buyers ? (
-          <div className="prod-detail__close-text">
-            <h2 className="prod-detail__h">{buyers.title}</h2>
-            {paragraphs(buyers, "buy")}
-          </div>
-        ) : null}
         <div className="prod-detail__cta">
           <Button href="/contact">Enquire about {product.name}</Button>
         </div>
