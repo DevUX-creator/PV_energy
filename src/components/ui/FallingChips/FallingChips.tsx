@@ -30,7 +30,7 @@ export default function FallingChips({ items, stagger = 550 }: FallingChipsProps
     let cleanup = () => {};
     let disposed = false;
 
-    (async () => {
+    const build = async () => {
       const Matter = await import("matter-js");
       if (disposed || !stageRef.current) return;
       const { Engine, Runner, World, Bodies, Mouse, MouseConstraint } = Matter;
@@ -141,10 +141,24 @@ export default function FallingChips({ items, stagger = 550 }: FallingChipsProps
         World.clear(engine.world, false);
         Engine.clear(engine);
       };
-    })();
+    };
+
+    // Defer loading matter.js until the section nears the viewport (it's below
+    // the fold on most pages) — the chips still fall identically when reached.
+    const loadIO = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) {
+          loadIO.disconnect();
+          build();
+        }
+      },
+      { rootMargin: "300px" }
+    );
+    loadIO.observe(stage);
 
     return () => {
       disposed = true;
+      loadIO.disconnect();
       cleanup();
     };
   }, [stagger]);

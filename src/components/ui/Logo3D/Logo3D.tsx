@@ -168,7 +168,13 @@ export default function Logo3D({ className = "" }: { className?: string }) {
       (entries) => {
         if (entries[0].isIntersecting) {
           io.disconnect();
-          init();
+          // Kick off three.js when the main thread is idle so it never blocks
+          // first paint / interactivity (the flat SVG shows until it's ready).
+          if (typeof window.requestIdleCallback === "function") {
+            window.requestIdleCallback(() => init(), { timeout: 1500 });
+          } else {
+            setTimeout(init, 200);
+          }
         }
       },
       { rootMargin: "300px" }
