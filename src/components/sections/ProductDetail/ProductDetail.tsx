@@ -68,7 +68,7 @@ export default function ProductDetail({
   const buyersP = buyers?.blocks.find((b) => b.type === "p");
   const asideText =
     (buyersP && buyersP.type === "p" ? buyersP.text : null) ??
-    doc.lead ??
+    doc?.lead ??
     product.tagline;
 
   // If there's no parsed content, fall back to a simple prose render.
