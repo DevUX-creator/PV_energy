@@ -117,6 +117,182 @@ const PRODUCT_EXTRAS: Record<string, ProductExtras> = {
       },
     ],
   },
+  bitumen: {
+    stages: [
+      {
+        tag: "What it is",
+        lead: "The heavy binder at the bottom of the barrel",
+        muted: "— the residue that holds asphalt together and waterproofs the built environment.",
+        noteTag: "Why it matters",
+        note: "Blended with aggregate it becomes asphalt — the surface of most of the world's roads, runways and hard-standing — and on its own a durable waterproofing material. Demand tracks infrastructure spending.",
+      },
+      {
+        tag: "Grades & specs",
+        lead: "Penetration, viscosity and performance grades",
+        muted: "— from 60/70 and VG-10 to polymer-modified bitumen for heavy traffic and temperature extremes.",
+        noteTag: "Core checks",
+        note: "**Penetration, softening point, ductility and viscosity** — the grade matched to the local climate and job specification.",
+      },
+    ],
+    cards: [
+      {
+        label: "Roads & paving",
+        info: "The binder in asphalt concrete for highways, streets, airports and industrial yards.",
+      },
+      {
+        label: "Waterproofing",
+        info: "Membranes, felts and coatings that keep water out of buildings and structures.",
+      },
+    ],
+    blocks: [
+      {
+        title: "Grades & specifications",
+        lead: "Penetration, viscosity, performance and oxidised grades",
+        muted:
+          "— 60/70 and 80/100 pen, VG-10 to VG-40, PG and polymer-modified for heavy duty, harder oxidised grades for roofing.",
+        sub: "Penetration · softening point · ductility · viscosity",
+      },
+      {
+        title: "Handling, storage & logistics",
+        lead: "Moved hot to stay liquid — or packed where hot infrastructure is absent",
+        muted:
+          "— insulated heated tankers and shore tanks, or drums, bulk bags and heat-resistant bitubags.",
+        sub: "Hot bulk · drums · bitubags · emulsions & cutbacks",
+      },
+    ],
+  },
+  lpg: {
+    stages: [
+      {
+        tag: "What it is",
+        lead: "A large amount of energy in a small, portable volume",
+        muted: "— propane, butane or a blend, kept liquid under modest pressure.",
+        noteTag: "Why it matters",
+        note: "Recovered from gas processing and refining, it turns to liquid under light pressure and back to gas when released — easy to store in cylinders and move where pipelines don't reach. Virtually sulphur-free and sootless.",
+      },
+      {
+        tag: "Grades & specs",
+        lead: "Commercial propane, butane, or a seasonal blend",
+        muted: "— tuned to a target vapour pressure, more propane in winter.",
+        noteTag: "Core checks",
+        note: "Traded against standards like **EN 589** (autogas). Buyers check the **C₃/C₄ ratio**, vapour pressure, sulphur and moisture.",
+      },
+    ],
+    cards: [
+      {
+        label: "Off-grid energy",
+        info: "Cooking, heating and reliable power for homes, restaurants and remote sites.",
+      },
+      {
+        label: "Autogas",
+        info: "A lower-emission transport fuel for converted petrol engines in taxi and delivery fleets.",
+      },
+    ],
+    blocks: [
+      {
+        title: "Grades & specifications",
+        lead: "Commercial propane (C₃), butane (C₄), or a blend",
+        muted:
+          "— propane for cold climates and heavier duty, butane for indoor and warmer use, mixes tuned seasonally.",
+        sub: "C₃/C₄ ratio · vapour pressure · sulphur · moisture · EN 589",
+      },
+      {
+        title: "Handling, storage & logistics",
+        lead: "Shipped as a pressurised or refrigerated liquid",
+        muted:
+          "— cylinders, bulk tankers and VLGCs by sea; heavier than air, so containment and venting are core to safety.",
+        sub: "Cylinders · bulk road / rail · VLGC sea cargo",
+      },
+    ],
+  },
+  dap: {
+    stages: [
+      {
+        tag: "What it is",
+        lead: "Concentrated phosphorus, with a useful dose of nitrogen",
+        muted: "— graded 18-46-0, the world's go-to phosphate at planting.",
+        noteTag: "Why it matters",
+        note: "Phosphorus drives early root development and energy transfer. DAP's high concentration and good handling make it the default phosphate source across most cropping systems.",
+      },
+      {
+        tag: "Grades & specs",
+        lead: "Standard 18-46-0 — firm, uniform granules",
+        muted: "— often weighed against MAP (11-52-0), which is more acidic and higher in phosphate.",
+        noteTag: "Core checks",
+        note: "Nutrient content, granule size and moisture, plus **cadmium content**, which some import markets regulate.",
+      },
+    ],
+    cards: [
+      {
+        label: "Establishment",
+        info: "Placed at or before sowing to build strong roots and early vigour.",
+      },
+      {
+        label: "Blending base",
+        info: "A phosphate base combined with other products into custom NPK programmes.",
+      },
+    ],
+    blocks: [
+      {
+        title: "Grades & specifications",
+        lead: "Standard grade 18-46-0",
+        muted:
+          "— 18% N, 46% P₂O₅; often compared with MAP (11-52-0), higher-P and more acidic.",
+        sub: "Nutrient content · granule size · moisture · cadmium (regulated markets)",
+      },
+      {
+        title: "Handling, storage & logistics",
+        lead: "Bulk or bagged, dry-stored to prevent caking",
+        muted:
+          "— firm uniform granules handle, blend and spread well, moving widely in trade.",
+        sub: "Consistent granulometry · low moisture · reliable delivery",
+      },
+    ],
+  },
+  npk: {
+    stages: [
+      {
+        tag: "What it is",
+        lead: "Three nutrients in one application",
+        muted: "— N, P and K, in the ratio the crop and soil actually need.",
+        noteTag: "Read the numbers",
+        note: "Every grade — **15-15-15**, **20-10-10** — gives the % of N, P₂O₅ and K₂O. Matching that ratio to the crop stage and the soil's fertility is what separates a good yield from a wasted one.",
+      },
+      {
+        tag: "Grades & types",
+        lead: "Compound or bulk-blended, tuned to your target",
+        muted: "— every-granule compounds for even spread, physical blends for flexibility, micronutrients on demand.",
+        noteTag: "Core checks",
+        note: "The **N-P₂O₅-K₂O grade**, granule size and consistency, water solubility, and the **chloride vs sulphate** potassium source.",
+      },
+    ],
+    cards: [
+      {
+        label: "Stage-specific",
+        info: "Higher-N for growth, higher-P for rooting, higher-K for fruiting and quality.",
+      },
+      {
+        label: "With micronutrients",
+        info: "Sulphur, zinc, boron and more added to correct specific deficiencies.",
+      },
+    ],
+    blocks: [
+      {
+        title: "Grades & types",
+        lead: "Compound NPK or bulk blends",
+        muted:
+          "— every granule complete for even distribution, or separate granules mixed to a target ratio.",
+        sub: "N-P₂O₅-K₂O grade · granule size · solubility · chloride vs sulphate K",
+      },
+      {
+        title: "Handling, storage & logistics",
+        lead: "Bagged or in bulk, blended to your target ratio",
+        muted:
+          "— anti-caking treatment and dry storage keep granules free-flowing.",
+        sub: "Accurate formulation · consistent granulometry",
+      },
+    ],
+  },
   ammonia: {
     stages: [
       {

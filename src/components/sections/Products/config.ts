@@ -54,6 +54,7 @@ export const PRODUCT_DEPARTMENTS: ProductDepartment[] = [
         name: "LPG (Liquefied Petroleum Gas)",
         tab: "LPG",
         image: "/Products/lpg.webp",
+        video: "/Products/lpg.mp4",
         origin: "Alberta, Canada",
         tagline: "A Cleaner, Efficient Energy Option",
         description:
@@ -150,6 +151,7 @@ export const PRODUCT_DEPARTMENTS: ProductDepartment[] = [
         name: "Bitumen",
         tab: "Bitumen",
         image: "/Products/bitumen.webp",
+        video: "/Products/bitumen.mp4",
         origin: "Global",
         tagline: "Building the Roads That Connect Economies",
         description:
@@ -283,6 +285,7 @@ export const PRODUCT_DEPARTMENTS: ProductDepartment[] = [
         name: "NPK Blends",
         tab: "NPK",
         image: "/Products/npk.webp",
+        video: "/Products/npk.mp4",
         origin: "Global",
         tagline: "Balanced Nutrition, Customizable Ratios",
         description:
@@ -310,6 +313,7 @@ export const PRODUCT_DEPARTMENTS: ProductDepartment[] = [
         name: "DAP (Diammonium Phosphate)",
         tab: "DAP",
         image: "/Products/dap.webp",
+        video: "/Products/dap.mp4",
         origin: "Global",
         tagline: "Phosphorus-Rich Crop Nutrition",
         description:
