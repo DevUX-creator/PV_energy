@@ -3,6 +3,32 @@
 Tracked items the client/dev will handle later (not bugs — the desktop look &
 animations are working).
 
+## Pre-launch — HANDED TO OTHER TEAM
+
+These are owned by the client / other dev team, not this codebase pass:
+
+- **Contact form backend.** `ContactForm.tsx` currently uses a `mailto:` fallback
+  (see the `TODO (developers)` at ~line 107). Replace with a POST to the real
+  form endpoint / CRM (HubSpot, API, etc.) and handle the response.
+- **Legal + registration details.** Confirm legal entity names (currently
+  placeholders in `src/components/sections/Offices/config.ts` and `src/lib/site.ts`
+  — `PV Link Energy FZCO` / Hellas / HK Ltd.) and fill the Legal page
+  registration number, jurisdiction, VAT / tax id (`LegalView.tsx` ~line 70).
+- **Analytics.** No tracking is wired (no GA / Plausible / Vercel Analytics).
+  Other team to add if wanted.
+- **`sameAs` social profiles.** `SAME_AS` in `src/lib/site.ts` is empty — add the
+  real LinkedIn / company profile URLs when confirmed.
+
+## Reach / stat numbers — CLIENT TO CONFIRM (unverified marketing claims)
+
+Currently on the site, unverifiable and mutually inconsistent — confirm the real
+figures or soften to non-numeric phrasing:
+
+- Experience section: **"100+ markets connected"** (`Experience/config.ts`).
+- AboutStory: **"20+ countries and five strategic hubs"** — "five hubs"
+  contradicts the 3 offices the site lists (Dubai, Athens, Hong Kong).
+- AboutFinale: **"20+ countries"**. Note "20+" here vs "100+" in Experience.
+
 ## Responsive (review on mobile / tablet — DEFERRED)
 
 The desktop (≥1024px) layouts are good; small-screen passes still needed.
