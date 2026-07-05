@@ -709,6 +709,10 @@
   color: var(--fg-primary);
 }
 
+.prod-detail__hero-cta {
+  margin-top: var(--space-6);
+}
+
 /* ---- More products — large index list ------------------------------- */
 .section.prod-detail__more {
   padding-block: var(--space-20);

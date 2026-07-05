@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Logo from "@/components/ui/Logo";
 import { MAIN_NAV, LEGAL_NAV } from "@/lib/navigation";
+import { ALL_PRODUCTS } from "@/lib/products";
 import { OFFICES } from "@/components/sections/Offices/config";
 import Wordmark from "@/components/ui/Wordmark";
 import { CookieSettingsButton } from "@/components/ui/CookieConsent";
@@ -46,6 +47,17 @@ export default function Footer() {
                   {MAIN_NAV.map((item) => (
                     <li key={item.href}>
                       <Link href={item.href}>{item.label}</Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              <div className="footer__col">
+                <span className="footer__col-title">Products</span>
+                <ul>
+                  {ALL_PRODUCTS.map((p) => (
+                    <li key={p.id}>
+                      <Link href={`/products/${p.id}`}>{p.name}</Link>
                     </li>
                   ))}
                 </ul>

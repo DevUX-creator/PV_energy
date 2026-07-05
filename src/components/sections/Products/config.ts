@@ -222,6 +222,7 @@ export const PRODUCT_DEPARTMENTS: ProductDepartment[] = [
         name: "Urea",
         tab: "Urea",
         image: "/Products/urea.webp",
+        video: "/Products/urea.mp4",
         origin: "Global",
         tagline: "Concentrated Nitrogen for High-Yield Crops",
         description:
@@ -254,6 +255,7 @@ export const PRODUCT_DEPARTMENTS: ProductDepartment[] = [
         name: "Ammonia",
         tab: "Ammonia",
         image: "/Products/ammonia.webp",
+        video: "/Products/ammonia.mp4",
         origin: "Global",
         tagline: "High-Purity Feedstock",
         description:

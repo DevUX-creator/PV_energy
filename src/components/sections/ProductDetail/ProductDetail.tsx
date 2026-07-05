@@ -58,40 +58,154 @@ function ShurikenIcon() {
   );
 }
 
-// Larger statement + mono subtext blocks (grades, logistics) for the scroll
-// column — deliberately offset for a looser, less hairline-heavy rhythm.
-const DETAIL_BLOCKS: {
-  title: string;
-  lead: string;
-  muted: string;
-  sub: string;
-}[] = [
-  {
-    title: "Grades & forms",
-    lead: "Crystalline, granular and compacted forms",
-    muted:
-      "— granular and compacted suit bulk blending and mechanical spreading; crystalline suits solution and industrial use.",
-    sub: "Source grade — caprolactam vs synthetic · ≈21% N · ≈24% S",
-  },
-  {
-    title: "Handling, storage & logistics",
-    lead: "Supplied bagged or in bulk, stored dry to stay free-flowing.",
-    muted: "",
-    sub: "Granular grades pair with urea, DAP and potash without segregating in the bag.",
-  },
-];
+// Per-product curated content for the scrubbed intro + Key Applications block.
+// Keyed by product id; only products with an entry get the rich scrub layout.
+type IntroStageCopy = {
+  tag: string;
+  lead: string; // full-colour part of the statement
+  muted: string; // grey tail of the statement
+  noteTag: string;
+  note: string; // right-side glass note
+};
+type ProductExtras = {
+  stages: IntroStageCopy[];
+  cards: { label: string; info: string }[];
+  blocks: { title: string; lead: string; muted: string; sub: string }[];
+};
 
-// Small info cards shown under the applications list.
-const APP_CARDS: { label: string; info: string }[] = [
-  {
-    label: "Blend-ready",
-    info: "Granular and compacted grades pair with urea, DAP and potash without segregating in the bag.",
+const PRODUCT_EXTRAS: Record<string, ProductExtras> = {
+  "ammonium-sulfate": {
+    stages: [
+      {
+        tag: "What it is",
+        lead: "Nitrogen and sulphur, delivered together",
+        muted: "— for the soils and crops that need both.",
+        noteTag: "Why it matters",
+        note: "Readily available nitrogen alongside a nutrient many soils increasingly lack as cleaner air cuts atmospheric sulphur — with a mild acidifying effect that suits alkaline soils.",
+      },
+      {
+        tag: "Grades & forms",
+        lead: "A clean, uniform source of N and S",
+        muted: "— on its own or in the blend.",
+        noteTag: "Core specs",
+        note: "Around **21% N** and **24% S**. Crystalline, granular and compacted forms — granular and compacted for bulk blending and spreading, crystalline for solution and industrial use.",
+      },
+    ],
+    cards: [
+      {
+        label: "Blend-ready",
+        info: "Granular and compacted grades pair with urea, DAP and potash without segregating in the bag.",
+      },
+      {
+        label: "Solution grade",
+        info: "Crystalline form dissolves cleanly for fertigation and industrial use.",
+      },
+    ],
+    blocks: [
+      {
+        title: "Grades & forms",
+        lead: "Crystalline, granular and compacted forms",
+        muted:
+          "— granular and compacted suit bulk blending and mechanical spreading; crystalline suits solution and industrial use.",
+        sub: "Source grade — caprolactam vs synthetic · ≈21% N · ≈24% S",
+      },
+      {
+        title: "Handling, storage & logistics",
+        lead: "Supplied bagged or in bulk, stored dry to stay free-flowing.",
+        muted: "",
+        sub: "Granular grades pair with urea, DAP and potash without segregating in the bag.",
+      },
+    ],
   },
-  {
-    label: "Solution grade",
-    info: "Crystalline form dissolves cleanly for fertigation and industrial use.",
+  ammonia: {
+    stages: [
+      {
+        tag: "What it is",
+        lead: "The most concentrated nitrogen of all",
+        muted: "— around 82% N, the feedstock behind nearly every nitrogen fertilizer.",
+        noteTag: "Why it matters",
+        note: "Made by combining nitrogen from the air with hydrogen — the base for urea, ammonium nitrate and DAP, a workhorse industrial chemical, and increasingly a carrier for clean hydrogen energy.",
+      },
+      {
+        tag: "Grades & specs",
+        lead: "Anhydrous, from commercial to metallurgical grade",
+        muted: "— matched on purity, water and oil content to the end use.",
+        noteTag: "Handled with discipline",
+        note: "A liquefied gas — refrigerated near **−33 °C** or stored under pressure in specialised insulated carriers. Toxic, so safety, containment and trained handling matter as much as the product.",
+      },
+    ],
+    cards: [
+      {
+        label: "Field-direct",
+        info: "Anhydrous ammonia injected straight into soil as a high-efficiency nitrogen source.",
+      },
+      {
+        label: "Clean-energy carrier",
+        info: "An emerging zero-carbon fuel and a practical way to move hydrogen around the world.",
+      },
+    ],
+    blocks: [
+      {
+        title: "Grades & specifications",
+        lead: "Anhydrous — commercial, refrigeration, metallurgical",
+        muted:
+          "— distinguished by purity and water content, matched to the end use.",
+        sub: "NH₃ purity · moisture / water · oil content",
+      },
+      {
+        title: "Handling, storage & logistics",
+        lead: "A liquefied gas — refrigerated near −33 °C or under pressure",
+        muted:
+          "— in specialised insulated carriers, with strict safety and trained handling at every step.",
+        sub: "Toxic · certified equipment · disciplined logistics",
+      },
+    ],
   },
-];
+  urea: {
+    stages: [
+      {
+        tag: "What it is",
+        lead: "The highest nitrogen of any dry fertilizer",
+        muted: "— around 46% N, dissolving readily to feed crops efficiently.",
+        noteTag: "Why it matters",
+        note: "More nutrient per tonne shipped and spread — lowering freight and handling cost per unit of nitrogen, which is why it dominates global nitrogen trade.",
+      },
+      {
+        tag: "Grades & forms",
+        lead: "Granular or prilled, plus a pure technical grade",
+        muted: "— from broad-acre spreading to resins, feed and emissions control.",
+        noteTag: "Core specs",
+        note: "Around **46% N** with **low biuret** for foliar use. Granular for bulk blending and spreading, prilled for direct application and technical use.",
+      },
+    ],
+    cards: [
+      {
+        label: "Blend-ready",
+        info: "Hard granular grade suits bulk blending and mechanical spreading across broad-acre crops.",
+      },
+      {
+        label: "Technical grade",
+        info: "High-purity urea feeds resins, adhesives and melamine, and DEF/AdBlue emissions control.",
+      },
+    ],
+    blocks: [
+      {
+        title: "Grades & specifications",
+        lead: "Granular or prilled — sized to the job",
+        muted:
+          "— granular for bulk blending and spreading, prilled for direct application and technical use.",
+        sub: "≈46% N · low biuret for foliar · consistent granulometry",
+      },
+      {
+        title: "Handling, storage & logistics",
+        lead: "Bagged (50 kg / jumbo) or in bulk",
+        muted:
+          "— urea is hygroscopic, so dry storage and anti-caking treatment protect quality plant to field.",
+        sub: "50 kg bags · one-tonne jumbos · bulk",
+      },
+    ],
+  },
+};
 
 /**
  * ProductDetail — a single product page laid out as alternating sections
@@ -149,35 +263,17 @@ export default function ProductDetail({
     </>
   );
 
+  const extras = PRODUCT_EXTRAS[product.id];
+  const appCards = extras?.cards ?? [];
+  const detailBlocks = extras?.blocks ?? [];
+
   const introStages: IntroStage[] = [];
-  if (product.video && doc) {
-    // Stage 0 — the pitch.
-    introStages.push({
-      left: statement(
-        intro?.title ?? "What it is",
-        "Nitrogen and sulphur, delivered together",
-        "— for the soils and crops that need both.",
-        "s0-l"
-      ),
-      right: glassNote(
-        "Why it matters",
-        "Readily available nitrogen alongside a nutrient many soils increasingly lack as cleaner air cuts atmospheric sulphur — with a mild acidifying effect that suits alkaline soils.",
-        "s0-note"
-      ),
-    });
-    // Stage 1 — the specifics.
-    introStages.push({
-      left: statement(
-        grades?.title ?? "Grades & forms",
-        "A clean, uniform source of N and S",
-        "— on its own or in the blend.",
-        "s1-l"
-      ),
-      right: glassNote(
-        "Core specs",
-        "Around **21% N** and **24% S**. Crystalline, granular and compacted forms — granular and compacted for bulk blending and spreading, crystalline for solution and industrial use.",
-        "s1-note"
-      ),
+  if (product.video && doc && extras) {
+    extras.stages.forEach((st, i) => {
+      introStages.push({
+        left: statement(st.tag, st.lead, st.muted, `st${i}-l`),
+        right: glassNote(st.noteTag, st.note, `st${i}-note`),
+      });
     });
   }
   const useScrub = product.video && doc && introStages.length > 0;
@@ -230,6 +326,9 @@ export default function ProductDetail({
           <span className="section-tag">{product.department.name}</span>
           <h1 className="prod-detail__title">{product.name}</h1>
           <p className="prod-detail__tagline">{product.tagline}</p>
+          <div className="prod-detail__hero-cta">
+            <Button href="/contact">Contact Us</Button>
+          </div>
         </div>
 
         {doc.lead || product.origin ? (
@@ -351,20 +450,22 @@ export default function ProductDetail({
                 })}
               </ul>
 
-              <div className="prod-detail__cards">
-                {APP_CARDS.map((c, i) => (
-                  <article key={i} className="prod-detail__card">
-                    <header className="prod-detail__card-top">
-                      <span className="prod-detail__card-label">{c.label}</span>
-                      <ShurikenIcon />
-                    </header>
-                    <p className="prod-detail__card-info">{c.info}</p>
-                  </article>
-                ))}
-              </div>
+              {appCards.length ? (
+                <div className="prod-detail__cards">
+                  {appCards.map((c, i) => (
+                    <article key={i} className="prod-detail__card">
+                      <header className="prod-detail__card-top">
+                        <span className="prod-detail__card-label">{c.label}</span>
+                        <ShurikenIcon />
+                      </header>
+                      <p className="prod-detail__card-info">{c.info}</p>
+                    </article>
+                  ))}
+                </div>
+              ) : null}
 
               {/* Grades / logistics — large statement + mono subtext, offset. */}
-              {DETAIL_BLOCKS.map((b, i) => (
+              {detailBlocks.map((b, i) => (
                 <div
                   key={i}
                   className={
