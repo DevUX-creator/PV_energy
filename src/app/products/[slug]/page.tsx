@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import ProductDetail from "@/components/sections/ProductDetail";
+import { OG_IMAGE } from "@/lib/site";
 import { ALL_PRODUCTS, getProduct } from "@/lib/products";
 import { getProductContent } from "@/lib/productContent";
 
@@ -27,6 +28,7 @@ export async function generateMetadata({
       description: product.description,
       url: `/products/${product.id}`,
       type: "website",
+      images: [OG_IMAGE],
     },
   };
 }
