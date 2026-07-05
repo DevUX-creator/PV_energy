@@ -96,7 +96,7 @@ export default function AboutStory() {
               </RevealText>
               <RevealText split="none" delay={0.06}>
                 <p>
-                  Across 20+ countries and five strategic hubs, we pair deep
+                  Across global markets and our strategic hubs, we pair deep
                   market knowledge with real-time analytics and disciplined risk
                   management. We&apos;re a lean, relationship-led operator —
                   fast, transparent, and accountable for every cargo we move.

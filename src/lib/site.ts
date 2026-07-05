@@ -22,9 +22,10 @@ export const SITE_DESCRIPTION =
 export const CONTACT_EMAIL = "info@pvlinkenergy.com";
 export const CONTACT_PHONE = "+971 4 577 5989";
 
-/** Social / authoritative profiles (schema.org sameAs). Add the real LinkedIn
- *  company URL here when confirmed — omitted for now rather than guessed. */
-export const SAME_AS: string[] = [];
+/** Social / authoritative profiles (schema.org sameAs). */
+export const SAME_AS: string[] = [
+  "https://www.linkedin.com/company/pvlink-energy",
+];
 
 export type SeoOffice = {
   id: string;

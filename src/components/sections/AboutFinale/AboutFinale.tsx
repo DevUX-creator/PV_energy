@@ -140,7 +140,7 @@ export default function AboutFinale() {
           <div className="about-finale__info">
             <h3 className="about-finale__info-h3">One link in the global energy chain</h3>
             <p className="about-finale__info-p">
-              We connect supply and demand across 20+ countries — one accountable
+              We connect supply and demand across global markets — one accountable
               partner from origin to destination.
             </p>
             <Button href="/contact" variant="primary" className="about-finale__cta">

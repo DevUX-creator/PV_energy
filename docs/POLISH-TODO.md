@@ -16,18 +16,17 @@ These are owned by the client / other dev team, not this codebase pass:
   registration number, jurisdiction, VAT / tax id (`LegalView.tsx` ~line 70).
 - **Analytics.** No tracking is wired (no GA / Plausible / Vercel Analytics).
   Other team to add if wanted.
-- **`sameAs` social profiles.** `SAME_AS` in `src/lib/site.ts` is empty — add the
-  real LinkedIn / company profile URLs when confirmed.
 
-## Reach / stat numbers — CLIENT TO CONFIRM (unverified marketing claims)
+## Reach / stat numbers — SOFTENED (client may add real figures later)
 
-Currently on the site, unverifiable and mutually inconsistent — confirm the real
-figures or soften to non-numeric phrasing:
+The unverified reach numbers have been replaced with safe, non-numeric phrasing.
+If the client has confirmed real figures, swap them back in here:
 
-- Experience section: **"100+ markets connected"** (`Experience/config.ts`).
-- AboutStory: **"20+ countries and five strategic hubs"** — "five hubs"
-  contradicts the 3 offices the site lists (Dubai, Athens, Hong Kong).
-- AboutFinale: **"20+ countries"**. Note "20+" here vs "100+" in Experience.
+- AboutStory: "20+ countries and five strategic hubs" → "global markets and our
+  strategic hubs".
+- AboutFinale: "20+ countries" → "global markets".
+- Experience `stat` (was "100+ markets") → neutral label; note it is not
+  rendered by `Experience.tsx` anyway.
 
 ## Responsive (review on mobile / tablet — DEFERRED)
 

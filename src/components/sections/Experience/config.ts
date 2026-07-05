@@ -25,10 +25,12 @@ export type ExperienceContent = {
 
 export const EXPERIENCE: ExperienceContent = {
   tag: "Global Reach",
+  // NOTE: not currently rendered by Experience.tsx. Kept as safe, non-numeric
+  // framing so no unverified reach figure ships if this is wired up later.
   stat: {
-    value: 100,
-    suffix: "+",
-    label: "Markets connected across the globe",
+    value: 0,
+    suffix: "",
+    label: "Connecting global energy markets",
   },
   lead: ["Delivering", "energy & commodities", "to"],
   sectors: [
