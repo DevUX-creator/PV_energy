@@ -7,6 +7,7 @@ import Footer from "@/components/layout/Footer";
 import CookieConsent from "@/components/ui/CookieConsent";
 import {
   SITE_URL,
+  METADATA_BASE,
   SITE_NAME,
   SITE_TAGLINE,
   SITE_DESCRIPTION,
@@ -16,7 +17,7 @@ import {
 import "@/styles/globals.css";
 
 export const metadata: Metadata = {
-  metadataBase: new URL(SITE_URL),
+  metadataBase: new URL(METADATA_BASE),
   title: {
     default: `${SITE_NAME} — ${SITE_TAGLINE}`,
     template: `%s | ${SITE_NAME}`,

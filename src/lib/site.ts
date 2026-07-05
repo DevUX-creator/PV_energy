@@ -10,6 +10,21 @@
 
 export const SITE_URL = "https://pvlinkenergy.com";
 export const SITE_HOST = "pvlinkenergy.com";
+
+/**
+ * Origin that `metadataBase` uses to turn relative OG/Twitter image paths into
+ * absolute URLs. On the live production deploy this is the canonical domain; on
+ * a Vercel PREVIEW deploy the canonical domain isn't serving yet, so we fall
+ * back to the deployment's own host — otherwise share images would point at the
+ * not-yet-live domain and crawlers (Telegram, Viber, LinkedIn…) get a 404 and
+ * show no image. Canonical URLs / sitemap / JSON-LD still use SITE_URL.
+ */
+export const METADATA_BASE =
+  process.env.VERCEL_ENV === "production"
+    ? SITE_URL
+    : process.env.VERCEL_URL
+      ? `https://${process.env.VERCEL_URL}`
+      : SITE_URL;
 export const SITE_NAME = "PV Link Energy";
 /** Legal entity — PLACEHOLDER pending client confirmation (see docs/CONTENT.md). */
 export const SITE_LEGAL_NAME = "PV Link Energy FZCO";
