@@ -29,6 +29,8 @@ export type Product = {
   tab?: string;
   /** Per-product image; dark placeholder until provided. */
   image?: string;
+  /** Per-product intro video (looping .mp4); falls back to `image` when absent. */
+  video?: string;
   /** Accordion sub-points — applications / grades. DRAFT copy. */
   points?: ProductPoint[];
 };
@@ -333,6 +335,7 @@ export const PRODUCT_DEPARTMENTS: ProductDepartment[] = [
         name: "Ammonium Sulfate",
         tab: "Ammonium Sulfate",
         image: "/Products/ammonium-sulfate.webp",
+        video: "/Products/ammonium-sulfate.mp4",
         origin: "Global",
         tagline: "Nitrogen + Sulfur for Alkaline Soils",
         description:

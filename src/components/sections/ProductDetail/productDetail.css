@@ -14,6 +14,10 @@
 .section.prod-detail__band {
   padding-block: var(--space-16);
 }
+/* The intro is the visual centrepiece — give the dotted backdrop more room. */
+.section.prod-detail__intro {
+  padding-block: var(--space-24);
+}
 
 /* ---- Hero ----------------------------------------------------------- */
 .prod-detail__crumbs {
@@ -105,6 +109,27 @@
   letter-spacing: -0.01em;
 }
 
+/* Section header — title on the left, tag on the right, both above a
+   full-width hairline. Reused across the product content sections. */
+.prod-detail__section-head {
+  display: flex;
+  flex-wrap: wrap; /* tag drops below the title when there's no room */
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3) var(--space-6);
+  padding-bottom: var(--space-5);
+  border-bottom: 1px solid var(--border);
+}
+.prod-detail__section-head .prod-detail__h {
+  margin: 0;
+  min-width: 0;
+  font-size: var(--text-fluid-h2);
+}
+.prod-detail__section-head .section-tag {
+  align-self: center;
+  flex: none;
+}
+
 /* ---- At a glance — stat boxes --------------------------------------- */
 .prod-detail__stat-grid {
   margin: 0;
@@ -167,45 +192,155 @@
   inset: 0;
   z-index: 0;
   pointer-events: none;
-  background-image: radial-gradient(rgba(12, 16, 32, 0.16) 1.2px, transparent 1.5px);
-  background-size: 22px 22px;
-  -webkit-mask-image: radial-gradient(
-    ellipse 85% 78% at 50% 45%,
-    #000 45%,
-    transparent 90%
-  );
-  mask-image: radial-gradient(
-    ellipse 85% 78% at 50% 45%,
-    #000 45%,
-    transparent 90%
-  );
+  background-image: radial-gradient(rgba(12, 16, 32, 0.18) 1.5px, transparent 2px);
+  background-size: 34px 34px;
+  /* Fade the dots out toward every edge — strongest on the sides — so the grid
+     dissolves smoothly into the background. */
+  -webkit-mask-image: linear-gradient(
+      to right,
+      transparent 0%,
+      #000 15%,
+      #000 85%,
+      transparent 100%
+    ),
+    linear-gradient(to bottom, transparent 0%, #000 10%, #000 90%, transparent 100%);
+  -webkit-mask-composite: source-in;
+  mask-image: linear-gradient(
+      to right,
+      transparent 0%,
+      #000 15%,
+      #000 85%,
+      transparent 100%
+    ),
+    linear-gradient(to bottom, transparent 0%, #000 10%, #000 90%, transparent 100%);
+  mask-composite: intersect;
+}
+/* Wrapper for the scroll scrub — full-height stage that pins so the video holds
+   the viewport centre while the side copy swaps behind it. */
+.prod-detail__intro-scrub {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
 }
 .prod-detail__intro-grid {
   position: relative;
   z-index: 1;
+  width: 100%;
   display: grid;
   grid-template-columns: 1fr 1.3fr 1fr;
   gap: var(--col-gap);
   align-items: center;
 }
+/* Side columns hold stacked stages; the centre (video) sits above them so
+   incoming text reads as rising from behind the plate. */
+.prod-detail__intro-scrub .prod-detail__intro-left,
+.prod-detail__intro-scrub .prod-detail__intro-right {
+  position: relative;
+  align-self: stretch;
+  z-index: 1;
+}
+.prod-detail__intro-scrub .prod-detail__intro-center {
+  z-index: 2;
+}
+.pds-stage {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  will-change: transform, opacity, filter;
+}
+/* Left = a short, serious statement, set larger than body copy. */
+.pds-stage--left .pds-stage__statement {
+  margin: 0;
+  max-width: 15ch;
+  font-size: clamp(1.6rem, 1rem + 2.1vw, 2.75rem);
+  line-height: var(--leading-snug, 1.15);
+  letter-spacing: -0.015em;
+  font-weight: 500;
+  color: var(--fg-primary);
+}
+.pds-stage--left .pds-stage__statement strong {
+  font-weight: 650;
+}
+.pds-stage--left .pds-stage__muted {
+  color: var(--fg-tertiary);
+}
+/* Until the scrub script runs (and under reduced-motion), show only stage 0;
+   GSAP overrides these inline once it takes over. */
+.pds-stage:not(:first-child) {
+  opacity: 0;
+  visibility: hidden;
+}
+
+/* Tablet / mobile: no pin/scrub. Everything stacks in normal flow, centred,
+   full width; every stage is shown and reveals once on scroll (see JS). */
+@media (max-width: 900px) {
+  .prod-detail__intro-scrub {
+    min-height: 0;
+    display: block;
+  }
+  .prod-detail__intro-grid {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+  .prod-detail__intro-scrub .prod-detail__intro-center {
+    order: -1; /* video leads on small screens */
+  }
+  .prod-detail__intro-scrub .prod-detail__intro-left,
+  .prod-detail__intro-scrub .prod-detail__intro-right {
+    align-self: stretch;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-10);
+  }
+  /* Stages become normal-flow, full-width, all visible and centred. */
+  .pds-stage,
+  .pds-stage:not(:first-child) {
+    position: static;
+    display: flex;
+    align-items: center;
+    opacity: 1;
+    visibility: visible;
+  }
+  .pds-stage--left .prod-detail__intro-tag,
+  .pds-stage--left .pds-stage__statement {
+    align-self: center;
+  }
+  .pds-stage--left .pds-stage__statement {
+    max-width: 30ch; /* let the statement breathe when stacked */
+  }
+  .pds-stage--right .prod-detail__glass {
+    margin-inline: auto;
+  }
+}
+.prod-detail__intro-list {
+  margin: 0;
+  padding-left: 1.1em;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+.prod-detail__intro-list li {
+  font-size: var(--text-fluid-body);
+  line-height: var(--leading-relaxed);
+  color: var(--fg-secondary);
+}
 
 /* Left — tag + subtext. */
-.prod-detail__eyebrow {
-  display: inline-block;
-  margin-bottom: var(--space-4);
-  font-family: var(--font-mono);
-  font-size: var(--text-xs);
-  letter-spacing: var(--tracking-eyebrow);
-  text-transform: uppercase;
-  color: var(--accent);
+.prod-detail__intro-tag {
+  margin-bottom: var(--space-5);
 }
 .prod-detail__intro-left p {
-  font-size: var(--text-base);
+  font-size: var(--text-fluid-body);
   line-height: var(--leading-relaxed);
   color: var(--fg-secondary);
 }
 .prod-detail__intro-left p + p {
-  margin-top: var(--space-4);
+  margin-top: var(--space-5);
 }
 
 /* Centre — shape holding the (future) product image. */
@@ -217,15 +352,19 @@
   position: relative;
   margin: 0;
   width: 100%;
-  max-width: 360px;
+  max-width: 420px;
   aspect-ratio: 4 / 5;
   overflow: hidden;
-  border-radius: clamp(20px, 6vw, 60px);
-  background: linear-gradient(160deg, #eef1f6, #dfe3ea);
+  /* Brand silhouette — sharp corners + a single diagonal cut, bottom-right. */
+  --chamfer-cut: clamp(2rem, 5vw, 3.5rem);
+  --chamfer-radius: 0.4rem;
+  border-radius: var(--radius-sm);
+  clip-path: var(--chamfer);
+  background: var(--bg-muted);
   border: 1px solid var(--border);
-  box-shadow: 0 30px 60px -30px rgba(10, 20, 40, 0.25);
 }
-.prod-detail__shape img {
+.prod-detail__shape img,
+.prod-detail__shape video {
   width: 100%;
   height: 100%;
   object-fit: cover;
@@ -250,11 +389,10 @@
   max-width: 34ch;
   padding: var(--space-6);
   border-radius: 16px;
-  background: rgba(255, 255, 255, 0.55);
-  border: 1px solid rgba(255, 255, 255, 0.8);
-  -webkit-backdrop-filter: blur(14px) saturate(160%);
-  backdrop-filter: blur(14px) saturate(160%);
-  box-shadow: 0 20px 50px -24px rgba(10, 20, 40, 0.25);
+  background: var(--glass-fill);
+  border: 1px solid var(--glass-border);
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
 }
 .prod-detail__glass-tag {
   display: block;
@@ -288,11 +426,19 @@
 }
 
 /* ---- Applications — feature blocks ---------------------------------- */
-.prod-detail__features {
-  margin-top: var(--space-10);
+/* Applications body — cubes on the left, feature text on the right. */
+.prod-detail__apps-body {
+  margin-top: 200px;
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: var(--space-8) var(--col-gap);
+  grid-template-columns: 420px 1fr;
+  gap: var(--col-gap);
+  align-items: start;
+}
+.prod-detail__features {
+  margin-top: 0;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-8);
   list-style: none;
   padding: 0;
 }
@@ -311,6 +457,191 @@
   font-size: var(--text-base);
   line-height: var(--leading-relaxed);
   color: var(--fg-secondary);
+}
+
+/* Right column stacks the feature list, then the info cards. */
+.prod-detail__apps-right {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-10);
+}
+.prod-detail__cards {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-4);
+}
+.prod-detail__card {
+  display: flex;
+  flex-direction: column;
+  min-height: 190px;
+  padding: var(--space-5);
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  /* Brand silhouette — single diagonal cut, bottom-right. */
+  --chamfer-cut: clamp(1rem, 2vw, 1.5rem);
+  border-radius: var(--radius-sm);
+  clip-path: var(--chamfer);
+}
+.prod-detail__card-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-4);
+}
+.prod-detail__card-label {
+  font-family: var(--font-display);
+  font-size: var(--text-fluid-h5);
+  font-weight: var(--font-semibold);
+  color: var(--fg-primary);
+}
+.prod-detail__card-icon {
+  flex: none;
+  width: 30px;
+  height: 30px;
+  color: var(--fg-tertiary);
+}
+.prod-detail__card-info {
+  margin-top: auto; /* push to the bottom-left */
+  padding-top: var(--space-6);
+  font-size: var(--text-sm);
+  line-height: var(--leading-relaxed);
+  color: var(--fg-secondary);
+}
+
+/* Grades / logistics — a large statement + a mono subtext, deliberately
+   offset (no hairlines) for a looser, editorial rhythm. */
+.prod-detail__dblock {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  padding-bottom: var(--space-10);
+}
+.prod-detail__dblock .section-tag {
+  align-self: start;
+}
+.prod-detail__dblock-lead {
+  align-self: start;
+  max-width: 26ch;
+  font-size: clamp(1.3rem, 0.9rem + 1.5vw, 2rem);
+  line-height: var(--leading-snug, 1.2);
+  letter-spacing: -0.01em;
+  color: var(--fg-primary);
+}
+.prod-detail__dblock-muted {
+  color: var(--fg-tertiary);
+}
+.prod-detail__dblock-sub {
+  align-self: end;
+  max-width: 34ch;
+  margin-top: clamp(2.5rem, 6vw, 6.25rem); /* big gap from the statement */
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  line-height: var(--leading-relaxed);
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--fg-tertiary);
+  text-align: right;
+}
+/* Alternate block mirrors the offsets for a zig-zag rhythm. */
+.prod-detail__dblock--alt .section-tag {
+  align-self: end;
+}
+.prod-detail__dblock--alt .prod-detail__dblock-lead {
+  align-self: end;
+  text-align: right;
+}
+.prod-detail__dblock--alt .prod-detail__dblock-sub {
+  align-self: start;
+  text-align: left;
+}
+
+/* ---- Applications — tetromino cube loader (left, below the hairline) ----
+   Converted from SCSS: $w:96 $h:112 $xspace:48 $yspace:27 $speed:1.5s.
+   Cubes are a grey linear gradient masked to the cube silhouette. */
+.prod-detail__apps-anim {
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-start;
+  min-height: 290px; /* reserves space for the scaled-up loader */
+  /* Cubes just sit at the top of their column (no longer sticky). */
+  align-self: start;
+}
+.tetrominos {
+  position: relative;
+  width: 240px;
+  height: 170px;
+  transform: scale(1.7);
+  transform-origin: left top;
+}
+.tetromino {
+  width: 96px;
+  height: 112px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  transition: all ease 0.3s;
+  /* Isometric cube: one grey-gradient face, the other two filled with the page
+     background (to occlude overlaps), every edge outlined. */
+  background: url("data:image/svg+xml;utf-8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 612 684'><defs><linearGradient id='g' x1='0' y1='0' x2='1' y2='1'><stop offset='0' stop-color='%23f2f3f5'/><stop offset='1' stop-color='%23d7dae0'/></linearGradient></defs><path d='M0 170.9L306 342 305.7 684 0 513.2Z' fill='%23ffffff'/><path d='M306 342L612 170.9 612 513.2 305.7 684Z' fill='%23ffffff'/><path d='M0 170.9L305.7 0 612 170.9 306 342Z' fill='url(%23g)'/><g fill='none' stroke='%234a4e57' stroke-width='8' stroke-linejoin='round'><path d='M305.7 0L612 170.9 612 513.2 305.7 684 0 513.2 0 170.9Z'/><path d='M306 342L0 170.9'/><path d='M306 342L612 170.9'/><path d='M306 342L305.7 684'/></g></svg>")
+    no-repeat top center;
+  background-size: contain;
+}
+.box1 {
+  animation: tetromino1 2s ease-out infinite;
+}
+.box2 {
+  animation: tetromino2 2s ease-out infinite;
+}
+.box3 {
+  animation: tetromino3 2s ease-out infinite;
+  z-index: 2;
+}
+.box4 {
+  animation: tetromino4 2s ease-out infinite;
+}
+
+@keyframes tetromino1 {
+  0%, 40% {
+    transform: translate(0, 0);
+  }
+  50% {
+    transform: translate(48px, -27px);
+  }
+  60%, 100% {
+    transform: translate(96px, 0);
+  }
+}
+@keyframes tetromino2 {
+  0%, 20% {
+    transform: translate(96px, 0);
+  }
+  40%, 100% {
+    transform: translate(144px, 27px);
+  }
+}
+@keyframes tetromino3 {
+  0% {
+    transform: translate(144px, 27px);
+  }
+  20%, 60% {
+    transform: translate(96px, 54px);
+  }
+  90%, 100% {
+    transform: translate(48px, 27px);
+  }
+}
+@keyframes tetromino4 {
+  0%, 60% {
+    transform: translate(48px, 27px);
+  }
+  90%, 100% {
+    transform: translate(0, 0);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .tetromino {
+    animation: none;
+  }
 }
 
 /* ---- Specifications — panel ----------------------------------------- */
@@ -378,6 +709,74 @@
   color: var(--fg-primary);
 }
 
+/* ---- More products — large index list ------------------------------- */
+.section.prod-detail__more {
+  padding-block: var(--space-20);
+}
+.prod-detail__more-list {
+  margin: var(--space-6) 0 0;
+  padding: 0;
+  list-style: none;
+}
+.prod-detail__more-sublist {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.prod-detail__more-group-label {
+  display: block;
+  margin-top: var(--space-10);
+  margin-bottom: var(--space-2);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--fg-tertiary);
+}
+.prod-detail__more-group:first-child .prod-detail__more-group-label {
+  margin-top: var(--space-4);
+}
+.prod-detail__more-item {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-6);
+  padding-block: clamp(0.85rem, 2vw, 1.6rem);
+  border-bottom: 1px solid var(--border);
+  text-decoration: none;
+  color: var(--fg-primary);
+  transition: color var(--transition-fast),
+    padding-left var(--transition-fast);
+}
+.prod-detail__more-name {
+  flex: 1;
+  font-family: var(--font-display);
+  font-size: var(--text-fluid-h3);
+  font-weight: var(--font-semibold);
+  letter-spacing: -0.02em;
+  line-height: 1.05;
+  color: var(--fg-tertiary);
+  transition: color var(--transition-fast);
+}
+.prod-detail__more-arrow {
+  flex: none;
+  font-size: var(--text-fluid-h4);
+  color: var(--fg-tertiary);
+  transform: translateX(-6px);
+  opacity: 0;
+  transition: transform var(--transition-fast), opacity var(--transition-fast);
+}
+.prod-detail__more-item:hover {
+  padding-left: var(--space-4);
+}
+.prod-detail__more-item:hover .prod-detail__more-name {
+  color: var(--fg-primary);
+}
+.prod-detail__more-item:hover .prod-detail__more-arrow {
+  transform: translateX(0);
+  opacity: 1;
+  color: var(--fg-primary);
+}
+
 /* ---- Closing + CTA -------------------------------------------------- */
 .prod-detail__close-text {
   max-width: var(--max-width-text);
@@ -390,6 +789,8 @@
 }
 .prod-detail__cta {
   margin-top: var(--space-10);
+  display: flex;
+  justify-content: flex-end;
 }
 
 .prod-detail__desc {
@@ -434,7 +835,24 @@
     grid-template-columns: 1fr;
     gap: var(--space-8);
   }
+  .prod-detail__apps-body {
+    grid-template-columns: 1fr;
+    gap: var(--space-10);
+    margin-top: var(--space-12);
+  }
+  /* Shrink + centre the loader so the scaled cubes never exceed the viewport. */
+  .prod-detail__apps-anim {
+    justify-content: center;
+    min-height: 210px;
+  }
+  .tetrominos {
+    transform: scale(1.1);
+    transform-origin: top center;
+  }
   .prod-detail__features {
+    grid-template-columns: 1fr;
+  }
+  .prod-detail__cards {
     grid-template-columns: 1fr;
   }
   .prod-detail__spec {

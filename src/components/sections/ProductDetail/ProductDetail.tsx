@@ -6,7 +6,8 @@ import Markdown from "@/components/ui/Markdown";
 import { inline } from "@/components/ui/Markdown/inline";
 import { parseProductDoc, type PSection } from "@/lib/productContent";
 import { PRODUCT_HIGHLIGHTS } from "@/lib/productHighlights";
-import { type ProductWithDept } from "@/lib/products";
+import { PRODUCT_DEPARTMENTS, type ProductWithDept } from "@/lib/products";
+import ProductIntroScrub, { type IntroStage } from "./ProductIntroScrub";
 import "./productDetail.css";
 
 type Kind = "intro" | "applications" | "grades" | "logistics" | "buyers" | "other";
@@ -42,6 +43,56 @@ function firstList(sec: PSection): string[] {
   return b && b.type === "ul" ? b.items : [];
 }
 
+// Four-point shuriken (throwing star) with a punched centre.
+function ShurikenIcon() {
+  return (
+    <svg
+      className="prod-detail__card-icon"
+      viewBox="0 0 24 24"
+      aria-hidden="true"
+      fill="currentColor"
+      fillRule="evenodd"
+    >
+      <path d="M12 1L14.8 9.2 23 12 14.8 14.8 12 23 9.2 14.8 1 12 9.2 9.2ZM9.9 12A2.1 2.1 0 1 0 14.1 12 2.1 2.1 0 1 0 9.9 12Z" />
+    </svg>
+  );
+}
+
+// Larger statement + mono subtext blocks (grades, logistics) for the scroll
+// column — deliberately offset for a looser, less hairline-heavy rhythm.
+const DETAIL_BLOCKS: {
+  title: string;
+  lead: string;
+  muted: string;
+  sub: string;
+}[] = [
+  {
+    title: "Grades & forms",
+    lead: "Crystalline, granular and compacted forms",
+    muted:
+      "— granular and compacted suit bulk blending and mechanical spreading; crystalline suits solution and industrial use.",
+    sub: "Source grade — caprolactam vs synthetic · ≈21% N · ≈24% S",
+  },
+  {
+    title: "Handling, storage & logistics",
+    lead: "Supplied bagged or in bulk, stored dry to stay free-flowing.",
+    muted: "",
+    sub: "Granular grades pair with urea, DAP and potash without segregating in the bag.",
+  },
+];
+
+// Small info cards shown under the applications list.
+const APP_CARDS: { label: string; info: string }[] = [
+  {
+    label: "Blend-ready",
+    info: "Granular and compacted grades pair with urea, DAP and potash without segregating in the bag.",
+  },
+  {
+    label: "Solution grade",
+    info: "Crystalline form dissolves cleanly for fertigation and industrial use.",
+  },
+];
+
 /**
  * ProductDetail — a single product page laid out as alternating sections
  * (hero → intro + image → application feature blocks → specification panel →
@@ -71,6 +122,66 @@ export default function ProductDetail({
     doc?.lead ??
     product.tagline;
 
+  // Scroll-scrubbed intro stages (only when the product has an intro video).
+  // Left = a short, larger "serious" statement; right = the supporting detail.
+  // Two stages keeps the scrub smooth; deeper copy lives further down the page.
+  const glassNote = (tag: string | null, text: string, key: string): ReactNode => (
+    <div className="prod-detail__glass">
+      {tag ? <span className="prod-detail__glass-tag">{tag}</span> : null}
+      <p className="prod-detail__glass-text">{inline(text, key)}</p>
+    </div>
+  );
+  // A two-tone statement: the emphatic lead in full colour, the tail in grey.
+  const statement = (
+    tag: string | null,
+    lead: string,
+    muted: string,
+    key: string
+  ): ReactNode => (
+    <>
+      {tag ? (
+        <span className="section-tag prod-detail__intro-tag">{tag}</span>
+      ) : null}
+      <p className="pds-stage__statement">
+        {inline(lead, `${key}-a`)}{" "}
+        <span className="pds-stage__muted">{inline(muted, `${key}-b`)}</span>
+      </p>
+    </>
+  );
+
+  const introStages: IntroStage[] = [];
+  if (product.video && doc) {
+    // Stage 0 — the pitch.
+    introStages.push({
+      left: statement(
+        intro?.title ?? "What it is",
+        "Nitrogen and sulphur, delivered together",
+        "— for the soils and crops that need both.",
+        "s0-l"
+      ),
+      right: glassNote(
+        "Why it matters",
+        "Readily available nitrogen alongside a nutrient many soils increasingly lack as cleaner air cuts atmospheric sulphur — with a mild acidifying effect that suits alkaline soils.",
+        "s0-note"
+      ),
+    });
+    // Stage 1 — the specifics.
+    introStages.push({
+      left: statement(
+        grades?.title ?? "Grades & forms",
+        "A clean, uniform source of N and S",
+        "— on its own or in the blend.",
+        "s1-l"
+      ),
+      right: glassNote(
+        "Core specs",
+        "Around **21% N** and **24% S**. Crystalline, granular and compacted forms — granular and compacted for bulk blending and spreading, crystalline for solution and industrial use.",
+        "s1-note"
+      ),
+    });
+  }
+  const useScrub = product.video && doc && introStages.length > 0;
+
   // If there's no parsed content, fall back to a simple prose render.
   if (!doc) {
     return (
@@ -92,7 +203,7 @@ export default function ProductDetail({
           <p className="prod-detail__tagline">{product.tagline}</p>
           <p className="prod-detail__desc">{product.description}</p>
           <div className="prod-detail__cta">
-            <Button href="/contact">Enquire about {product.name}</Button>
+            <Button href="/contact">Contact Us</Button>
           </div>
         </Section>
       </article>
@@ -158,108 +269,127 @@ export default function ProductDetail({
           className="prod-detail__intro"
           ariaLabel={intro?.title ?? "Overview"}
         >
-          <div className="prod-detail__intro-dots" aria-hidden="true" />
+          {useScrub ? (
+            <ProductIntroScrub
+              video={product.video!}
+              poster={product.video!.replace(/\.mp4$/, "-poster.jpg")}
+              stages={introStages}
+            />
+          ) : (
+            <>
+              <div className="prod-detail__intro-dots" aria-hidden="true" />
 
-          <div className="prod-detail__intro-grid">
-            <div className="prod-detail__intro-left">
-              <span className="prod-detail__eyebrow">
-                {intro?.title ?? "Overview"}
-              </span>
-              {intro ? paragraphs(intro, "intro") : null}
-            </div>
-
-            <div className="prod-detail__intro-center">
-              <figure className="prod-detail__shape">
-                {product.image ? (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img src={product.image} alt={product.name} />
-                ) : (
-                  <span className="prod-detail__shape-ph" aria-hidden="true" />
-                )}
-              </figure>
-            </div>
-
-            <div className="prod-detail__intro-right">
-              {asideText ? (
-                <div className="prod-detail__glass">
-                  {buyers ? (
-                    <span className="prod-detail__glass-tag">{buyers.title}</span>
-                  ) : null}
-                  <p className="prod-detail__glass-text">
-                    {inline(asideText, "aside")}
-                  </p>
+              <div className="prod-detail__intro-grid">
+                <div className="prod-detail__intro-left">
+                  <span className="section-tag prod-detail__intro-tag">
+                    {intro?.title ?? "Overview"}
+                  </span>
+                  {intro ? paragraphs(intro, "intro") : null}
                 </div>
-              ) : null}
-            </div>
-          </div>
+
+                <div className="prod-detail__intro-center">
+                  <figure className="prod-detail__shape">
+                    {product.image ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img src={product.image} alt={product.name} />
+                    ) : (
+                      <span className="prod-detail__shape-ph" aria-hidden="true" />
+                    )}
+                  </figure>
+                </div>
+
+                <div className="prod-detail__intro-right">
+                  {asideText ? (
+                    <div className="prod-detail__glass">
+                      {buyers ? (
+                        <span className="prod-detail__glass-tag">
+                          {buyers.title}
+                        </span>
+                      ) : null}
+                      <p className="prod-detail__glass-text">
+                        {inline(asideText, "aside")}
+                      </p>
+                    </div>
+                  ) : null}
+                </div>
+              </div>
+            </>
+          )}
         </Section>
       ) : null}
 
       {/* Applications — feature blocks */}
       {apps ? (
         <Section width="wide" className="prod-detail__apps">
-          <h2 className="prod-detail__h">{apps.title}</h2>
-          <ul className="prod-detail__features">
-            {firstList(apps).map((it, i) => {
-              const { label, text } = splitItem(it);
-              return (
-                <li key={i} className="prod-detail__feature">
-                  {label ? (
-                    <h3 className="prod-detail__feature-title">{label}</h3>
-                  ) : null}
-                  <p className="prod-detail__feature-body">{inline(text, `f${i}`)}</p>
-                </li>
-              );
-            })}
-          </ul>
-        </Section>
-      ) : null}
-
-      {/* Specifications — panel */}
-      {grades ? (
-        <Section width="wide" className="prod-detail__specs">
-          <div className="prod-detail__specs-inner">
-            <h2 className="prod-detail__h">{grades.title}</h2>
-            <ul className="prod-detail__spec-list">
-              {firstList(grades).map((it, i) => {
-                const { label, text } = splitItem(it);
-                return (
-                  <li key={i} className="prod-detail__spec">
-                    {label ? (
-                      <span className="prod-detail__spec-label">{label}</span>
-                    ) : null}
-                    <span className="prod-detail__spec-text">
-                      {inline(text, `s${i}`)}
-                    </span>
-                  </li>
-                );
-              })}
-            </ul>
-            {paragraphs(grades, "grades")}
-          </div>
-        </Section>
-      ) : null}
-
-      {/* Logistics — band */}
-      {logistics ? (
-        <Section surface width="wide" className="prod-detail__band">
-          <div className="prod-detail__band-inner">
-            <h2 className="prod-detail__h">{logistics.title}</h2>
-            {paragraphs(logistics, "log")}
-            {firstList(logistics).length ? (
-              <ul className="prod-detail__band-list">
-                {firstList(logistics).map((it, i) => {
+          <header className="prod-detail__section-head">
+            <h2 className="prod-detail__h">{apps.title}</h2>
+            <span className="section-tag">{product.department.name}</span>
+          </header>
+          <div className="prod-detail__apps-body">
+            <div className="prod-detail__apps-anim" aria-hidden="true">
+              <div className="tetrominos">
+                <div className="tetromino box1" />
+                <div className="tetromino box2" />
+                <div className="tetromino box3" />
+                <div className="tetromino box4" />
+              </div>
+            </div>
+            <div className="prod-detail__apps-right">
+              <ul className="prod-detail__features">
+                {firstList(apps).map((it, i) => {
                   const { label, text } = splitItem(it);
                   return (
-                    <li key={i}>
-                      {label ? <strong>{label}</strong> : null}
-                      {label ? " — " : null}
-                      {inline(text, `l${i}`)}
+                    <li key={i} className="prod-detail__feature">
+                      {label ? (
+                        <h3 className="prod-detail__feature-title">{label}</h3>
+                      ) : null}
+                      <p className="prod-detail__feature-body">
+                        {inline(text, `f${i}`)}
+                      </p>
                     </li>
                   );
                 })}
               </ul>
-            ) : null}
+
+              <div className="prod-detail__cards">
+                {APP_CARDS.map((c, i) => (
+                  <article key={i} className="prod-detail__card">
+                    <header className="prod-detail__card-top">
+                      <span className="prod-detail__card-label">{c.label}</span>
+                      <ShurikenIcon />
+                    </header>
+                    <p className="prod-detail__card-info">{c.info}</p>
+                  </article>
+                ))}
+              </div>
+
+              {/* Grades / logistics — large statement + mono subtext, offset. */}
+              {DETAIL_BLOCKS.map((b, i) => (
+                <div
+                  key={i}
+                  className={
+                    "prod-detail__dblock" +
+                    (i % 2 ? " prod-detail__dblock--alt" : "")
+                  }
+                >
+                  <span className="section-tag">{b.title}</span>
+                  <p className="prod-detail__dblock-lead">
+                    {b.lead}
+                    {b.muted ? (
+                      <>
+                        {" "}
+                        <span className="prod-detail__dblock-muted">
+                          {b.muted}
+                        </span>
+                      </>
+                    ) : null}
+                  </p>
+                  {b.sub ? (
+                    <p className="prod-detail__dblock-sub">{b.sub}</p>
+                  ) : null}
+                </div>
+              ))}
+            </div>
           </div>
         </Section>
       ) : null}
@@ -267,7 +397,7 @@ export default function ProductDetail({
       {/* Closing + CTA (the "buyers" note now lives in the intro glass box) */}
       <Section width="wide" className="prod-detail__close">
         <div className="prod-detail__cta">
-          <Button href="/contact">Enquire about {product.name}</Button>
+          <Button href="/contact">Contact Us</Button>
         </div>
       </Section>
 
@@ -287,6 +417,47 @@ export default function ProductDetail({
             />
           </Section>
         ))}
+
+      {/* More products — index of the rest of the range */}
+      <Section width="wide" className="prod-detail__more" ariaLabel="More products">
+        <header className="prod-detail__section-head">
+          <h2 className="prod-detail__h">More products</h2>
+          <Link href="/products" className="section-tag">
+            All products
+          </Link>
+        </header>
+        <ul className="prod-detail__more-list">
+          {PRODUCT_DEPARTMENTS.map((dept) => {
+            const items = dept.products.filter((p) => p.id !== product.id);
+            if (!items.length) return null;
+            return (
+              <li key={dept.id} className="prod-detail__more-group">
+                <span className="prod-detail__more-group-label">
+                  {dept.name}
+                </span>
+                <ul className="prod-detail__more-sublist">
+                  {items.map((p) => (
+                    <li key={p.id}>
+                      <Link
+                        href={`/products/${p.id}`}
+                        className="prod-detail__more-item"
+                      >
+                        <span className="prod-detail__more-name">{p.name}</span>
+                        <span
+                          className="prod-detail__more-arrow"
+                          aria-hidden="true"
+                        >
+                          →
+                        </span>
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </li>
+            );
+          })}
+        </ul>
+      </Section>
     </article>
   );
 }

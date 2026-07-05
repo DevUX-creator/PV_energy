@@ -15,9 +15,11 @@ tagline: Nitrogen with essential sulphur
 Ammonium sulfate delivers readily available nitrogen alongside sulphur, a
 nutrient many soils are increasingly short of as cleaner air has cut atmospheric
 sulphur deposition. It also has a mild acidifying effect, which makes it a
-natural fit for alkaline soils. Much of the world's supply is produced as a
-co-product of the caprolactam and steel industries, and it's valued both as a
-standalone fertilizer and as a quality blending ingredient.
+natural fit for alkaline soils.
+
+Much of the world's supply is produced as a co-product of the caprolactam and
+steel industries, and it's valued both as a standalone fertilizer and as a
+quality blending ingredient.
 
 ## Key applications
 
