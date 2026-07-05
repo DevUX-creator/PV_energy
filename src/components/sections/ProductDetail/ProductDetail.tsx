@@ -165,8 +165,8 @@ const PRODUCT_EXTRAS: Record<string, ProductExtras> = {
     stages: [
       {
         tag: "What they are",
-        lead: "Light streams between two worlds — chemical feedstock and road fuel",
-        muted: "— naphtha feeds petrochemicals and blends into gasoline; mogas is the finished pump fuel.",
+        lead: "Light streams between two worlds",
+        muted: "— chemical feedstock and finished road fuel.",
         noteTag: "Why it matters",
         note: "Sitting at the crossover of chemicals and fuels, they're among the most actively traded and arbitraged products in the barrel — flexibility across markets and seasons.",
       },
