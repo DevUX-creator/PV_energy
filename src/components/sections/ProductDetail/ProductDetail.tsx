@@ -117,6 +117,138 @@ const PRODUCT_EXTRAS: Record<string, ProductExtras> = {
       },
     ],
   },
+  "fuel-oil": {
+    stages: [
+      {
+        tag: "What it is",
+        lead: "The heavy residue that powers ships, plants and heavy industry",
+        muted: "— a lot of energy per barrel at a competitive price.",
+        noteTag: "Why it matters",
+        note: "The workhorse fuel for marine engines, power stations and large boilers. Since **IMO 2020** capped marine sulphur, the market split into low- and high-sulphur grades — matching grade to engine or scrubber setup is now central to every deal.",
+      },
+      {
+        tag: "Grades & specs",
+        lead: "VLSFO, ULSFO and HSFO, to ISO 8217",
+        muted: "— from ≤0.5% sulphur standard to ≤0.1% for ECAs and ≈3.5% for scrubber-fitted vessels.",
+        noteTag: "Core checks",
+        note: "Bunker grades like **RMG 380, RMK 500**, defined by **viscosity (cSt at 50 °C), density, flash and pour point, CCAI and water/sediment**.",
+      },
+    ],
+    cards: [
+      {
+        label: "Marine bunkering",
+        info: "The primary fuel for deep-sea shipping, delivered ship-to-ship or at berth.",
+      },
+      {
+        label: "Power & heat",
+        info: "Feeding power plants where gas isn't available, and firing industrial boilers and kilns.",
+      },
+    ],
+    blocks: [
+      {
+        title: "Grades & specifications",
+        lead: "VLSFO, ULSFO, HSFO — split by sulphur since IMO 2020",
+        muted:
+          "— ≤0.5% standard, ≤0.1% for ECAs, ≈3.5% for scrubber-fitted vessels; bunker grades to ISO 8217.",
+        sub: "Viscosity (cSt @ 50 °C) · density · flash / pour point · CCAI · water/sediment",
+      },
+      {
+        title: "Handling, storage & logistics",
+        lead: "Stored and pumped heated to stay fluid",
+        muted:
+          "— dedicated tankage, bunker barge or pipeline delivery; blend stability and compatibility matter.",
+        sub: "Heated tankage · bunker barge · provenance & testing",
+      },
+    ],
+  },
+  "distillates-naphtha-mogas": {
+    stages: [
+      {
+        tag: "What they are",
+        lead: "Light streams between two worlds — chemical feedstock and road fuel",
+        muted: "— naphtha feeds petrochemicals and blends into gasoline; mogas is the finished pump fuel.",
+        noteTag: "Why it matters",
+        note: "Sitting at the crossover of chemicals and fuels, they're among the most actively traded and arbitraged products in the barrel — flexibility across markets and seasons.",
+      },
+      {
+        tag: "Grades & specs",
+        lead: "Light or heavy naphtha, mogas by octane",
+        muted: "— RON 91 / 95 / 98, with oxygenate blends where mandated.",
+        noteTag: "Core checks",
+        note: "**Octane (RON/MON), Reid vapour pressure** (seasonal), **sulphur and oxygenate content** — plus P/N/A for naphtha — all vary by market.",
+      },
+    ],
+    cards: [
+      {
+        label: "Petrochemical feedstock",
+        info: "Naphtha cracked to ethylene and propylene, reformed into aromatics and high-octane components.",
+      },
+      {
+        label: "Transport fuel",
+        info: "On-spec mogas for cars and light vehicles, to regional octane and emissions standards.",
+      },
+    ],
+    blocks: [
+      {
+        title: "Grades & specifications",
+        lead: "Light vs heavy naphtha; mogas RON 91 / 95 / 98",
+        muted:
+          "— light naphtha favours steam cracking, heavy favours reforming; oxygenate blends where mandated.",
+        sub: "Octane (RON/MON) · RVP (seasonal) · sulphur · oxygenate · P/N/A",
+      },
+      {
+        title: "Handling, storage & logistics",
+        lead: "Moved as clean petroleum products on product tankers",
+        muted:
+          "— dedicated shore tankage and hub blending, kept segregated from heavier, dirtier grades.",
+        sub: "CPP tankers · hub blending · grade segregation",
+      },
+    ],
+  },
+  "base-oil": {
+    stages: [
+      {
+        tag: "What it is",
+        lead: "The refined oil that makes up most of every lubricant",
+        muted: "— typically 70–90% by volume, the base additives are blended into.",
+        noteTag: "Why it matters",
+        note: "Its quality — how well it resists heat, oxidation and thickening — sets the ceiling for the lubricant made from it. Classified into **API Groups**, with higher groups commanding a premium for cleaner, longer-life oils.",
+      },
+      {
+        tag: "Grades & specs",
+        lead: "API Group I to V, in solvent-neutral cuts",
+        muted: "— from solvent-refined Group I to true synthetics (PAO, esters).",
+        noteTag: "Core checks",
+        note: "Quoted as **SN 150, SN 500, Bright Stock**, with **viscosity index, pour point, flash point and sulphur** the key quality markers.",
+      },
+    ],
+    cards: [
+      {
+        label: "Automotive",
+        info: "Engine, transmission and gear oils — the fluid base of finished lubricants.",
+      },
+      {
+        label: "Industrial",
+        info: "Hydraulic, turbine, compressor, transformer and metalworking fluids.",
+      },
+    ],
+    blocks: [
+      {
+        title: "Grades & specifications",
+        lead: "API Group I–V, from solvent-refined to true synthetic",
+        muted:
+          "— Group II hydrotreated is mainstream; Group III high-VI markets as synthetic; PAO and esters for demanding duty.",
+        sub: "SN 150 · SN 500 · Bright Stock · VI · pour / flash point · sulphur",
+      },
+      {
+        title: "Handling, storage & logistics",
+        lead: "Flexitanks, ISO tanks, drums or bulk parcel tankers",
+        muted:
+          "— kept clean and segregated by grade, because blenders rely on consistent, on-spec stock.",
+        sub: "Segregated by grade · batch-to-batch consistency",
+      },
+    ],
+  },
   bitumen: {
     stages: [
       {

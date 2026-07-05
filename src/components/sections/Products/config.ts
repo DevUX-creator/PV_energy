@@ -87,6 +87,7 @@ export const PRODUCT_DEPARTMENTS: ProductDepartment[] = [
         name: "Distillates: Naphtha & Mogas",
         tab: "Distillates",
         image: "/Products/distillates.webp",
+        video: "/Products/distillates.mp4",
         origin: "Riyadh, Saudi Arabia",
         tagline: "Versatile Fuels, Strategic Reach",
         description:
@@ -119,6 +120,7 @@ export const PRODUCT_DEPARTMENTS: ProductDepartment[] = [
         name: "Fuel Oil",
         tab: "Fuel Oil",
         image: "/Products/fuel-oil.webp",
+        video: "/Products/fuel-oil.mp4",
         origin: "Global",
         tagline: "Heavy Fuels, Smart Solutions",
         description:
@@ -184,6 +186,7 @@ export const PRODUCT_DEPARTMENTS: ProductDepartment[] = [
         name: "Base Oil",
         tab: "Base Oil",
         image: "/Products/base-oil.webp",
+        video: "/Products/base-oil.mp4",
         origin: "Global",
         tagline: "The Foundation of Quality Lubricants",
         description:
