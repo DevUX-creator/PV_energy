@@ -147,8 +147,8 @@ export default function ProductsHero() {
           </div>
 
           <div className="prod-hero__actions">
-            <Button href="/products#petroleum" variant="primary">
-              Explore products
+            <Button href="/contact" variant="primary">
+              Contact Us
             </Button>
           </div>
         </div>
