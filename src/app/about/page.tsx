@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { OG_IMAGE } from "@/lib/site";
 import AboutHero from "@/components/sections/AboutHero";
 import AboutStory from "@/components/sections/AboutStory";
 import AboutServices from "@/components/sections/AboutServices";
@@ -15,6 +16,7 @@ export const metadata: Metadata = {
       "International energy & commodities trader connecting supply and demand across global markets — offices in Dubai, Athens and Hong Kong.",
     url: "/about",
     type: "website",
+    images: [OG_IMAGE],
   },
 };
 

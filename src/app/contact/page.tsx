@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { OG_IMAGE } from "@/lib/site";
 import ContactView from "@/components/sections/ContactView";
 
 export const metadata: Metadata = {
@@ -18,6 +19,7 @@ export const metadata: Metadata = {
       "Reach our offices in Dubai (UAE), Athens (Greece) and Hong Kong — email, phone and locations.",
     url: "/contact",
     type: "website",
+    images: [OG_IMAGE],
   },
 };
 

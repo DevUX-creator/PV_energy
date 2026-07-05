@@ -16,6 +16,16 @@ export const SITE_LEGAL_NAME = "PV Link Energy FZCO";
 
 export const SITE_TAGLINE = "Empowering Global Energy Flows";
 
+/**
+ * Site-wide social share banner (the generated /opengraph-image route).
+ * metadataBase resolves this to an absolute URL. Pages that declare their OWN
+ * `openGraph` block must include this in `openGraph.images` — otherwise Next
+ * does NOT cascade the root file-based banner into an overridden openGraph, and
+ * the share card ships imageless. Pages without an openGraph override, and
+ * product pages (own opengraph-image), don't need it.
+ */
+export const OG_IMAGE = "/opengraph-image";
+
 export const SITE_DESCRIPTION =
   "PV Link Energy is an international energy and commodities trading company delivering LPG, distillates, fuel oil, bitumen, base oil and fertilizers across global markets — trading, supply, distribution, storage, shipping and risk management from Dubai, Athens and Hong Kong.";
 
