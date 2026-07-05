@@ -39,7 +39,7 @@ export const SITE_TAGLINE = "Empowering Global Energy Flows";
  * the share card ships imageless. Pages without an openGraph override, and
  * product pages (own opengraph-image), don't need it.
  */
-export const OG_IMAGE = "/opengraph-image";
+export const OG_IMAGE = "/opengraph-image.png";
 
 export const SITE_DESCRIPTION =
   "PV Link Energy is an international energy and commodities trading company delivering LPG, distillates, fuel oil, bitumen, base oil and fertilizers across global markets — trading, supply, distribution, storage, shipping and risk management from Dubai, Athens and Hong Kong.";
