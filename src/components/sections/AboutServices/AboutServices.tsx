@@ -93,26 +93,6 @@ export default function AboutServices() {
             <RevealText split="none">
               <span className="section-tag">How we work</span>
             </RevealText>
-            <a
-              className="about-services__sponsor"
-              href="https://www.argusmedia.com/en"
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="PV Link Energy is a platinum sponsor of Argus Media"
-            >
-              <span className="about-services__sponsor-label">
-                Platinum Sponsor of
-              </span>
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                className="about-services__sponsor-logo"
-                src="/argus-media.svg"
-                alt="Argus Media"
-                width={400}
-                height={157}
-                loading="lazy"
-              />
-            </a>
           </div>
           <div className="about-services__header-right">
             <RevealText split="none" delay={0.05}>
