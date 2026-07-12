@@ -38,6 +38,24 @@ export default function Footer() {
                 <br />
                 energy flows.
               </h3>
+
+              <a
+                className="footer__sponsor"
+                href="https://www.argusmedia.com/en"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="PV Link Energy is a platinum sponsor of Argus Media"
+              >
+                <span className="footer__sponsor-label">Platinum Sponsor of</span>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  className="footer__sponsor-logo"
+                  src="/argus-media.svg"
+                  alt="Argus Media"
+                  width={400}
+                  height={157}
+                />
+              </a>
             </div>
 
             <nav className="footer__nav" aria-label="Footer">

@@ -66,6 +66,19 @@
   overflow: hidden;
 }
 
+/* Beyond the container cap the side gaps grow large — and since the JS mirrors
+   that side gap to top/bottom, the photo would shrink. Let the stage break out
+   wider than the text container so the image keeps filling the screen (and the
+   mirrored vertical padding stays small). Margins, not transform, so the cards'
+   backdrop-filter blur is never broken by a transformed ancestor. */
+@media (min-width: 1761px) {
+  .leaders__stage {
+    --stage-w: min(100vw - 4rem, 2240px);
+    width: var(--stage-w);
+    margin-inline: calc((100% - var(--stage-w)) / 2);
+  }
+}
+
 /* Background photo fills the stage. brightness() (not opacity) darkens it so
    the section reads dark BUT the contrast/detail survives — which is what the
    glass actually blurs. object-position biases to the detailed deck so the
@@ -94,13 +107,18 @@
   display: flex;
   align-items: center;
   gap: 24px;
-  padding: 0 24px;
+  padding: 24px; /* equal top/bottom room so cards never touch the frame edge */
   pointer-events: none;
 }
 
 .leaders__card {
   flex: 1 1 0; /* equal columns filling the available width → larger cards */
   aspect-ratio: 0.8125;
+  /* On short/wide viewports the portrait aspect-ratio would make the card
+     taller than the stage and clip against overflow:hidden. Cap it to the
+     stage height so the card shrinks to fit instead of being cut off. */
+  max-height: 100%;
+  min-height: 0;
   pointer-events: auto;
   /* Fly (--fly) + levitation (--lev) composed on the card's own transform so
      the glass blur is never broken by a transformed ancestor. */
