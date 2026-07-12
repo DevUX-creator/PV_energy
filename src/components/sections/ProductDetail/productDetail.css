@@ -370,6 +370,23 @@
   object-fit: cover;
   display: block;
 }
+/* Static poster sits under the scrub video; the video fades in over it only
+   once it has painted a real frame (JS adds .is-ready). Prevents a blank frame
+   on mobile cold reloads where the <video poster> is dropped on the first seek. */
+.prod-detail__poster {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+.prod-detail__shape video {
+  position: relative;
+  z-index: 1;
+  opacity: 0;
+  transition: opacity 0.35s ease;
+}
+.prod-detail__shape video.is-ready {
+  opacity: 1;
+}
 .prod-detail__shape-ph {
   position: absolute;
   inset: 0;

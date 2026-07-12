@@ -33,6 +33,44 @@
   flex: 2;
 }
 
+/* Platinum sponsor lockup — understated partnership badge under the tag. */
+.about-services__sponsor {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.6rem;
+  margin-top: clamp(1.5rem, 1rem + 2vw, 2.5rem);
+}
+
+.about-services__sponsor-label {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  font-weight: var(--font-medium);
+  letter-spacing: var(--tracking-eyebrow);
+  text-transform: uppercase;
+  color: var(--fg-tertiary);
+  transition: color var(--transition-fast);
+}
+
+.about-services__sponsor-logo {
+  height: clamp(2.25rem, 2rem + 1vw, 3rem);
+  width: auto;
+  align-self: flex-start;
+  opacity: 0.9;
+  transition:
+    opacity var(--transition-fast),
+    transform var(--transition-fast);
+}
+
+.about-services__sponsor:hover .about-services__sponsor-logo {
+  opacity: 1;
+  transform: translateY(-1px);
+}
+
+.about-services__sponsor:hover .about-services__sponsor-label {
+  color: var(--fg-secondary);
+}
+
 .about-services__header-right {
   flex: 5;
 }

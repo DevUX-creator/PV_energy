@@ -42,6 +42,22 @@ export default function ProductIntroScrub({
     registerGsapPlugins();
     vid.pause();
 
+    // Mobile browsers frequently ignore preload and, worse, drop the
+    // <video poster> the moment currentTime is set by the scrub — leaving a
+    // blank frame on a cold reload / direct URL entry. A static poster <img>
+    // (sibling below) stays visible until the video has actually painted a
+    // frame; only then do we reveal the video. On client navigation the video
+    // is usually already warm, so this just fades in instantly.
+    const reveal = () => vid.classList.add("is-ready");
+    if (vid.readyState >= 2) reveal();
+    else {
+      vid.addEventListener("loadeddata", reveal, { once: true });
+      vid.addEventListener("seeked", reveal, { once: true });
+      vid.addEventListener("canplay", reveal, { once: true });
+      // Nudge mobile Safari/Chrome to buffer frame data now.
+      vid.load();
+    }
+
     const ctx = gsap.context(() => {
       const mm = gsap.matchMedia();
 
@@ -189,7 +205,12 @@ export default function ProductIntroScrub({
       );
     }, root);
 
-    return () => ctx.revert();
+    return () => {
+      vid.removeEventListener("loadeddata", reveal);
+      vid.removeEventListener("seeked", reveal);
+      vid.removeEventListener("canplay", reveal);
+      ctx.revert();
+    };
   }, [nStages]);
 
   return (
@@ -207,6 +228,19 @@ export default function ProductIntroScrub({
 
         <div className="prod-detail__intro-center">
           <figure className="prod-detail__shape">
+            {poster ? (
+              // Always-visible first-frame preview. Guarantees a poster on
+              // mobile cold reloads, where the browser drops the <video poster>
+              // as soon as the scrub sets currentTime. The video fades in over
+              // this identical frame once it can actually paint (see effect).
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                className="prod-detail__poster"
+                src={poster}
+                alt=""
+                aria-hidden="true"
+              />
+            ) : null}
             <video ref={videoRef} muted playsInline preload="auto" poster={poster}>
               <source src={video} type="video/mp4" />
             </video>
